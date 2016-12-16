@@ -6,6 +6,10 @@ package worldbuilding;
 public class BodySettings {
     int legs;
     int segments;
+    float bodyWidth;
+    float bodyHeight;
+    float segmentHeight;
+    float getSegmentwidth;
 
     public BodySettings(int legs, int segments){
         this.legs = legs;
