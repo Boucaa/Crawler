@@ -8,9 +8,13 @@ import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
 import org.jbox2d.testbed.framework.TestbedSettings;
 import org.jbox2d.testbed.framework.TestbedTest;
+import worldbuilding.BodySettings;
+import worldbuilding.WorldBuilder;
+import worldbuilding.WorldSettings;
 
 /**
  * Created by colander on 12/13/16.
+ * A class used in initial testing, to be deleted.
  */
 public class BaseTestbedTest extends TestbedTest {
     private RevoluteJoint j1;
@@ -19,7 +23,11 @@ public class BaseTestbedTest extends TestbedTest {
     @Override
     public void initTest(boolean argDeserialized) {
         setTitle("B2Dtest");
-        getWorld().setGravity(new Vec2(0, -10));
+
+        BodySettings bodySettings = new BodySettings(10,2,20,1,0.8f,3f);
+        WorldSettings worldSettings = new WorldSettings(10f,WorldSettings.BASE_FLAT);
+        WorldBuilder.build(getWorld(),worldSettings,bodySettings);
+/*        getWorld().setGravity(new Vec2(0, -10));
 
         PolygonShape base = new PolygonShape();
         base.setAsBox(50, 5);
@@ -72,17 +80,17 @@ public class BaseTestbedTest extends TestbedTest {
         j2.enableMotor(true);
         j2.setMotorSpeed(5);
         j2.setMaxMotorTorque(100000);
-        j2.setLimits(-1, 1);
+        j2.setLimits(-1, 1);*/
     }
 
-    @Override
+    /*@Override
     public synchronized void step(TestbedSettings settings) {
         if (j2.getJointAngle() > Math.PI || j2.getJointAngle() < -Math.PI) {
             j2.setMotorSpeed(0);
         }
         System.out.println(j2.getJointAngle());
         super.step(settings);
-    }
+    }*/
 
     @Override
     public String getTestName() {

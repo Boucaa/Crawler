@@ -2,6 +2,7 @@ package worldbuilding;
 
 /**
  * Created by colander on 12/14/16.
+ * A settings container used in test world creation
  */
 public class WorldSettings {
     private final float gravity;

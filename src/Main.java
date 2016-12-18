@@ -5,6 +5,7 @@ import javax.swing.*;
 
 /**
  * Created by colander on 12/13/16.
+ * A launcher class.
  */
 public class Main {
 
