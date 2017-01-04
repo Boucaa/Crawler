@@ -1,5 +1,8 @@
+package launcher;
+
 import org.jbox2d.testbed.framework.*;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
+import simulation.BaseTestbedTest;
 
 import javax.swing.*;
 

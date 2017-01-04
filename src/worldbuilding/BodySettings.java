@@ -5,12 +5,12 @@ package worldbuilding;
  * A settings container used in test body construction.
  */
 public class BodySettings {
-    int legs;
-    int segments;
-    float bodyWidth;
-    float bodyHeight;
-    float segmentHeight;
-    float segmentWidth;
+    public int legs;
+    public int segments;
+    public float bodyWidth;
+    public float bodyHeight;
+    public float segmentHeight;
+    public float segmentWidth;
 
     public BodySettings(int legs, int segments, float bodyWidth, float bodyHeight, float segmentWidth, float segmentHeight) {
         this.legs = legs;

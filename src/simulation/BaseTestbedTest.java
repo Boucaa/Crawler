@@ -1,3 +1,7 @@
+package simulation;
+
+//TODO cleanup
+
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.Body;
@@ -24,9 +28,9 @@ public class BaseTestbedTest extends TestbedTest {
     public void initTest(boolean argDeserialized) {
         setTitle("B2Dtest");
 
-        BodySettings bodySettings = new BodySettings(10,2,20,1,0.8f,3f);
-        WorldSettings worldSettings = new WorldSettings(10f,WorldSettings.BASE_FLAT);
-        WorldBuilder.build(getWorld(),worldSettings,bodySettings);
+        BodySettings bodySettings = new BodySettings(10, 2, 20, 1, 0.8f, 2f);
+        WorldSettings worldSettings = new WorldSettings(10f, WorldSettings.BASE_FLAT);
+        WorldBuilder.build(getWorld(), worldSettings, bodySettings);
 /*        getWorld().setGravity(new Vec2(0, -10));
 
         PolygonShape base = new PolygonShape();

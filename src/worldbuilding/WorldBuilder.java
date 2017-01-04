@@ -66,13 +66,17 @@ public class WorldBuilder {
                     jointDef.bodyA = segments[j][i - 1];
                     jointDef.bodyB = legBody;
                     jointDef.type = JointType.REVOLUTE;
-                    jointDef.localAnchorA.set(0, -bodySettings.bodyHeight);
+                    jointDef.localAnchorA.set(0, -bodySettings.segmentHeight);
                     jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
                     joints[j][i] = (RevoluteJoint) world.createJoint(jointDef);
+                    joints[j][i].enableMotor(true);
+                    joints[j][i].setMaxMotorTorque(10000);
+                    //TODO ^ find suitable value
                 }
 
             }
         }
+
 
 
     }
