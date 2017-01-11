@@ -10,39 +10,39 @@ import java.util.ArrayList;
 public class Util {
     public static void printGenotype(Genotype genotype) {
         System.out.print("NODES:\nINNO\t");
-        for (int i = 0; i < genotype.nodeGenes.length; i++) {
-            System.out.print(genotype.nodeGenes[i].innov + "\t");
+        for (int i = 0; i < genotype.nodeGenes.size(); i++) {
+            System.out.print(genotype.nodeGenes.get(i).innov + "\t");
         }
         System.out.print("\nTYPE\t");
-        for (int i = 0; i < genotype.nodeGenes.length; i++) {
-            System.out.print(genotype.nodeGenes[i].type + "\t");
+        for (int i = 0; i < genotype.nodeGenes.size(); i++) {
+            System.out.print(genotype.nodeGenes.get(i).type + "\t");
         }
         System.out.print("\nCONNECTIONS:\nACTIVE\t");
-        for (int i = 0; i < genotype.connectionGenes.length; i++) {
-            System.out.print(genotype.connectionGenes[i].active + "\t");
+        for (int i = 0; i < genotype.connectionGenes.size(); i++) {
+            System.out.print(genotype.connectionGenes.get(i).active + "\t");
         }
-        System.out.print("\nIN\t");
-        for (int i = 0; i < genotype.connectionGenes.length; i++) {
-            System.out.print(genotype.connectionGenes[i].in + "\t");
+        System.out.print("\nIN\t\t");
+        for (int i = 0; i < genotype.connectionGenes.size(); i++) {
+            System.out.print(genotype.connectionGenes.get(i).in + "\t\t");
         }
-        System.out.print("\nOUT\t");
-        for (int i = 0; i < genotype.connectionGenes.length; i++) {
-            System.out.print(genotype.connectionGenes[i].out + "\t");
+        System.out.print("\nOUT\t\t");
+        for (int i = 0; i < genotype.connectionGenes.size(); i++) {
+            System.out.print(genotype.connectionGenes.get(i).out + "\t\t");
         }
         System.out.print("\nWEIGHT\t");
-        for (int i = 0; i < genotype.connectionGenes.length; i++) {
-            System.out.print(genotype.connectionGenes[i].weight + "\t");
+        for (int i = 0; i < genotype.connectionGenes.size(); i++) {
+            System.out.print(Math.round(genotype.connectionGenes.get(i).weight*10000)/10000.0 + "\t");
         }
         System.out.print("\nINNO\t");
-        for (int i = 0; i < genotype.connectionGenes.length; i++) {
-            System.out.print(genotype.connectionGenes[i].innovation + "\t");
+        for (int i = 0; i < genotype.connectionGenes.size(); i++) {
+            System.out.print(genotype.connectionGenes.get(i).innovation + "\t\t");
         }
     }
 
     public static boolean[][] getEdgeMatrix(Genotype g) {
-        boolean[][] mat = new boolean[g.nodeGenes.length][g.nodeGenes.length];
-        for (int i = 0; i < g.connectionGenes.length; i++) {
-            mat[g.connectionGenes[i].in][g.connectionGenes[i].out] = true;
+        boolean[][] mat = new boolean[g.nodeGenes.size()][g.nodeGenes.size()];
+        for (int i = 0; i < g.connectionGenes.size(); i++) {
+            mat[g.connectionGenes.get(i).in][g.connectionGenes.get(i).out] = true;
         }
         return mat;
     }

@@ -8,9 +8,9 @@ public class ConnectionGene {
     int out;
     double weight;
     boolean active;
-    int innovation;
+    final int innovation;
 
-    public ConnectionGene(int in, int out, double weight, boolean active, int innovation) {
+    ConnectionGene(int in, int out, double weight, boolean active, int innovation) {
         this.in = in;
         this.out = out;
         this.weight = weight;

@@ -24,6 +24,6 @@ public class Main {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);*/
         BodySettings set = new BodySettings(4, 2, 10, 2, 0.5f, 3f);
         Evolution evo = new Evolution(set);
-        Util.printGenotype(evo.nextGeneration()[0]);
+        Util.printGenotype(evo.nextGeneration().get(0));
     }
 }
