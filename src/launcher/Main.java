@@ -5,6 +5,7 @@ import neat.Util;
 import org.jbox2d.testbed.framework.*;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 import simulation.BaseTestbedTest;
+import simulation.TestbedFitnessTest;
 import worldbuilding.BodySettings;
 
 import javax.swing.*;
@@ -16,14 +17,21 @@ import javax.swing.*;
 public class Main {
 
     public static void main(String[] args) {
+        BodySettings set = new BodySettings(4, 2, 12, 0.5f, 0.7f, 2.5f);
+        Evolution evo = new Evolution(set);
+
+        for (int i = 0; i < 1000; i++) {
+            evo.nextGeneration();
+            if(i%5==0){
+
+            }
+        }
         /*TestbedModel model = new TestbedModel();
-        model.addTest(new BaseTestbedTest());
+        model.addTest(new TestbedFitnessTest(evo.nextGeneration().get(0),set));
         TestbedPanel panel = new TestPanelJ2D(model);
         TestbedFrame frame = new TestbedFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED);
         frame.setVisible(true);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);*/
-        BodySettings set = new BodySettings(4, 2, 10, 2, 0.5f, 3f);
-        Evolution evo = new Evolution(set);
-        Util.printGenotype(evo.nextGeneration().get(0));
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //Util.printGenotype(evo.nextGeneration().get(0));*/
     }
 }

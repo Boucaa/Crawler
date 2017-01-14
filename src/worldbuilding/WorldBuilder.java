@@ -9,6 +9,9 @@ import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.joints.JointType;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
+import simulation.Robot;
+
+import java.util.ArrayList;
 
 /**
  * Created by colander on 12/14/16.
@@ -21,7 +24,7 @@ public class WorldBuilder {
     final static int FLAT_BASE_WIDTH = 50;
     final static int FLAT_BASE_HEIGHT = 5;
 
-    public static void build(World world, WorldSettings worldSettings, BodySettings bodySettings) {
+    public static Robot build(World world, WorldSettings worldSettings, BodySettings bodySettings) {
         world.setGravity(new Vec2(0, -worldSettings.getGravity()));
 
         switch (worldSettings.BASE_TYPE) {
@@ -39,6 +42,9 @@ public class WorldBuilder {
         Body body = world.createBody(bodyDef);
         body.createFixture(bodyShape, 5.0f);
 
+        ArrayList<Body> legList = new ArrayList<>();
+        ArrayList<RevoluteJoint> jointList = new ArrayList<>();
+
         RevoluteJoint[][] joints = new RevoluteJoint[bodySettings.legs][bodySettings.segments];
         Body[][] segments = new Body[bodySettings.legs][bodySettings.segments];
         for (int i = 0; i < joints[0].length; i++) {
@@ -54,6 +60,8 @@ public class WorldBuilder {
                 legBody.createFixture(legShape, 5.0f);
                 segments[j][i] = legBody;
 
+                legList.add(legBody);
+
                 RevoluteJointDef jointDef = new RevoluteJointDef();
                 if (i == 0) {
                     jointDef.bodyA = body;
@@ -62,6 +70,7 @@ public class WorldBuilder {
                     jointDef.localAnchorA.set((float) x, 0);
                     jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
                     joints[j][i] = (RevoluteJoint) world.createJoint(jointDef);
+                    jointList.add(joints[j][i]);
                 } else {
                     jointDef.bodyA = segments[j][i - 1];
                     jointDef.bodyB = legBody;
@@ -72,13 +81,13 @@ public class WorldBuilder {
                     joints[j][i].enableMotor(true);
                     joints[j][i].setMaxMotorTorque(10000);
                     //TODO ^ find suitable value
+                    jointList.add(joints[j][i]);
                 }
 
             }
         }
 
-
-
+        return new Robot(body, legList, jointList);
     }
 
     private static void buildBaseFlat(World world) {
