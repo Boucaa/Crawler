@@ -25,17 +25,20 @@ public class Evolution {
     //mutation chances
     final double MUTATE_ADD_NODE = 0.05;
     final double MUTATE_ADD_CONNECTION = 0.05;
-    final double MUTATE_WEIGHT_SMALL = 0.05;
-    final double MUTATE_WEIGHT_RANDOM = 0.05;
+    final double MUTATE_WEIGHT = 0.8; //the chance of mutating all connections
+    final double MUTATE_WEIGHT_SMALL = 0.9; //if all the connections are to be changed, this decides the small/random ratio
+    //final double MUTATE_WEIGHT_RANDOM = 0.05;
 
     final double MUTATE_SMALL_LIMIT = 0.05;
 
-    final double COMPAT_1 = 1.0;
-    final double COMPAT_2 = 0.4;
+    final double COMPAT_1 = 2.0;
+    final double COMPAT_2 = 0.6;
     final double DELTA_T = 3.0;
 
     final double CROSSOVER = 0.75;
     final double KILL_OFF = 0.5;
+
+    final double ELITISM = 0.1;
 
     final Random random = new Random(1337 * 420);
     final int INPUT_NODES;
@@ -102,6 +105,7 @@ public class Evolution {
             FitnessTest test = new FitnessTest(generation.get(i), bodySettings);
             test.compute();
             fitnesses.add(test);
+            //System.out.println(test.result);
         }
         Collections.sort(fitnesses);
 
@@ -131,6 +135,11 @@ public class Evolution {
             }
         }
 
+        //remove empty species
+        Iterator<Species> it = species.iterator();
+        while (it.hasNext()) {
+            if (it.next().genotypes.isEmpty()) it.remove();
+        }
 
         System.out.println(species.size());
 
@@ -155,7 +164,9 @@ public class Evolution {
                 species.get(i).genotypes.remove(0);
             }
 
-            int toBreed = (int) (species.get(i).avgFitness / sum * GENERATION_SIZE);
+            System.out.println(species.get(i).avgFitness + " " + sum);
+            int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 - ELITISM));
+            System.out.println("BREED: " + toBreed);
             for (int j = 0; j < toBreed; j++) {
                 if (random.nextDouble() < CROSSOVER) {
                     children.add(Util.copyGenotype(species.get(i).genotypes.get(random.nextInt(species.get(i).genotypes.size())).getKey()));
@@ -167,15 +178,31 @@ public class Evolution {
             }
         }
 
+
         //MUTATE
         for (int i = 0; i < children.size(); i++) {
             if (random.nextDouble() < MUTATE_ADD_CONNECTION) mutateAddConnection(children.get(i));
             if (random.nextDouble() < MUTATE_ADD_NODE && !children.get(i).connectionGenes.isEmpty())
                 mutateSplitConnection(children.get(i));
-            if (random.nextDouble() < MUTATE_WEIGHT_SMALL && !children.get(i).connectionGenes.isEmpty())
-                mutateWightSmall(children.get(i));
-            if (random.nextDouble() < MUTATE_WEIGHT_RANDOM && !children.get(i).connectionGenes.isEmpty())
-                mutateWeightRandom(children.get(i));
+            /*if (random.nextDouble() < MUTATE_WEIGHT_SMALL && !children.get(i).connectionGenes.isEmpty())
+                mutateWightSmall(children.get(i));*/
+            if (random.nextDouble() < MUTATE_WEIGHT && !children.get(i).connectionGenes.isEmpty()) {
+                Genotype g = children.get(i);
+                for (int j = 0; j < g.connectionGenes.size(); j++) {
+                    if (random.nextDouble() < MUTATE_WEIGHT_SMALL) {
+                        mutateWightSmall(g.connectionGenes.get(j));
+                    } else {
+                        mutateWeightRandom(g.connectionGenes.get(j));
+                    }
+                }
+            }
+
+        }
+
+        System.out.println("REFILL:");
+        while (children.size() < GENERATION_SIZE) {
+            System.out.println(fitnesses.get(children.size()).result);
+            children.add(Util.copyGenotype(fitnesses.get(children.size()).genotype));
         }
 
         generation = children;
@@ -223,12 +250,14 @@ public class Evolution {
         gene.active = !gene.active;
     }
 
-    private void mutateWightSmall(Genotype g) {
-        g.connectionGenes.get(random.nextInt(g.connectionGenes.size())).weight *= 1 + random.nextDouble() * (random.nextBoolean() ? MUTATE_SMALL_LIMIT : -MUTATE_SMALL_LIMIT);
+    private void mutateWightSmall(ConnectionGene connectionGene) {
+        connectionGene.weight *= 1 + random.nextDouble() * (random.nextBoolean() ? MUTATE_SMALL_LIMIT : -MUTATE_SMALL_LIMIT);
+        //g.connectionGenes.get(random.nextInt(g.connectionGenes.size())).weight *= 1 + random.nextDouble() * (random.nextBoolean() ? MUTATE_SMALL_LIMIT : -MUTATE_SMALL_LIMIT);
     }
 
-    private void mutateWeightRandom(Genotype g) {
-        g.connectionGenes.get(random.nextInt(g.connectionGenes.size())).weight = random.nextDouble() * 2 * DEFAULT_WEIGHT_RANGE - DEFAULT_WEIGHT_RANGE;
+    private void mutateWeightRandom(ConnectionGene connectionGene) {
+        connectionGene.weight = random.nextDouble() * 2 * DEFAULT_WEIGHT_RANGE - DEFAULT_WEIGHT_RANGE;
+        //g.connectionGenes.get(random.nextInt(g.connectionGenes.size())).weight = random.nextDouble() * 2 * DEFAULT_WEIGHT_RANGE - DEFAULT_WEIGHT_RANGE;
     }
 
     //genotype a is the fitter one (decides disjoint and excess genes)

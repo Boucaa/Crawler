@@ -34,7 +34,8 @@ public class FitnessTest implements Comparable<FitnessTest> {
     }
 
     public double compute() {
-        float max = 0f;
+        float maxX = 0f;
+        float minY = 10f;
         for (int i = 0; i < ITERATIONS; i++) {
             double[] inputs = new double[robot.joints.size()];
             for (int j = 0; j < inputs.length; j++) {
@@ -42,15 +43,27 @@ public class FitnessTest implements Comparable<FitnessTest> {
             }
             double[] outputs = phenotype.step(inputs);
             for (int j = 0; j < outputs.length; j++) {
-                robot.joints.get(j).setMotorSpeed((float) (outputs[j] *SPEED_MULTIPLIER));
+                if (robot.joints.get(j).getJointAngle() < 2 && robot.joints.get(j).getJointAngle() > -2 || (robot.joints.get(j).getJointAngle() < -2 && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > 2 && outputs[j] < 0)) {
+                    robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER));
+                } else {
+                    robot.joints.get(j).setMotorSpeed(0);
+                }
             }
             world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);
             float curx = robot.body.getPosition().x;
-            if (curx > max) max = curx;
+            if (curx > maxX) maxX = curx;
+            float cury = robot.body.getPosition().y + 9;
+            if (cury < minY) minY = cury;
             //System.out.println(curx + " " + robot.getPosition().y);
         }
-        result = max;
-        return max;
+        result = maxX * minY;
+        if (result <= 0) result =h -0.001;
+        //free up memory ASAP
+        world = null;
+        robot = null;
+        System.gc();
+
+        return result;
     }
 
     @Override

@@ -52,11 +52,16 @@ public class TestbedFitnessTest extends TestbedTest {
         }
         double[] outputs = phenotype.step(inputs);
         for (int j = 0; j < outputs.length; j++) {
-            robot.joints.get(j).setMotorSpeed((float) (outputs[j] *SPEED_MULTIPLIER));
+            if (robot.joints.get(j).getJointAngle() < 2 && robot.joints.get(j).getJointAngle() > -2 || (robot.joints.get(j).getJointAngle() < -2 && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > 2 && outputs[j]<0)) {
+                robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER));
+            } else {
+                robot.joints.get(j).setMotorSpeed(0);
+            }
         }
         float curx = robot.body.getPosition().x;
-        if (curx > max) max = curx;
-        this.addTextLine(curx + "");
+        float cury = robot.body.getPosition().y;
+        this.addTextLine(curx + " ");
+        this.addTextLine(cury + " ");
         super.step(settings);
     }
 }

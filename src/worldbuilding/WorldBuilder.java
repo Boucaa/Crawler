@@ -20,7 +20,7 @@ import java.util.ArrayList;
 public class WorldBuilder {
 
     final static int BODY_POS_X = 0;
-    final static int BODY_POS_Y = 3;
+    final static float BODY_POS_Y = 1.7f;
     final static int FLAT_BASE_WIDTH = 50;
     final static int FLAT_BASE_HEIGHT = 5;
 
