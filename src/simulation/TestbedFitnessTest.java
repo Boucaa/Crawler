@@ -1,41 +1,34 @@
 package simulation;
 
 import neat.Genotype;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.testbed.framework.TestbedSettings;
 import org.jbox2d.testbed.framework.TestbedTest;
 import worldbuilding.BodySettings;
-import worldbuilding.WorldBuilder;
-import worldbuilding.WorldSettings;
 
 /**
  * Created by colander on 1/13/17.
  */
 public class TestbedFitnessTest extends TestbedTest {
-    final float TIME_STEP = 1 / 60f;
-    final int VEL_ITERATIONS = 8;
-    final int POS_ITERATIONS = 3;
-    final int ITERATIONS = 1000;
-    final double SPEED_MULTIPLIER = 5;
 
-    Robot robot;
-    Phenotype phenotype;
+    private int frames = 0;
 
-    double max = 0;
-    double result;
+    private BodySettings bodySettings;
+    private Genotype g;
 
-    BodySettings bodySettings;
+    private FitnessSimulationStepper stepper;
+
 
     public TestbedFitnessTest(Genotype g, BodySettings bodySettings) {
         super();
+        this.g = g;
         this.bodySettings = bodySettings;
-        phenotype = new Phenotype(g);
     }
 
     @Override
     public void initTest(boolean b) {
-        WorldSettings worldSettings = new WorldSettings(10.0f, WorldSettings.BASE_FLAT);
-        robot = WorldBuilder.build(getWorld(), worldSettings, bodySettings);
+        stepper = new FitnessSimulationStepper(getWorld(), bodySettings, g);
     }
 
     @Override
@@ -45,23 +38,13 @@ public class TestbedFitnessTest extends TestbedTest {
 
     @Override
     public synchronized void step(TestbedSettings settings) {
+        frames++;
         //System.out.println("step");
-        double[] inputs = new double[robot.joints.size()];
-        for (int j = 0; j < inputs.length; j++) {
-            inputs[j] = robot.joints.get(j).getJointAngle();
-        }
-        double[] outputs = phenotype.step(inputs);
-        for (int j = 0; j < outputs.length; j++) {
-            if (robot.joints.get(j).getJointAngle() < 2 && robot.joints.get(j).getJointAngle() > -2 || (robot.joints.get(j).getJointAngle() < -2 && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > 2 && outputs[j]<0)) {
-                robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER));
-            } else {
-                robot.joints.get(j).setMotorSpeed(0);
-            }
-        }
-        float curx = robot.body.getPosition().x;
-        float cury = robot.body.getPosition().y;
-        this.addTextLine(curx + " ");
-        this.addTextLine(cury + " ");
+        stepper.step();
+        float curx = stepper.robot.body.getPosition().x;
+        float cury = stepper.robot.body.getPosition().y;
+        this.addTextLine("X: " + curx);
+        this.addTextLine("FRAMES: " + frames);
         super.step(settings);
     }
 }
