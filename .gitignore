@@ -53,3 +53,4 @@ fabric.properties
 # .idea/misc.xml
 # *.ipr
 
+/results/
