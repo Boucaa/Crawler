@@ -6,6 +6,7 @@ import org.jbox2d.testbed.framework.TestbedFrame;
 import org.jbox2d.testbed.framework.TestbedModel;
 import org.jbox2d.testbed.framework.TestbedPanel;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
+import resultsviewer.IOHandler;
 import simulation.FitnessTest;
 import simulation.TestbedFitnessTest;
 import worldbuilding.BodySettings;
@@ -52,6 +53,10 @@ public class Evolution {
 
     double best = 0;
 
+    int generationNo = 0;
+
+    private IOHandler ioHandler = new IOHandler();
+
     //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {
         this.bodySettings = bodySettings;
@@ -97,22 +102,21 @@ public class Evolution {
     }
 
     public ArrayList<Genotype> nextGeneration() {
-        //TODO implement
-
         //MEASURE FITNESSES
         ArrayList<FitnessTest> fitnesses = new ArrayList<>();
         for (int i = 0; i < generation.size(); i++) {
             FitnessTest test = new FitnessTest(generation.get(i), bodySettings);
             test.compute();
             fitnesses.add(test);
-            //System.out.println(test.result);
+            System.out.println(test.result);
         }
         Collections.sort(fitnesses);
 
         if (fitnesses.get(fitnesses.size() - 1).result > best) {
             best = fitnesses.get(fitnesses.size() - 1).result;
+            Genotype bestGenotype = fitnesses.get(fitnesses.size() - 1).genotype;
             TestbedModel model = new TestbedModel();
-            model.addTest(new TestbedFitnessTest(fitnesses.get(fitnesses.size() - 1).genotype, bodySettings));
+            model.addTest(new TestbedFitnessTest(bestGenotype, bodySettings, best));
             TestbedPanel panel = new TestPanelJ2D(model);
             TestbedFrame frame = new TestbedFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED);
             frame.setVisible(true);
@@ -217,6 +221,8 @@ public class Evolution {
 
         //LOG RESULTS
         System.out.println("MAX FITNESS: " + fitnesses.get(fitnesses.size() - 1).result + " SUM: " + sum + " SPEC: " + species.size() + " GEN: " + generation.size());
+        ioHandler.writeGeneration(fitnesses,generationNo);
+        generationNo++;
         return generation;
     }
 

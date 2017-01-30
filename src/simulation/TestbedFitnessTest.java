@@ -1,8 +1,6 @@
 package simulation;
 
 import neat.Genotype;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.World;
 import org.jbox2d.testbed.framework.TestbedSettings;
 import org.jbox2d.testbed.framework.TestbedTest;
 import worldbuilding.BodySettings;
@@ -19,9 +17,13 @@ public class TestbedFitnessTest extends TestbedTest {
 
     private FitnessSimulationStepper stepper;
 
+    private double target;
+    private double maxX = 0;
 
-    public TestbedFitnessTest(Genotype g, BodySettings bodySettings) {
+
+    public TestbedFitnessTest(Genotype g, BodySettings bodySettings, double target) {
         super();
+        this.target = target;
         this.g = g;
         this.bodySettings = bodySettings;
     }
@@ -39,11 +41,13 @@ public class TestbedFitnessTest extends TestbedTest {
     @Override
     public synchronized void step(TestbedSettings settings) {
         frames++;
-        //System.out.println("step");
         stepper.step();
         float curx = stepper.robot.body.getPosition().x;
+        if (curx > maxX) maxX = curx;
         float cury = stepper.robot.body.getPosition().y;
         this.addTextLine("X: " + curx);
+        this.addTextLine("Mh: " + curx);
+        this.addTextLine("T: " + target);
         this.addTextLine("FRAMES: " + frames);
         super.step(settings);
     }

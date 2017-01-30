@@ -22,9 +22,6 @@ public class Main {
 
         for (int i = 0; i < 1000; i++) {
             evo.nextGeneration();
-            if(i%5==0){
-
-            }
         }
         /*TestbedModel model = new TestbedModel();
         model.addTest(new TestbedFitnessTest(evo.nextGeneration().get(0),set));
