@@ -9,6 +9,10 @@ import simulation.TestbedFitnessTest;
 import worldbuilding.BodySettings;
 
 import javax.swing.*;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 
 /**
  * Created by colander on 12/13/16.
@@ -20,7 +24,7 @@ public class Main {
         BodySettings set = new BodySettings(4, 2, 12, 0.5f, 0.7f, 2.5f);
         Evolution evo = new Evolution(set);
 
-        for (int i = 0; i < 1000; i++) {
+        for (int i = 0; i < 35; i++) {
             evo.nextGeneration();
         }
         /*TestbedModel model = new TestbedModel();

@@ -30,7 +30,7 @@ public class FitnessTest implements Comparable<FitnessTest> {
         stepper = new FitnessSimulationStepper(world, bodySettings, g);
     }
 
-    public double compute() {
+    public FitnessTest compute() {
         float maxX = 0f;
         //float minY = 10f;
         for (int i = 0; i < ITERATIONS; i++) {
@@ -39,7 +39,7 @@ public class FitnessTest implements Comparable<FitnessTest> {
         }
         //result = maxX * minY;
         result = maxX;
-        if (result <= 0) result = -0.001;
+        if (result <= 0) result = -1e-12*genotype.hashCode();
         //free up memory ASAP
 /*        Body destroy = world.getBodyList();
         while (destroy != null) {
@@ -50,7 +50,7 @@ public class FitnessTest implements Comparable<FitnessTest> {
         world = null; //does this actually do anything?
         System.gc();
 
-        return result;
+        return this;
     }
 
     @Override

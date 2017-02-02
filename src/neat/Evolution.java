@@ -1,17 +1,18 @@
 package neat;
 
 import javafx.util.Pair;
+import iohandling.IOHandler;
 import org.jbox2d.testbed.framework.TestbedController;
 import org.jbox2d.testbed.framework.TestbedFrame;
 import org.jbox2d.testbed.framework.TestbedModel;
 import org.jbox2d.testbed.framework.TestbedPanel;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
-import resultsviewer.IOHandler;
+import simulation.FitnessResolver;
+import simulation.FitnessResult;
 import simulation.FitnessTest;
 import simulation.TestbedFitnessTest;
 import worldbuilding.BodySettings;
 
-import javax.swing.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -103,18 +104,41 @@ public class Evolution {
 
     public ArrayList<Genotype> nextGeneration() {
         //MEASURE FITNESSES
-        ArrayList<FitnessTest> fitnesses = new ArrayList<>();
-        for (int i = 0; i < generation.size(); i++) {
+        //ArrayList<FitnessTest> fitnesses = new ArrayList<>();
+
+        //TODO paraWTF
+        /*generation.parallelStream().forEach(genotype -> {
+            FitnessTest test = new FitnessTest(genotype, bodySettings);
+            test.compute();
+            fitnesses.add(test);
+            System.out.println(test.result);
+        });*/
+        /*generation.parallelStream().forEach(genotype -> {
+            for (int i = 0; i < 100000000; i++) {
+                System.out.println(i);
+            }
+        });*/
+
+        FitnessResolver resolver = new FitnessResolver(generation);
+        ArrayList<FitnessResult> fitnesses = resolver.resolve();
+
+        /*generation.parallelStream().forEach(genotype -> {
+            //System.out.println(genotype.hashCode() + " start");
+            fitnesses.add(new FitnessTest(genotype, bodySettings).compute());
+            //System.out.println(genotype.hashCode() + " end");
+        });*/
+        /*for (int i = 0; i < generation.size(); i++) {
             FitnessTest test = new FitnessTest(generation.get(i), bodySettings);
             test.compute();
             fitnesses.add(test);
             System.out.println(test.result);
-        }
+        }*/
         Collections.sort(fitnesses);
 
         if (fitnesses.get(fitnesses.size() - 1).result > best) {
             best = fitnesses.get(fitnesses.size() - 1).result;
             Genotype bestGenotype = fitnesses.get(fitnesses.size() - 1).genotype;
+            //display new best genotype fitness test
             TestbedModel model = new TestbedModel();
             model.addTest(new TestbedFitnessTest(bestGenotype, bodySettings, best));
             TestbedPanel panel = new TestPanelJ2D(model);
@@ -220,8 +244,10 @@ public class Evolution {
         }
 
         //LOG RESULTS
+        System.out.println("GENERATION #" + generationNo);
         System.out.println("MAX FITNESS: " + fitnesses.get(fitnesses.size() - 1).result + " SUM: " + sum + " SPEC: " + species.size() + " GEN: " + generation.size());
-        ioHandler.writeGeneration(fitnesses,generationNo);
+        //TODO REDO logging
+        //ioHandler.writeFitnesses(fitnesses, generationNo);
         generationNo++;
         return generation;
     }
