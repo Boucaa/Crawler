@@ -27,7 +27,7 @@ public class FitnessSimulationStepper {
         phenotype = new Phenotype(g);
     }
 
-    void step() {
+    void step(boolean stepWorld) {
         double[] inputs = new double[robot.joints.size()];
         for (int j = 0; j < inputs.length; j++) {
             inputs[j] = robot.joints.get(j).getJointAngle();
@@ -40,6 +40,6 @@ public class FitnessSimulationStepper {
                 robot.joints.get(j).setMotorSpeed(0);
             }
         }
-        world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);
+        if (stepWorld) world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);
     }
 }

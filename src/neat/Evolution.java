@@ -7,10 +7,7 @@ import org.jbox2d.testbed.framework.TestbedFrame;
 import org.jbox2d.testbed.framework.TestbedModel;
 import org.jbox2d.testbed.framework.TestbedPanel;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
-import simulation.FitnessResolver;
-import simulation.FitnessResult;
-import simulation.FitnessTest;
-import simulation.TestbedFitnessTest;
+import simulation.*;
 import worldbuilding.BodySettings;
 
 import java.util.*;
@@ -57,6 +54,8 @@ public class Evolution {
     int generationNo = 0;
 
     private IOHandler ioHandler = new IOHandler();
+
+    private final boolean DEBUG_DISPLAY = true;
 
     //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {
@@ -106,44 +105,21 @@ public class Evolution {
         //MEASURE FITNESSES
         //ArrayList<FitnessTest> fitnesses = new ArrayList<>();
 
-        //TODO paraWTF
-        /*generation.parallelStream().forEach(genotype -> {
-            FitnessTest test = new FitnessTest(genotype, bodySettings);
-            test.compute();
-            fitnesses.add(test);
-            System.out.println(test.result);
-        });*/
-        /*generation.parallelStream().forEach(genotype -> {
-            for (int i = 0; i < 100000000; i++) {
-                System.out.println(i);
-            }
-        });*/
-
-        FitnessResolver resolver = new FitnessResolver(generation);
+        FitnessResolver resolver = new ParallelFitnessResolver(generation, bodySettings);
         ArrayList<FitnessResult> fitnesses = resolver.resolve();
-
-        /*generation.parallelStream().forEach(genotype -> {
-            //System.out.println(genotype.hashCode() + " start");
-            fitnesses.add(new FitnessTest(genotype, bodySettings).compute());
-            //System.out.println(genotype.hashCode() + " end");
-        });*/
-        /*for (int i = 0; i < generation.size(); i++) {
-            FitnessTest test = new FitnessTest(generation.get(i), bodySettings);
-            test.compute();
-            fitnesses.add(test);
-            System.out.println(test.result);
-        }*/
         Collections.sort(fitnesses);
 
         if (fitnesses.get(fitnesses.size() - 1).result > best) {
             best = fitnesses.get(fitnesses.size() - 1).result;
             Genotype bestGenotype = fitnesses.get(fitnesses.size() - 1).genotype;
             //display new best genotype fitness test
-            TestbedModel model = new TestbedModel();
-            model.addTest(new TestbedFitnessTest(bestGenotype, bodySettings, best));
-            TestbedPanel panel = new TestPanelJ2D(model);
-            TestbedFrame frame = new TestbedFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED);
-            frame.setVisible(true);
+            if (DEBUG_DISPLAY) {
+                TestbedModel model = new TestbedModel();
+                model.addTest(new TestbedFitnessTest(bestGenotype, bodySettings, best));
+                TestbedPanel panel = new TestPanelJ2D(model);
+                TestbedFrame frame = new TestbedFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED);
+                frame.setVisible(true);
+            }
         }
 
         //SPECIATION

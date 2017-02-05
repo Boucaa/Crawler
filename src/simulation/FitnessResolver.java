@@ -3,6 +3,7 @@ package simulation;
 import iohandling.IOHandler;
 import javafx.util.Pair;
 import neat.Genotype;
+import worldbuilding.BodySettings;
 
 import java.util.ArrayList;
 
@@ -12,9 +13,11 @@ import java.util.ArrayList;
 public class FitnessResolver {
 
     ArrayList<Genotype> genotypes;
+    BodySettings settings;
 
-    public FitnessResolver(ArrayList<Genotype> genotypes) {
+    public FitnessResolver(ArrayList<Genotype> genotypes, BodySettings settings) {
         this.genotypes = genotypes;
+        this.settings = settings;
     }
 
     public ArrayList<FitnessResult> resolve() {

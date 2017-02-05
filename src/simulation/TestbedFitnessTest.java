@@ -41,12 +41,12 @@ public class TestbedFitnessTest extends TestbedTest {
     @Override
     public synchronized void step(TestbedSettings settings) {
         frames++;
-        stepper.step();
+        stepper.step(false);
         float curx = stepper.robot.body.getPosition().x;
         if (curx > maxX) maxX = curx;
-        float cury = stepper.robot.body.getPosition().y;
+        //float cury = stepper.robot.body.getPosition().y;
         this.addTextLine("X: " + curx);
-        this.addTextLine("Mh: " + curx);
+        this.addTextLine("M: " + maxX);
         this.addTextLine("T: " + target);
         this.addTextLine("FRAMES: " + frames);
         super.step(settings);
