@@ -44,7 +44,6 @@ public class TestbedFitnessTest extends TestbedTest {
         stepper.step(false);
         float curx = stepper.robot.body.getPosition().x;
         if (curx > maxX) maxX = curx;
-        //float cury = stepper.robot.body.getPosition().y;
         this.addTextLine("X: " + curx);
         this.addTextLine("M: " + maxX);
         this.addTextLine("T: " + target);

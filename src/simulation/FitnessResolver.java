@@ -1,7 +1,5 @@
 package simulation;
 
-import iohandling.IOHandler;
-import javafx.util.Pair;
 import neat.Genotype;
 import worldbuilding.BodySettings;
 
@@ -21,14 +19,11 @@ public class FitnessResolver {
     }
 
     public ArrayList<FitnessResult> resolve() {
-        System.out.println("RESOLVING FITNESSES");
-        IOHandler handler = new IOHandler();
-        handler.postJobs(genotypes);
-        ArrayList<Pair<Integer, Double>> results = handler.readJobResults();
-        ArrayList<FitnessResult> result = new ArrayList<>();
-        for (int i = 0; i < results.size(); i++) {
-            result.add(new FitnessResult(results.get(i).getValue(), genotypes.get(results.get(i).getKey())));
+        ArrayList<FitnessResult> results = new ArrayList<>();
+        for (int i = 0; i < genotypes.size(); i++) {
+            FitnessTest test = new FitnessTest(genotypes.get(i), settings);
+            results.add(new FitnessResult(test.compute().result, genotypes.get(i)));
         }
-        return result;
+        return results;
     }
 }

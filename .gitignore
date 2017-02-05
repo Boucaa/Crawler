@@ -54,4 +54,4 @@ fabric.properties
 # *.ipr
 
 /results/
-/jobs/
+JBox2d.log

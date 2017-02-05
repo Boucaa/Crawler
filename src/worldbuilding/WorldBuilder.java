@@ -80,7 +80,6 @@ public class WorldBuilder {
                     joints[j][i] = (RevoluteJoint) world.createJoint(jointDef);
                     joints[j][i].enableMotor(true);
                     joints[j][i].setMaxMotorTorque(10000);
-                    //TODO ^ find suitable value
                     jointList.add(joints[j][i]);
                 }
 
