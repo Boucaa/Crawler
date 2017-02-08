@@ -7,6 +7,7 @@ import java.util.ArrayList;
 
 /**
  * Created by colander on 2/5/17.
+ * A refined version of the FitnessResolver, which uses multiple CPU cores to improve performance.
  */
 public class ParallelFitnessResolver extends FitnessResolver {
     public ParallelFitnessResolver(ArrayList<Genotype> genotypes, BodySettings settings) {

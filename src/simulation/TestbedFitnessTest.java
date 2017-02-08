@@ -7,6 +7,7 @@ import worldbuilding.BodySettings;
 
 /**
  * Created by colander on 1/13/17.
+ * Class used to show a phenotype fitness test in a GUI.
  */
 public class TestbedFitnessTest extends TestbedTest {
 

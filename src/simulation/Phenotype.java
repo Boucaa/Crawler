@@ -9,9 +9,9 @@ import java.util.HashMap;
 
 /**
  * Created by colander on 1/3/17.
+ * Class used as the single phenotype constructed from a genotype.
  */
 public class Phenotype {
-
 
     HashMap<Integer, NetworkNode> nodesByInnov = new HashMap<>();
     ArrayList<NetworkNode> network = new ArrayList<>();
@@ -62,6 +62,6 @@ public class Phenotype {
     }
 
     public double sigmoid(double sum) {
-        return 1 / (1 + Math.exp(-4.9 * sum)) - 0.5; //see paper/4.1
+        return 1 / (1 + Math.exp(-4.9 * sum)) - 0.5; //see PAPER/4.1
     }
 }

@@ -8,6 +8,7 @@ import worldbuilding.WorldSettings;
 
 /**
  * Created by colander on 1/18/17.
+ * Class used to commit the actual steps (frames) of the simulation.
  */
 public class FitnessSimulationStepper {
     final float TIME_STEP = 1 / 60f;

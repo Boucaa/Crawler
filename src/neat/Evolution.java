@@ -1,15 +1,18 @@
 package neat;
 
+import iohandling.Logger;
 import javafx.util.Pair;
-import iohandling.IOHandler;
 import org.jbox2d.testbed.framework.TestbedController;
 import org.jbox2d.testbed.framework.TestbedFrame;
 import org.jbox2d.testbed.framework.TestbedModel;
 import org.jbox2d.testbed.framework.TestbedPanel;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
+import results_viewer.FitnessFrame;
 import simulation.*;
 import worldbuilding.BodySettings;
 
+import javax.swing.*;
+import java.awt.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -18,42 +21,42 @@ import java.util.stream.Collectors;
  */
 public class Evolution {
     //final int GENERATIONS = 10; TODO remove?
-    final int GENERATION_SIZE = 100;
-    final double DEFAULT_WEIGHT_RANGE = 2;
+    private final int GENERATION_SIZE = 100;
+    private final double DEFAULT_WEIGHT_RANGE = 2;
 
     //mutation chances
-    final double MUTATE_ADD_NODE = 0.05;
-    final double MUTATE_ADD_CONNECTION = 0.05;
-    final double MUTATE_WEIGHT = 0.8; //the chance of mutating all connections
-    final double MUTATE_WEIGHT_SMALL = 0.9; //if all the connections are to be changed, this decides the small/random ratio
-    //final double MUTATE_WEIGHT_RANDOM = 0.05;
+    private final double MUTATE_ADD_NODE = 0.05;
+    private final double MUTATE_ADD_CONNECTION = 0.05;
+    private final double MUTATE_ENABLE_DISABLE = 0;
+    private final double MUTATE_WEIGHT = 0.8; //the chance of mutating all connections
+    private final double MUTATE_WEIGHT_SMALL = 0.9; //if all the connections are to be changed, this decides the small/random ratio
 
-    final double MUTATE_SMALL_LIMIT = 0.05;
+    private final double MUTATE_SMALL_LIMIT = 0.05;
 
-    final double COMPAT_1 = 2.0;
-    final double COMPAT_2 = 0.6;
-    final double DELTA_T = 3.0;
+    private final double COMPAT_1 = 2.0;
+    private final double COMPAT_2 = 0.6;
+    private final double DELTA_T = 3.0;
 
-    final double CROSSOVER = 0.75;
-    final double KILL_OFF = 0.5;
+    private final double CROSSOVER = 0.75;
+    private final double KILL_OFF = 0.5;
 
-    final double ELITISM = 0.1;
+    private final double ELITISM = 0.1;
 
-    final Random random = new Random(1337 * 420);
-    final int INPUT_NODES;
-    final int OUTPUT_NODES;
+    private final Random random = new Random(1337 * 420);
+    private final int INPUT_NODES;
+    private final int OUTPUT_NODES;
 
     private BodySettings bodySettings;
 
-    int innovation = 0;
+    private int innovation = 0;
     private ArrayList<Genotype> generation = new ArrayList<>();
     private ArrayList<Species> species = new ArrayList<>();
 
-    double best = 0;
+    private double best = 0;
 
-    int generationNo = 0;
+    private int generationNo = 0;
 
-    private IOHandler ioHandler = new IOHandler();
+    private Logger logger = new Logger();
 
     private final boolean DEBUG_DISPLAY = true;
 
@@ -78,33 +81,10 @@ public class Evolution {
             }
             innovation++;
         }
-
-
-        //TESTING
-        /*for (int i = 0; i < 100; i++) {
-            mutateAddConnection(generation.get(0));
-            mutateAddConnection(generation.get(1));
-        }
-        for (int i = 0; i < 10; i++) {
-            mutateSplitConnection(generation.get(0));
-            mutateSplitConnection(generation.get(1));
-        }
-
-        Util.printGenotype(generation.get(0));
-        Genotype cross = crossOver(generation.get(0), generation.get(1));
-
-        FitnessTest fit = new FitnessTest(generation.get(0), bodySettings);
-        System.out.println(fit.compute());
-        /*for (int i = 0; i < 10; i++) {
-            mutateEnableDisableConnection(generation.get(0));
-        }*/
-
     }
 
     public ArrayList<Genotype> nextGeneration() {
         //MEASURE FITNESSES
-        //ArrayList<FitnessTest> fitnesses = new ArrayList<>();
-
         FitnessResolver resolver = new ParallelFitnessResolver(generation, bodySettings);
         ArrayList<FitnessResult> fitnesses = resolver.resolve();
         Collections.sort(fitnesses);
@@ -117,8 +97,7 @@ public class Evolution {
                 TestbedModel model = new TestbedModel();
                 model.addTest(new TestbedFitnessTest(bestGenotype, bodySettings, best));
                 TestbedPanel panel = new TestPanelJ2D(model);
-                TestbedFrame frame = new TestbedFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED);
-                frame.setVisible(true);
+                new FitnessFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED);
             }
         }
 
@@ -145,8 +124,6 @@ public class Evolution {
             if (it.next().genotypes.isEmpty()) it.remove();
         }
 
-        System.out.println(species.size());
-
         double sum = 0;
         for (int i = 0; i < species.size(); i++) {
             Species spec = species.get(i);
@@ -159,6 +136,7 @@ public class Evolution {
         }
 
         //BREEDING
+        logger.log("breeding");
         ArrayList<Genotype> children = new ArrayList<>();
 
         for (int i = 0; i < species.size(); i++) {
@@ -168,11 +146,11 @@ public class Evolution {
                 species.get(i).genotypes.remove(0);
             }
 
-            System.out.println(species.get(i).avgFitness + " " + sum);
+            //System.out.println(species.get(i).avgFitness + " " + sum);
             int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 - ELITISM));
-            System.out.println("BREED: " + toBreed);
+            logger.log("species #: " + i + " " + toBreed);
             for (int j = 0; j < toBreed; j++) {
-                if (random.nextDouble() < CROSSOVER) {
+                if (random.nextDouble() > CROSSOVER) {
                     children.add(Util.copyGenotype(species.get(i).genotypes.get(random.nextInt(species.get(i).genotypes.size())).getKey()));
                 } else {
                     Genotype a = species.get(i).genotypes.get(random.nextInt(species.get(i).genotypes.size())).getKey();
@@ -188,8 +166,8 @@ public class Evolution {
             if (random.nextDouble() < MUTATE_ADD_CONNECTION) mutateAddConnection(children.get(i));
             if (random.nextDouble() < MUTATE_ADD_NODE && !children.get(i).connectionGenes.isEmpty())
                 mutateSplitConnection(children.get(i));
-            /*if (random.nextDouble() < MUTATE_WEIGHT_SMALL && !children.get(i).connectionGenes.isEmpty())
-                mutateWightSmall(children.get(i));*/
+            if (random.nextDouble() < MUTATE_ENABLE_DISABLE && !children.get(i).connectionGenes.isEmpty())
+                mutateEnableDisableConnection(children.get(i));
             if (random.nextDouble() < MUTATE_WEIGHT && !children.get(i).connectionGenes.isEmpty()) {
                 Genotype g = children.get(i);
                 for (int j = 0; j < g.connectionGenes.size(); j++) {
@@ -203,9 +181,8 @@ public class Evolution {
 
         }
 
-        System.out.println("REFILL:");
+        //logger.log("refilling " + (GENERATION_SIZE - children.size()));
         while (children.size() < GENERATION_SIZE) {
-            System.out.println(fitnesses.get(children.size()).result);
             children.add(Util.copyGenotype(fitnesses.get(children.size()).genotype));
         }
 
@@ -220,11 +197,10 @@ public class Evolution {
         }
 
         //LOG RESULTS
-        System.out.println("GENERATION #" + generationNo);
-        System.out.println("MAX FITNESS: " + fitnesses.get(fitnesses.size() - 1).result + " SUM: " + sum + " SPEC: " + species.size() + " GEN: " + generation.size());
-        //TODO REDO logging
-        //ioHandler.writeFitnesses(fitnesses, generationNo);
         generationNo++;
+        logger.log("GENERATION #" + generationNo);
+        logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\nsum: " + sum + "\nspecies: " + species.size() + "\nsize: " + generation.size());
+        logger.logGeneration(fitnesses, generationNo);
         return generation;
     }
 
@@ -260,16 +236,15 @@ public class Evolution {
 
     private void mutateWightSmall(ConnectionGene connectionGene) {
         connectionGene.weight *= 1 + random.nextDouble() * (random.nextBoolean() ? MUTATE_SMALL_LIMIT : -MUTATE_SMALL_LIMIT);
-        //g.connectionGenes.get(random.nextInt(g.connectionGenes.size())).weight *= 1 + random.nextDouble() * (random.nextBoolean() ? MUTATE_SMALL_LIMIT : -MUTATE_SMALL_LIMIT);
+
     }
 
     private void mutateWeightRandom(ConnectionGene connectionGene) {
         connectionGene.weight = random.nextDouble() * 2 * DEFAULT_WEIGHT_RANGE - DEFAULT_WEIGHT_RANGE;
-        //g.connectionGenes.get(random.nextInt(g.connectionGenes.size())).weight = random.nextDouble() * 2 * DEFAULT_WEIGHT_RANGE - DEFAULT_WEIGHT_RANGE;
     }
 
     //genotype a is the fitter one (decides disjoint and excess genes)
-    public Genotype crossOver(Genotype a, Genotype b) {
+    private Genotype crossOver(Genotype a, Genotype b) {
         //NODES
         /* unnecessary code, nodegenes do not mutate
         ArrayList<Pair<NodeGene, NodeGene>> commonNodes = new ArrayList<>();
@@ -325,7 +300,7 @@ public class Evolution {
         return new Genotype(cpNodes, cpConnections);
     }
 
-    public double distance(Genotype a, Genotype b) {
+    private double distance(Genotype a, Genotype b) {
         double W = 0;
         int common = 0;
         HashMap<Integer, ConnectionGene> map = new HashMap<>();

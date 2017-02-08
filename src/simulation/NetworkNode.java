@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 /**
  * Created by colander on 1/13/17.
+ * Class used in simulation as a single neural network node.
  */
 public class NetworkNode {
     final int innov;
@@ -12,7 +13,7 @@ public class NetworkNode {
 
     double currentValue = 0;
 
-    public NetworkNode(int innov) {
+    NetworkNode(int innov) {
         this.innov = innov;
     }
 }

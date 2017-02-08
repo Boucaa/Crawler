@@ -7,6 +7,7 @@ import worldbuilding.BodySettings;
 
 /**
  * Created by colander on 1/13/17.
+ * Class used to measure the fitness of a single genotype.
  */
 public class FitnessTest implements Comparable<FitnessTest> {
     final int ITERATIONS = 5000;

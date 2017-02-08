@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 /**
  * Created by colander on 2/1/17.
+ * DEPRECATED
+ * Class used to compute all fitnesses of genotypes in and ArrayList.
  */
 public class FitnessResolver {
 
