@@ -12,9 +12,6 @@ public class Main {
     public static void main(String[] args) {
         BodySettings set = new BodySettings(4, 2, 12, 0.5f, 0.7f, 2.5f);
         Evolution evo = new Evolution(set);
-
-        for (int i = 0; i < 35; i++) {
-            evo.nextGeneration();
-        }
+        evo.run();
     }
 }

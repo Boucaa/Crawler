@@ -1,18 +1,23 @@
 package neat;
 
+import worldbuilding.BodySettings;
+
 import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
  * Created by colander on 1/3/17.
+ * Class used in evolution as a single genotype.
  */
 public class Genotype {
     public ArrayList<NodeGene> nodeGenes;
     public ArrayList<ConnectionGene> connectionGenes;
+    public BodySettings bodySettings;
 
-    public Genotype(ArrayList<NodeGene> nodeGenes, ArrayList<ConnectionGene> connectionGenes) {
+    public Genotype(ArrayList<NodeGene> nodeGenes, ArrayList<ConnectionGene> connectionGenes, BodySettings bodySettings) {
         this.nodeGenes = nodeGenes;
         this.connectionGenes = connectionGenes;
+        this.bodySettings = bodySettings;
     }
 
     //custom DIY serialization (mainly for the sake of performance)

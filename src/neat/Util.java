@@ -104,6 +104,6 @@ public class Util {
         for (int i = 0; i < g.connectionGenes.size(); i++) {
             connectionGenes.add(copyConnection(g.connectionGenes.get(i)));
         }
-        return new Genotype(nodeGenes, connectionGenes);
+        return new Genotype(nodeGenes, connectionGenes, g.bodySettings); //TODO fix for variable BodySettings
     }
 }

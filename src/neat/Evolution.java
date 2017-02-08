@@ -2,17 +2,10 @@ package neat;
 
 import iohandling.Logger;
 import javafx.util.Pair;
-import org.jbox2d.testbed.framework.TestbedController;
-import org.jbox2d.testbed.framework.TestbedFrame;
-import org.jbox2d.testbed.framework.TestbedModel;
-import org.jbox2d.testbed.framework.TestbedPanel;
-import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 import results_viewer.FitnessFrame;
 import simulation.*;
 import worldbuilding.BodySettings;
 
-import javax.swing.*;
-import java.awt.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,7 +13,7 @@ import java.util.stream.Collectors;
  * Created by colander on 1/3/17.
  */
 public class Evolution {
-    //final int GENERATIONS = 10; TODO remove?
+    final int GENERATIONS = 10;
     private final int GENERATION_SIZE = 100;
     private final double DEFAULT_WEIGHT_RANGE = 2;
 
@@ -67,7 +60,7 @@ public class Evolution {
         OUTPUT_NODES = bodySettings.legs * bodySettings.segments;
 
         for (int i = 0; i < GENERATION_SIZE; i++) {
-            generation.add(new Genotype(new ArrayList<>(), new ArrayList<>()));
+            generation.add(new Genotype(new ArrayList<>(), new ArrayList<>(), bodySettings));
         }
         for (int j = 0; j < INPUT_NODES; j++) {
             for (int i = 0; i < GENERATION_SIZE; i++) {
@@ -83,7 +76,16 @@ public class Evolution {
         }
     }
 
-    public ArrayList<Genotype> nextGeneration() {
+    public void run() {
+        for (int i = 0; i < GENERATIONS; i++) {
+            nextGeneration();
+        }
+    }
+
+    public void nextGeneration() {
+        generationNo++;
+        logger.log("GENERATION #" + generationNo);
+
         //MEASURE FITNESSES
         FitnessResolver resolver = new ParallelFitnessResolver(generation, bodySettings);
         ArrayList<FitnessResult> fitnesses = resolver.resolve();
@@ -92,12 +94,10 @@ public class Evolution {
         if (fitnesses.get(fitnesses.size() - 1).result > best) {
             best = fitnesses.get(fitnesses.size() - 1).result;
             Genotype bestGenotype = fitnesses.get(fitnesses.size() - 1).genotype;
-            //display new best genotype fitness test
+            //display new best genotype fitness test, only for debug purposes - to be removed
             if (DEBUG_DISPLAY) {
-                TestbedModel model = new TestbedModel();
-                model.addTest(new TestbedFitnessTest(bestGenotype, bodySettings, best));
-                TestbedPanel panel = new TestPanelJ2D(model);
-                new FitnessFrame(model, panel, TestbedController.UpdateBehavior.UPDATE_CALLED);
+
+                new FitnessFrame(fitnesses.get(fitnesses.size() - 1));
             }
         }
 
@@ -186,7 +186,6 @@ public class Evolution {
             children.add(Util.copyGenotype(fitnesses.get(children.size()).genotype));
         }
 
-        generation = children;
 
         //CLEANUP
         //clear species, new archetypes
@@ -195,13 +194,12 @@ public class Evolution {
             species.get(i).genotypes.clear();
 
         }
+        //set the new generation as the current one
+        generation = children;
 
         //LOG RESULTS
-        generationNo++;
-        logger.log("GENERATION #" + generationNo);
         logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\nsum: " + sum + "\nspecies: " + species.size() + "\nsize: " + generation.size());
         logger.logGeneration(fitnesses, generationNo);
-        return generation;
     }
 
     private void mutateAddConnection(Genotype g) {
@@ -245,31 +243,6 @@ public class Evolution {
 
     //genotype a is the fitter one (decides disjoint and excess genes)
     private Genotype crossOver(Genotype a, Genotype b) {
-        //NODES
-        /* unnecessary code, nodegenes do not mutate
-        ArrayList<Pair<NodeGene, NodeGene>> commonNodes = new ArrayList<>();
-        ArrayList<NodeGene> dominantNodes = new ArrayList<>();
-        for (int i = 0; i < a.nodeGenes.size(); i++) {
-            boolean found = false;
-            for (int j = 0; j < b.nodeGenes.size(); j++) {
-                if (a.nodeGenes.get(i).innov == b.nodeGenes.get(j).innov) {
-                    commonNodes.add(new Pair<>(a.nodeGenes.get(i), a.nodeGenes.get(j)));
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) dominantNodes.add(a.nodeGenes.get(i));
-        }
-        ArrayList<NodeGene> nodeGenes = new ArrayList<>();
-        for (int i = 0; i < commonNodes.size(); i++) {
-            if (random.nextBoolean()) {
-                nodeGenes.add(commonNodes.get(i).getKey());
-            } else {
-                nodeGenes.add(commonNodes.get(i).getValue());
-            }
-        }
-        nodeGenes.addAll(dominantNodes);*/
-
         //CONNECTIONS
         ArrayList<Pair<ConnectionGene, ConnectionGene>> commonConnections = new ArrayList<>();
         ArrayList<ConnectionGene> dominantConnections = new ArrayList<>();
@@ -295,9 +268,9 @@ public class Evolution {
         connectionGenes.addAll(dominantConnections);
 
         ArrayList<ConnectionGene> cpConnections = connectionGenes.stream().map(Util::copyConnection).collect(Collectors.toCollection(ArrayList::new));
-        ArrayList<NodeGene> cpNodes = a.nodeGenes.stream().map(Util::copyNode).collect(Collectors.toCollection(ArrayList::new)); //!!!
+        ArrayList<NodeGene> cpNodes = a.nodeGenes.stream().map(Util::copyNode).collect(Collectors.toCollection(ArrayList::new));
 
-        return new Genotype(cpNodes, cpConnections);
+        return new Genotype(cpNodes, cpConnections, bodySettings);
     }
 
     private double distance(Genotype a, Genotype b) {
