@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
  * Created by colander on 1/3/17.
  */
 public class Evolution {
-    final int GENERATIONS = 10;
+    final int GENERATIONS = 100;
     private final int GENERATION_SIZE = 100;
     private final double DEFAULT_WEIGHT_RANGE = 2;
 
@@ -93,16 +93,15 @@ public class Evolution {
 
         if (fitnesses.get(fitnesses.size() - 1).result > best) {
             best = fitnesses.get(fitnesses.size() - 1).result;
-            Genotype bestGenotype = fitnesses.get(fitnesses.size() - 1).genotype;
             //display new best genotype fitness test, only for debug purposes - to be removed
             if (DEBUG_DISPLAY) {
-
                 new FitnessFrame(fitnesses.get(fitnesses.size() - 1));
             }
         }
 
         //SPECIATION
         for (int i = 0; i < fitnesses.size(); i++) {
+            //find a species to put the genotype in
             boolean found = false;
             for (int j = 0; j < species.size(); j++) {
                 if (distance(fitnesses.get(i).genotype, species.get(j).archetype) < DELTA_T) {
@@ -111,6 +110,7 @@ public class Evolution {
                     break;
                 }
             }
+            //if no compatible species found, create a new one
             if (!found) {
                 Species nspecies = new Species(fitnesses.get(i).genotype);
                 nspecies.genotypes.add(new Pair<>(fitnesses.get(i).genotype, fitnesses.get(i).result));
@@ -146,7 +146,7 @@ public class Evolution {
                 species.get(i).genotypes.remove(0);
             }
 
-            //System.out.println(species.get(i).avgFitness + " " + sum);
+            //breed the next generation
             int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 - ELITISM));
             logger.log("species #: " + i + " " + toBreed);
             for (int j = 0; j < toBreed; j++) {
@@ -181,7 +181,7 @@ public class Evolution {
 
         }
 
-        //logger.log("refilling " + (GENERATION_SIZE - children.size()));
+        //fill the rest of the next generation with copies of the best genotypes from the current generation
         while (children.size() < GENERATION_SIZE) {
             children.add(Util.copyGenotype(fitnesses.get(children.size()).genotype));
         }
@@ -200,6 +200,7 @@ public class Evolution {
         //LOG RESULTS
         logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\nsum: " + sum + "\nspecies: " + species.size() + "\nsize: " + generation.size());
         logger.logGeneration(fitnesses, generationNo);
+        logger.flush();
     }
 
     private void mutateAddConnection(Genotype g) {

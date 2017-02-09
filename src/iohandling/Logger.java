@@ -3,33 +3,34 @@ package iohandling;
 import simulation.FitnessResult;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 /**
  * Created by colander on 2/5/17.
+ * Logs debug messages and the results of an evolution run.
  */
 public class Logger {
-    private final String RESULTS_DIRECTORY = "results/";
-    private final String LOG_FILE = RESULTS_DIRECTORY + "evolution.log";
-    private final String CURRENT_RUN_DIRECTORY;
+    public final static String RESULTS_DIRECTORY = "results/";
+    private final String runDir;
 
-    BufferedWriter logWriter;
+    private BufferedWriter logWriter;
 
     public Logger() {
-        CURRENT_RUN_DIRECTORY = RESULTS_DIRECTORY + new Date(System.currentTimeMillis()).toGMTString().replaceAll(" ", "_");
-        IOHandler.createDirectory(CURRENT_RUN_DIRECTORY);
+        runDir = RESULTS_DIRECTORY + System.currentTimeMillis();
+        IOHandler.createDirectory(runDir);
+        File logFile = new File(runDir + "/evolution.log");
         try {
-            logWriter = new BufferedWriter(new FileWriter(LOG_FILE));
+            logWriter = new BufferedWriter(new FileWriter(logFile));
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     public void logGeneration(ArrayList<FitnessResult> results, int generationNo) {
-        String genFolder = CURRENT_RUN_DIRECTORY + "/" + generationNo;
+        String genFolder = runDir + "/" + generationNo;
         IOHandler.createDirectory(genFolder);
         for (int i = 0; i < results.size(); i++) {
             IOHandler.writeFile(genFolder + "/" + i + "gtp", results.get(i).result + "\n" + results.get(i).genotype.serialize());
@@ -42,6 +43,7 @@ public class Logger {
             System.out.println(System.currentTimeMillis() + "|" + split[i]); //TODO REMOVE when the project is done
             try {
                 logWriter.write(System.currentTimeMillis() + "|" + split[i]);
+                logWriter.newLine();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -49,9 +51,9 @@ public class Logger {
 
     }
 
-    public void finish() {
+    public void flush() {
         try {
-            logWriter.close();
+            logWriter.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
