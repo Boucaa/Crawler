@@ -30,10 +30,10 @@ public class Logger {
     }
 
     public void logGeneration(ArrayList<FitnessResult> results, int generationNo) {
-        String genFolder = runDir + "/" + generationNo;
+        String genFolder = runDir + "/" + (generationNo > 10 ? generationNo : "0" + generationNo);
         IOHandler.createDirectory(genFolder);
         for (int i = 0; i < results.size(); i++) {
-            IOHandler.writeFile(genFolder + "/" + i + "gtp", results.get(i).result + "\n" + results.get(i).genotype.serialize());
+            IOHandler.writeFile(genFolder + "/" + (i > 10 ? i : "0" + i) + ".gtp", results.get(i).result + "\n" + results.get(i).genotype.serialize());
         }
     }
 

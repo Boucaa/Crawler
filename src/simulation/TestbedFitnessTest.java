@@ -24,6 +24,7 @@ public class TestbedFitnessTest extends TestbedTest {
 
     public TestbedFitnessTest(Genotype g, BodySettings bodySettings, double target) {
         super();
+        this.setTitle("Fitness");
         this.target = target;
         this.g = g;
         this.bodySettings = bodySettings;
@@ -50,5 +51,9 @@ public class TestbedFitnessTest extends TestbedTest {
         this.addTextLine("T: " + target);
         this.addTextLine("FRAMES: " + frames);
         super.step(settings);
+    }
+
+    public void update() {
+        super.update();
     }
 }

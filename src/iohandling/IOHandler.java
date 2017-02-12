@@ -25,6 +25,7 @@ public class IOHandler {
         }
     }
 
+    //not efficient, works well enough
     public static String readFile(String address) {
         try {
             Scanner sc = new Scanner(new File(address));

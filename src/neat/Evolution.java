@@ -51,7 +51,7 @@ public class Evolution {
 
     private Logger logger = new Logger();
 
-    private final boolean DEBUG_DISPLAY = true;
+    private final boolean DEBUG_DISPLAY = false;
 
     //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {

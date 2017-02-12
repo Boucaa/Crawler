@@ -13,6 +13,7 @@ import java.awt.*;
 /**
  * Created by colander on 2/8/17.
  * A modified version of the org.jbox2d.testbed.framework.TestbedFrame, which omits the unnecessary gui components.
+ * Will not be used in the final release, but a cool utility for playing around with the project.
  */
 public class FitnessFrame extends JFrame {
 

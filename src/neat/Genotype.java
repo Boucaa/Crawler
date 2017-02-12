@@ -20,7 +20,7 @@ public class Genotype {
         this.bodySettings = bodySettings;
     }
 
-    //custom DIY serialization (mainly for the sake of performance)
+    //custom DIY serialization (mainly for the sake of performance and simplicity)
     public String serialize() {
         StringBuilder sb = new StringBuilder();
         sb.append(nodeGenes.size()).append(" ").append(connectionGenes.size()).append("\n");
@@ -31,6 +31,7 @@ public class Genotype {
             ConnectionGene gene = connectionGenes.get(i);
             sb.append(gene.in).append(" ").append(gene.out).append(" ").append(gene.weight).append(" ").append(gene.active).append(" ").append(gene.innovation).append("\n");
         }
+        sb.append(bodySettings.serialize());
         return sb.toString();
     }
 
@@ -47,5 +48,8 @@ public class Genotype {
         for (int i = 0; i < connections; i++) {
             connectionGenes.add(new ConnectionGene(scanner.nextInt(), scanner.nextInt(), scanner.nextDouble(), scanner.nextBoolean(), scanner.nextInt()));
         }
+        //use the rest of the serialized string to load the BodySettings
+        scanner.useDelimiter("\\Z");
+        this.bodySettings = new BodySettings(scanner.next());
     }
 }
