@@ -13,18 +13,18 @@ import java.util.stream.Collectors;
  * Created by colander on 1/3/17.
  */
 public class Evolution {
-    final int GENERATIONS = 100;
+    private final int GENERATIONS = 1000;
     private final int GENERATION_SIZE = 100;
     private final double DEFAULT_WEIGHT_RANGE = 2;
 
     //mutation chances
     private final double MUTATE_ADD_NODE = 0.05;
     private final double MUTATE_ADD_CONNECTION = 0.05;
-    private final double MUTATE_ENABLE_DISABLE = 0;
+    private final double MUTATE_ENABLE_DISABLE = 0.0; //0
     private final double MUTATE_WEIGHT = 0.8; //the chance of mutating all connections
     private final double MUTATE_WEIGHT_SMALL = 0.9; //if all the connections are to be changed, this decides the small/random ratio
 
-    private final double MUTATE_SMALL_LIMIT = 0.05;
+    private final double MUTATE_SMALL_LIMIT = 0.05; //0.05
 
     private final double COMPAT_1 = 2.0;
     private final double COMPAT_2 = 0.6;
@@ -41,7 +41,7 @@ public class Evolution {
 
     private BodySettings bodySettings;
 
-    private int innovation = 0;
+    private int innovation = 1;
     private ArrayList<Genotype> generation = new ArrayList<>();
     private ArrayList<Species> species = new ArrayList<>();
 
@@ -56,13 +56,16 @@ public class Evolution {
     //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {
         this.bodySettings = bodySettings;
-        INPUT_NODES = bodySettings.legs * bodySettings.segments;
+        INPUT_NODES = bodySettings.legs * bodySettings.segments + 1;
         OUTPUT_NODES = bodySettings.legs * bodySettings.segments;
 
         for (int i = 0; i < GENERATION_SIZE; i++) {
             generation.add(new Genotype(new ArrayList<>(), new ArrayList<>(), bodySettings));
         }
-        for (int j = 0; j < INPUT_NODES; j++) {
+        for (int i = 0; i < GENERATION_SIZE; i++) {
+            generation.get(i).nodeGenes.add(new NodeGene(0, NodeGene.TYPE_INPUT));
+        }
+        for (int j = 0; j < INPUT_NODES - 1; j++) {
             for (int i = 0; i < GENERATION_SIZE; i++) {
                 generation.get(i).nodeGenes.add(new NodeGene(innovation, NodeGene.TYPE_INPUT));
             }
@@ -90,6 +93,7 @@ public class Evolution {
         FitnessResolver resolver = new ParallelFitnessResolver(generation, bodySettings);
         ArrayList<FitnessResult> fitnesses = resolver.resolve();
         Collections.sort(fitnesses);
+        logger.log("GEN " + generation.size() + " FIT " + fitnesses.size());
 
         if (fitnesses.get(fitnesses.size() - 1).result > best) {
             best = fitnesses.get(fitnesses.size() - 1).result;
@@ -131,7 +135,8 @@ public class Evolution {
             for (int j = 0; j < spec.genotypes.size(); j++) {
                 curSum += spec.genotypes.get(j).getValue();
             }
-            spec.avgFitness = curSum / spec.genotypes.size();
+            spec.avgFitness = Math.max(0, curSum / spec.genotypes.size());
+            //System.out.println(spec.avgFitness);
             sum += spec.avgFitness;
         }
 
@@ -148,6 +153,7 @@ public class Evolution {
 
             //breed the next generation
             int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 - ELITISM));
+            if (sum == 0) toBreed = GENERATION_SIZE / species.size();
             logger.log("species #: " + i + " " + toBreed);
             for (int j = 0; j < toBreed; j++) {
                 if (random.nextDouble() > CROSSOVER) {
@@ -178,7 +184,6 @@ public class Evolution {
                     }
                 }
             }
-
         }
 
         //fill the rest of the next generation with copies of the best genotypes from the current generation
@@ -198,7 +203,7 @@ public class Evolution {
         generation = children;
 
         //LOG RESULTS
-        logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\nsum: " + sum + "\nspecies: " + species.size() + "\nsize: " + generation.size());
+        logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\nsum: " + sum + "\navg: " + sum / species.size() + "\nspecies: " + species.size() + "\nsize: " + generation.size());
         logger.logGeneration(fitnesses, generationNo);
         logger.flush();
     }

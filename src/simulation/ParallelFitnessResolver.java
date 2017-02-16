@@ -1,5 +1,6 @@
 package simulation;
 
+import javafx.util.Pair;
 import neat.Genotype;
 import worldbuilding.BodySettings;
 
@@ -16,9 +17,13 @@ public class ParallelFitnessResolver extends FitnessResolver {
 
     public ArrayList<FitnessResult> resolve() {
         ArrayList<FitnessResult> results = new ArrayList<>();
-        genotypes.parallelStream().forEach(genotype -> {
-            FitnessTest test = new FitnessTest(genotype, settings);
-            results.add(new FitnessResult(test.compute().result, genotype));
+        ArrayList<Pair<Genotype, Integer>> markedGenotypes = new ArrayList<>();
+        for (int i = 0; i < genotypes.size(); i++) {
+            markedGenotypes.add(new Pair<>(genotypes.get(i), i));
+        }
+        markedGenotypes.parallelStream().forEach(genoPair -> {
+            FitnessTest test = new FitnessTest(genoPair.getKey(), settings, genoPair.getValue());
+            results.add(new FitnessResult(test.compute().result, genoPair.getKey()));
         });
         return results;
     }

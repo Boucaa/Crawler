@@ -12,13 +12,11 @@ import simulation.TestbedFitnessTest;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.TimerTask;
 
 /**
  * Class used to display the results in a GUI.
- * It does produce some exceptions when switching the displayed genotypes too fast, but this is a bug of the JBox2D TestbedController
  * Created by colander on 2/8/17.
  */
 public class GUI extends JFrame {
@@ -34,9 +32,6 @@ public class GUI extends JFrame {
     private FixedController controller;
     private TestPanelJ2D testbedPanel;
 
-    //an ArrayList used for a JBox2D workaround
-    //private ArrayList<FixedController> controllers = new ArrayList<>();
-
     final private int FRAME_WIDTH = 1000;
     final private int FRAME_HEIGHT = 700;
     final private int TESTBED_WIDTH = 800;
@@ -48,16 +43,16 @@ public class GUI extends JFrame {
     }
 
     private GUI() {
+        //set basic properties of the JFrame
+        this.setTitle("Crawler");
+        this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         try {
             UIManager.setLookAndFeel(
                     UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        //set basic properties of the JFrame
-        this.setSize(FRAME_WIDTH, FRAME_HEIGHT);
-        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //create the selection panel
         JPanel selectionPanel = new JPanel();
@@ -128,18 +123,18 @@ public class GUI extends JFrame {
             runSelectModel.addElement(runFolders[i].getName());
         }
         runSelectList.setSelectedIndex(0);
-        generationSelectList.setSelectedIndex(0);
+        generationSelectList.setSelectedIndex(generationSelectModel.size() - 1);
     }
 
     private void updateLists() {
         File resultsFolder = new File(Logger.RESULTS_DIRECTORY);
         File[] runFolders = resultsFolder.listFiles();
-        if (runFolders == null) return;
+        if (runFolders.length == 0) return;
         Arrays.sort(runFolders);
         for (int i = runSelectModel.size(); runSelectModel.size() < runFolders.length; i++) {
             runSelectModel.addElement(runFolders[i].getName());
         }
-
+        if (runSelectList.getSelectedIndex() == -1) return;
         File selectedRunFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(runSelectList.getSelectedIndex()));
         File[] genFolders = selectedRunFolder.listFiles();
         Arrays.sort(genFolders);
@@ -152,7 +147,6 @@ public class GUI extends JFrame {
         generationSelectModel.clear();
         if (runSelectModel.isEmpty() || index < 0) return;
         File runFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(index));
-        System.out.println(runFolder.getAbsolutePath());
         DefaultListModel model = new DefaultListModel();
         File[] genFolders = runFolder.listFiles();
         if (genFolders == null) return;
@@ -181,14 +175,8 @@ public class GUI extends JFrame {
         genotypeSelectList.setModel(newJListModel);
         genotypeSelectModel = newJListModel;
 
-
-        //the following is a workaround for the JBox2D controller bug
+        //stop the current test
         if (this.controller != null) this.controller.stop();
-        //this.controllers.stream().forEach(FixedController::stop);
-        /*this.controllers.stream().forEach(c -> {
-            if (controller.isAnimating()) System.out.println("WATAFAK");
-        });*/
-        //this.controllers.clear();
 
         //recreate the testbed panel
         TestbedModel testbedModel = new TestbedModel();
@@ -209,12 +197,10 @@ public class GUI extends JFrame {
             FitnessResult fitnessResult = new FitnessResult(fitness, genotype);
             testbedModel.addTest(new TestbedFitnessTest(fitnessResult.genotype, fitnessResult.genotype.bodySettings, fitnessResult.result));
         }
-        //TestbedController controller = new TestbedController(testbedModel, testbedPanel, TestbedController.UpdateBehavior.UPDATE_CALLED);
         FixedController controller = new FixedController(testbedModel, testbedPanel, TestbedController.UpdateBehavior.UPDATE_CALLED);
         controller.start(++id);
         controller.playTest(0);
         this.controller = controller;
-        //this.controllers.add(controller);
 
     }
 

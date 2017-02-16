@@ -45,11 +45,13 @@ public class TestbedFitnessTest extends TestbedTest {
         frames++;
         stepper.step(false);
         float curx = stepper.robot.body.getPosition().x;
+        float cury = stepper.robot.body.getPosition().y;
         if (curx > maxX) maxX = curx;
         this.addTextLine("X: " + curx);
         this.addTextLine("M: " + maxX);
         this.addTextLine("T: " + target);
         this.addTextLine("FRAMES: " + frames);
+        this.addTextLine("Y: " + cury);
         super.step(settings);
     }
 

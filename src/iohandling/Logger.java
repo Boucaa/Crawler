@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by colander on 2/5/17.
@@ -30,10 +31,11 @@ public class Logger {
     }
 
     public void logGeneration(ArrayList<FitnessResult> results, int generationNo) {
-        String genFolder = runDir + "/" + (generationNo > 10 ? generationNo : "0" + generationNo);
+        Collections.reverse(results); //reverse, so that the first genotype has the highest fitness
+        String genFolder = runDir + "/" + String.format("%04d", generationNo);
         IOHandler.createDirectory(genFolder);
         for (int i = 0; i < results.size(); i++) {
-            IOHandler.writeFile(genFolder + "/" + (i > 10 ? i : "0" + i) + ".gtp", results.get(i).result + "\n" + results.get(i).genotype.serialize());
+            IOHandler.writeFile(genFolder + "/" + String.format("%02d", i) + ".gtp", results.get(i).result + "\n" + results.get(i).genotype.serialize());
         }
     }
 

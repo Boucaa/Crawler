@@ -14,19 +14,21 @@ public class BodySettings {
     float bodyHeight;
     float segmentWidth;
     float segmentHeight;
+    float density;
 
-    public BodySettings(int legs, int segments, float bodyWidth, float bodyHeight, float segmentWidth, float segmentHeight) {
+    public BodySettings(int legs, int segments, float bodyWidth, float bodyHeight, float segmentWidth, float segmentHeight, float density) {
         this.legs = legs;
         this.segments = segments;
         this.bodyWidth = bodyWidth;
         this.bodyHeight = bodyHeight;
         this.segmentWidth = segmentWidth;
         this.segmentHeight = segmentHeight;
+        this.density = density;
     }
 
     //custom DIY serialization (mainly for the sake of performance and simplicity)
     public String serialize() {
-        return legs + " " + segments + " " + bodyWidth + " " + bodyHeight + " " + segmentWidth + " " + segmentHeight;
+        return legs + " " + segments + " " + bodyWidth + " " + bodyHeight + " " + segmentWidth + " " + segmentHeight + " " + density;
     }
 
     public BodySettings(String serialized) {
@@ -37,5 +39,6 @@ public class BodySettings {
         this.bodyHeight = sc.nextFloat();
         this.segmentWidth = sc.nextFloat();
         this.segmentHeight = sc.nextFloat();
+        this.density = sc.nextFloat();
     }
 }

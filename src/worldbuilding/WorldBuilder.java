@@ -2,10 +2,7 @@ package worldbuilding;
 
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyDef;
-import org.jbox2d.dynamics.BodyType;
-import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.joints.JointType;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
 import org.jbox2d.dynamics.joints.RevoluteJointDef;
@@ -19,10 +16,10 @@ import java.util.ArrayList;
  */
 public class WorldBuilder {
 
-    final static int BODY_POS_X = 0;
-    final static float BODY_POS_Y = 1.7f;
-    final static int FLAT_BASE_WIDTH = 50;
-    final static int FLAT_BASE_HEIGHT = 5;
+    private final static int BODY_POS_X = 0;
+    private final static float BODY_POS_Y = -7.3f;
+    private final static int FLAT_BASE_WIDTH = 200;
+    private final static int FLAT_BASE_HEIGHT = 5;
 
     public static Robot build(World world, WorldSettings worldSettings, BodySettings bodySettings) {
         world.setGravity(new Vec2(0, -worldSettings.getGravity()));
@@ -40,7 +37,12 @@ public class WorldBuilder {
         bodyDef.position.set(BODY_POS_X, BODY_POS_Y);
         bodyDef.type = BodyType.DYNAMIC;
         Body body = world.createBody(bodyDef);
-        body.createFixture(bodyShape, 5.0f);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.density = bodySettings.density;
+        fixtureDef.shape = bodyShape;
+        fixtureDef.filter.categoryBits = 4;
+        body.createFixture(fixtureDef);
+        //body.createFixture(bodyShape, 5.0f);
 
         ArrayList<Body> legList = new ArrayList<>();
         ArrayList<RevoluteJoint> jointList = new ArrayList<>();
@@ -51,13 +53,18 @@ public class WorldBuilder {
             for (int j = 0; j < joints.length; j++) {
                 PolygonShape legShape = new PolygonShape();
                 legShape.setAsBox(bodySettings.segmentWidth, bodySettings.segmentHeight);
-                double x = BODY_POS_X - bodySettings.bodyWidth + j * 2.0 * bodySettings.bodyWidth / (bodySettings.legs - 1);
-                double y = BODY_POS_X - bodySettings.bodyHeight - i * bodySettings.segmentHeight;
+                double x = BODY_POS_X - bodySettings.bodyWidth + (j - j % 2) * 2.0 * bodySettings.bodyWidth / (bodySettings.legs / 2);
+                double y = BODY_POS_Y - bodySettings.bodyHeight - i * bodySettings.segmentHeight;
                 BodyDef legDef = new BodyDef();
                 legDef.position.set((float) x, (float) y);
                 legDef.type = BodyType.DYNAMIC;
                 Body legBody = world.createBody(legDef);
-                legBody.createFixture(legShape, 5.0f);
+                FixtureDef fixDef = new FixtureDef();
+                fixDef.density = bodySettings.density;
+                fixDef.shape = legShape;
+                fixDef.filter.categoryBits = 2;
+                fixDef.filter.maskBits = 4;
+                legBody.createFixture(fixDef);
                 segments[j][i] = legBody;
 
                 legList.add(legBody);
@@ -94,8 +101,12 @@ public class WorldBuilder {
         base.setAsBox(FLAT_BASE_WIDTH, FLAT_BASE_HEIGHT);
         BodyDef baseDef = new BodyDef();
         baseDef.type = BodyType.STATIC;
-        baseDef.position.set(0, -20);
+        baseDef.position.set(FLAT_BASE_WIDTH * 2 / 5, -20);
         Body baseBody = world.createBody(baseDef);
-        baseBody.createFixture(base, 5.0f);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = base;
+        fixtureDef.density = 5.0f;
+        fixtureDef.filter.categoryBits = 4;
+        baseBody.createFixture(fixtureDef);
     }
 }

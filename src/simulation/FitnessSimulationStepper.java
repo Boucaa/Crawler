@@ -15,6 +15,7 @@ public class FitnessSimulationStepper {
     final int VEL_ITERATIONS = 8;
     final int POS_ITERATIONS = 3;
     final double SPEED_MULTIPLIER = 5;
+    final double ANGLE_LIMIT = 1.6;
 
     private World world;
     Robot robot;
@@ -29,13 +30,14 @@ public class FitnessSimulationStepper {
     }
 
     void step(boolean stepWorld) {
-        double[] inputs = new double[robot.joints.size()];
-        for (int j = 0; j < inputs.length; j++) {
-            inputs[j] = robot.joints.get(j).getJointAngle();
+        double[] inputs = new double[robot.joints.size() + 1];
+        inputs[0] = 1;
+        for (int j = 1; j < inputs.length; j++) {
+            inputs[j] = robot.joints.get(j - 1).getJointAngle();
         }
         double[] outputs = phenotype.step(inputs);
         for (int j = 0; j < outputs.length; j++) {
-            if (robot.joints.get(j).getJointAngle() < 2 && robot.joints.get(j).getJointAngle() > -2 || (robot.joints.get(j).getJointAngle() < -2 && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > 2 && outputs[j] < 0)) {
+            if (robot.joints.get(j).getJointAngle() < ANGLE_LIMIT && robot.joints.get(j).getJointAngle() > -ANGLE_LIMIT || (robot.joints.get(j).getJointAngle() < -ANGLE_LIMIT && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > ANGLE_LIMIT && outputs[j] < 0)) {
                 robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER));
             } else {
                 robot.joints.get(j).setMotorSpeed(0);
