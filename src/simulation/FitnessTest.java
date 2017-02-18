@@ -13,7 +13,7 @@ import worldbuilding.BodySettings;
 public class FitnessTest implements Comparable<FitnessTest> {
     final int ITERATIONS = 5000;
     final int CONFIRM_ITERATIONS = 1500;
-    final private boolean LIMIT_HEIGHT = false;
+    final private boolean LIMIT_HEIGHT = true;
 
     private World world;
     public Genotype genotype;
@@ -34,15 +34,12 @@ public class FitnessTest implements Comparable<FitnessTest> {
         for (int i = 0; i < ITERATIONS + CONFIRM_ITERATIONS; i++) {
             stepper.step(true);
             if (stepper.robot.body.getPosition().x > maxX && i < ITERATIONS) maxX = stepper.robot.body.getPosition().x;
-            if (stepper.robot.body.getPosition().y < -9) {
+            if (LIMIT_HEIGHT && stepper.robot.body.getPosition().y < -8.3) {
                 maxX = 0;
                 break;
             }
         }
         result = maxX;
-        //System.out.println(maxX);
-        //Util.printGenotype(genotype);
-        //if (result <= 0) result = 0;//-1e-12 * genotype.hashCode();
         //free up memory ASAP
         world = null;
         System.gc();

@@ -13,13 +13,13 @@ import java.util.stream.Collectors;
  * Created by colander on 1/3/17.
  */
 public class Evolution {
-    private final int GENERATIONS = 1000;
+    private final int GENERATIONS = 10000;
     private final int GENERATION_SIZE = 100;
     private final double DEFAULT_WEIGHT_RANGE = 2;
 
     //mutation chances
     private final double MUTATE_ADD_NODE = 0.05;
-    private final double MUTATE_ADD_CONNECTION = 0.05;
+    private final double MUTATE_ADD_CONNECTION = 0.07;
     private final double MUTATE_ENABLE_DISABLE = 0.0; //0
     private final double MUTATE_WEIGHT = 0.8; //the chance of mutating all connections
     private final double MUTATE_WEIGHT_SMALL = 0.9; //if all the connections are to be changed, this decides the small/random ratio
@@ -27,7 +27,7 @@ public class Evolution {
     private final double MUTATE_SMALL_LIMIT = 0.05; //0.05
 
     private final double COMPAT_1 = 2.0;
-    private final double COMPAT_2 = 0.6;
+    private final double COMPAT_2 = 1.0;
     private final double DELTA_T = 3.0;
 
     private final double CROSSOVER = 0.75;
@@ -88,9 +88,10 @@ public class Evolution {
     public void nextGeneration() {
         generationNo++;
         logger.log("GENERATION #" + generationNo);
+        long startTime = System.currentTimeMillis(); //start time measurement
 
         //MEASURE FITNESSES
-        FitnessResolver resolver = new ParallelFitnessResolver(generation, bodySettings);
+        ParallelFitnessResolver resolver = new FixedParallelFitnessResolver(generation, bodySettings);
         ArrayList<FitnessResult> fitnesses = resolver.resolve();
         Collections.sort(fitnesses);
         logger.log("GEN " + generation.size() + " FIT " + fitnesses.size());
@@ -191,7 +192,6 @@ public class Evolution {
             children.add(Util.copyGenotype(fitnesses.get(children.size()).genotype));
         }
 
-
         //CLEANUP
         //clear species, new archetypes
         for (int i = 0; i < species.size(); i++) {
@@ -203,6 +203,8 @@ public class Evolution {
         generation = children;
 
         //LOG RESULTS
+        long time = System.currentTimeMillis() - startTime;
+        logger.log("finished in " + time + "ms");
         logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\nsum: " + sum + "\navg: " + sum / species.size() + "\nspecies: " + species.size() + "\nsize: " + generation.size());
         logger.logGeneration(fitnesses, generationNo);
         logger.flush();

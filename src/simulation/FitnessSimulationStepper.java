@@ -15,7 +15,7 @@ public class FitnessSimulationStepper {
     final int VEL_ITERATIONS = 8;
     final int POS_ITERATIONS = 3;
     final double SPEED_MULTIPLIER = 5;
-    final double ANGLE_LIMIT = 1.6;
+    final double ANGLE_LIMIT = 1.3;
 
     private World world;
     Robot robot;
