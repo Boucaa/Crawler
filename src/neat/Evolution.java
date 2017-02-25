@@ -11,19 +11,20 @@ import java.util.stream.Collectors;
 
 /**
  * Created by colander on 1/3/17.
+ * The main NEAT class.
  */
 public class Evolution {
     private final int GENERATIONS = 10000;
     private final int GENERATION_SIZE = 250;
-    private final double DEFAULT_WEIGHT_RANGE = 2;
+    private final double DEFAULT_WEIGHT_RANGE = 4;
 
     //mutation chances
     private final double MUTATE_ADD_NODE = 0.05;
     private final double MUTATE_ADD_CONNECTION = 0.05;
-    private final double MUTATE_ENABLE_DISABLE = 0.0; //0
-    private final double MUTATE_WEIGHT = 0.5; //the chance of mutating all connections //0.8
-    private final double MUTATE_WEIGHT_SMALL = 0.9; //if all the connections are to be changed, this decides the small/random ratio
-    private final double MUTATE_SINGLE_INSTEAD = 0.3;
+    private final double MUTATE_ENABLE_DISABLE = 0.5; //0
+    private final double MUTATE_WEIGHT = 0.8; //the chance of mutating connection weights //0.8
+    private final double MUTATE_WEIGHT_SMALL = 0.9; //if the connections are to be changed, this decides the small/random ratio
+    private final double MUTATE_SINGLE_INSTEAD = 0.1; //chance of mutating only a single weight
 
     private final double MUTATE_SMALL_LIMIT = 0.05; //0.05
 
