@@ -14,7 +14,7 @@ public class FitnessSimulationStepper {
     final float TIME_STEP = 1 / 60f;
     final int VEL_ITERATIONS = 8;
     final int POS_ITERATIONS = 3;
-    final double SPEED_MULTIPLIER = 5;
+    final double SPEED_MULTIPLIER = 8;
     final double ANGLE_LIMIT = 1.3;
 
     private World world;
@@ -37,12 +37,16 @@ public class FitnessSimulationStepper {
         }
         double[] outputs = phenotype.step(inputs);
         for (int j = 0; j < outputs.length; j++) {
-            if (robot.joints.get(j).getJointAngle() < ANGLE_LIMIT && robot.joints.get(j).getJointAngle() > -ANGLE_LIMIT || (robot.joints.get(j).getJointAngle() < -ANGLE_LIMIT && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > ANGLE_LIMIT && outputs[j] < 0)) {
+            if (inRange(robot.joints.get(j).getJointAngle(), -ANGLE_LIMIT, ANGLE_LIMIT) || (robot.joints.get(j).getJointAngle() < -ANGLE_LIMIT && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > ANGLE_LIMIT && outputs[j] < 0)) {
                 robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER));
             } else {
                 robot.joints.get(j).setMotorSpeed(0);
             }
         }
         if (stepWorld) world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);
+    }
+
+    private boolean inRange(double value, double min, double max) {
+        return value > min && value < max;
     }
 }

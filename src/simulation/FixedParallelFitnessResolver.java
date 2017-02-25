@@ -8,6 +8,8 @@ import java.util.ArrayList;
 
 /**
  * Created by colander on 2/18/17.
+ * A parallel fitness resolver tailored towards specific thread count, can be used, but does not provide any
+ * significant performance improvements over the default resolver.
  */
 public class FixedParallelFitnessResolver extends ParallelFitnessResolver {
     private ArrayList<Pair<Genotype, Integer>> markedGenotypes;

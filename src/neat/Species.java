@@ -11,6 +11,8 @@ public class Species {
     ArrayList<Pair<Genotype, Double>> genotypes = new ArrayList<>();
     Genotype archetype;
     double avgFitness = 0;
+    int lastInnovate = 0;
+    double bestFitness = 0;
 
     public Species(Genotype archetype) {
         this.archetype = archetype;

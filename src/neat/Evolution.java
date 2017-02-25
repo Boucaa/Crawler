@@ -14,15 +14,16 @@ import java.util.stream.Collectors;
  */
 public class Evolution {
     private final int GENERATIONS = 10000;
-    private final int GENERATION_SIZE = 100;
+    private final int GENERATION_SIZE = 250;
     private final double DEFAULT_WEIGHT_RANGE = 2;
 
     //mutation chances
     private final double MUTATE_ADD_NODE = 0.05;
-    private final double MUTATE_ADD_CONNECTION = 0.07;
+    private final double MUTATE_ADD_CONNECTION = 0.05;
     private final double MUTATE_ENABLE_DISABLE = 0.0; //0
-    private final double MUTATE_WEIGHT = 0.8; //the chance of mutating all connections
+    private final double MUTATE_WEIGHT = 0.5; //the chance of mutating all connections //0.8
     private final double MUTATE_WEIGHT_SMALL = 0.9; //if all the connections are to be changed, this decides the small/random ratio
+    private final double MUTATE_SINGLE_INSTEAD = 0.3;
 
     private final double MUTATE_SMALL_LIMIT = 0.05; //0.05
 
@@ -34,6 +35,8 @@ public class Evolution {
     private final double KILL_OFF = 0.5;
 
     private final double ELITISM = 0.1;
+
+    private final double SPECIES_RESET_COUNTER = 15;
 
     private final Random random = new Random(1337 * 420);
     private final int INPUT_NODES;
@@ -132,20 +135,37 @@ public class Evolution {
         double sum = 0;
         for (int i = 0; i < species.size(); i++) {
             Species spec = species.get(i);
+            if (spec.genotypes.get(spec.genotypes.size() - 1).getValue() > spec.bestFitness) {
+                spec.bestFitness = spec.genotypes.get(spec.genotypes.size() - 1).getValue();
+                spec.lastInnovate = 0;
+            } else {
+                spec.lastInnovate++;
+                if (spec.lastInnovate > SPECIES_RESET_COUNTER) {
+                    spec.lastInnovate = 0;
+                    spec.avgFitness = -1;
+                    logger.log("purge: i=" + i);
+                    continue;
+                }
+            }
+            spec.lastInnovate++;
             double curSum = 0;
             for (int j = 0; j < spec.genotypes.size(); j++) {
                 curSum += spec.genotypes.get(j).getValue();
             }
             spec.avgFitness = Math.max(0, curSum / spec.genotypes.size());
-            //System.out.println(spec.avgFitness);
             sum += spec.avgFitness;
         }
 
         //BREEDING
         logger.log("breeding");
         ArrayList<Genotype> children = new ArrayList<>();
+        ArrayList<Genotype> noMutateChildren = new ArrayList<>();
 
         for (int i = 0; i < species.size(); i++) {
+            if (species.get(i).avgFitness == -1) {
+                noMutateChildren.add(Util.copyGenotype(species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey()));
+                continue;
+            }
             //kill off the weak members
             int targetSize = Math.max((int) (species.get(i).genotypes.size() * KILL_OFF), 1);
             while (species.get(i).genotypes.size() > targetSize) {
@@ -153,9 +173,12 @@ public class Evolution {
             }
 
             //breed the next generation
-            int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 - ELITISM));
+            int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 /*- ELITISM*/)) - 1;
             if (sum == 0) toBreed = GENERATION_SIZE / species.size();
             logger.log("species #: " + i + " " + toBreed);
+            if (toBreed >= 0) {
+                noMutateChildren.add(Util.copyGenotype(species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey()));
+            }
             for (int j = 0; j < toBreed; j++) {
                 if (random.nextDouble() > CROSSOVER) {
                     children.add(Util.copyGenotype(species.get(i).genotypes.get(random.nextInt(species.get(i).genotypes.size())).getKey()));
@@ -177,20 +200,32 @@ public class Evolution {
                 mutateEnableDisableConnection(children.get(i));
             if (random.nextDouble() < MUTATE_WEIGHT && !children.get(i).connectionGenes.isEmpty()) {
                 Genotype g = children.get(i);
-                for (int j = 0; j < g.connectionGenes.size(); j++) {
-                    if (random.nextDouble() < MUTATE_WEIGHT_SMALL) {
-                        mutateWightSmall(g.connectionGenes.get(j));
-                    } else {
-                        mutateWeightRandom(g.connectionGenes.get(j));
+                if (random.nextDouble() < MUTATE_SINGLE_INSTEAD) {
+                    mutateWightSmall(g.connectionGenes.get(random.nextInt(g.connectionGenes.size())));
+                } else {
+                    for (int j = 0; j < g.connectionGenes.size(); j++) {
+                        if (random.nextDouble() < MUTATE_WEIGHT_SMALL) {
+                            mutateWightSmall(g.connectionGenes.get(j));
+                        } else {
+                            mutateWeightRandom(g.connectionGenes.get(j));
+                        }
                     }
                 }
             }
         }
 
+        children.addAll(noMutateChildren);
+
         //fill the rest of the next generation with copies of the best genotypes from the current generation
-        while (children.size() < GENERATION_SIZE) {
+        /*for (int i = 0; i < species.size(); i++) {
+            ArrayList<Pair<Genotype, Double>> genotypes = species.get(i).genotypes;
+            children.add(Util.copyGenotype(genotypes.get(genotypes.size() - 1).getKey()));
+        }*/
+
+        /*while (children.size() < GENERATION_SIZE) {
+            logger.log("REFILLING");
             children.add(Util.copyGenotype(fitnesses.get(children.size()).genotype));
-        }
+        }*/
 
         //CLEANUP
         //clear species, new archetypes
