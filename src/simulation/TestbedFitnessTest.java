@@ -52,6 +52,9 @@ public class TestbedFitnessTest extends TestbedTest {
         this.addTextLine("T: " + target);
         this.addTextLine("FRAMES: " + frames);
         this.addTextLine("Y: " + cury);
+        for (int i = 0; i < stepper.robot.legs.size(); i++) {
+            this.addTextLine(stepper.robot.legs.get(i).getPosition().y + "");
+        }
         super.step(settings);
     }
 

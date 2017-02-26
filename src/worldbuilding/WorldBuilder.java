@@ -64,6 +64,7 @@ public class WorldBuilder {
                 fixDef.shape = legShape;
                 fixDef.filter.categoryBits = 2;
                 fixDef.filter.maskBits = 4;
+                fixDef.friction = 0.25f;
                 legBody.createFixture(fixDef);
                 segments[j][i] = legBody;
 

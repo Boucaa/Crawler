@@ -37,7 +37,9 @@ public class FitnessSimulationStepper {
         }
         double[] outputs = phenotype.step(inputs);
         for (int j = 0; j < outputs.length; j++) {
-            if (inRange(robot.joints.get(j).getJointAngle(), -ANGLE_LIMIT, ANGLE_LIMIT) || (robot.joints.get(j).getJointAngle() < -ANGLE_LIMIT && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > ANGLE_LIMIT && outputs[j] < 0)) {
+            double angleStart = -ANGLE_LIMIT;
+            double angleEnd = j < outputs.length / 2 ? ANGLE_LIMIT : 0;
+            if (inRange(robot.joints.get(j).getJointAngle(),angleStart, angleEnd) || (robot.joints.get(j).getJointAngle() <angleStart && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > angleStart && outputs[j] < 0)) {
                 robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER));
             } else {
                 robot.joints.get(j).setMotorSpeed(0);

@@ -15,13 +15,13 @@ import java.util.stream.Collectors;
  */
 public class Evolution {
     private final int GENERATIONS = 10000;
-    private final int GENERATION_SIZE = 250;
-    private final double DEFAULT_WEIGHT_RANGE = 4;
+    private final int GENERATION_SIZE = 100;
+    private final double DEFAULT_WEIGHT_RANGE = 6;
 
     //mutation chances
-    private final double MUTATE_ADD_NODE = 0.05;
-    private final double MUTATE_ADD_CONNECTION = 0.05;
-    private final double MUTATE_ENABLE_DISABLE = 0.5; //0
+    private final double MUTATE_ADD_NODE = 0.10;
+    private final double MUTATE_ADD_CONNECTION = 0.10;
+    private final double MUTATE_ENABLE_DISABLE = 0.05; //0
     private final double MUTATE_WEIGHT = 0.8; //the chance of mutating connection weights //0.8
     private final double MUTATE_WEIGHT_SMALL = 0.9; //if the connections are to be changed, this decides the small/random ratio
     private final double MUTATE_SINGLE_INSTEAD = 0.1; //chance of mutating only a single weight
@@ -176,7 +176,7 @@ public class Evolution {
             //breed the next generation
             int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 /*- ELITISM*/)) - 1;
             if (sum == 0) toBreed = GENERATION_SIZE / species.size();
-            logger.log("species #: " + i + " " + toBreed);
+            logger.log("species #" + i + ": breeding " + toBreed);
             if (toBreed >= 0) {
                 noMutateChildren.add(Util.copyGenotype(species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey()));
             }
@@ -257,7 +257,10 @@ public class Evolution {
                 it.remove();
 
         }
-        if (nonEdgeList.size() == 0) return;
+        if (nonEdgeList.size() == 0) {
+            logger.log("NON EDGE LIST EMPTY\n" + g.serialize()); //just for debug purposes
+            return;
+        }
         Pair<Integer, Integer> coord = nonEdgeList.get(random.nextInt(nonEdgeList.size()));
         g.connectionGenes.add(new ConnectionGene(coord.getKey(), coord.getValue(), random.nextDouble() * 2 * DEFAULT_WEIGHT_RANGE - DEFAULT_WEIGHT_RANGE, true, ++innovation));
     }
