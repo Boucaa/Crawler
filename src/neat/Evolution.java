@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class Evolution {
     private final int GENERATIONS = 10000;
     private final int GENERATION_SIZE = 100;
-    private final double DEFAULT_WEIGHT_RANGE = 6;
+    private final double DEFAULT_WEIGHT_RANGE = 4.5;
 
     //mutation chances
     private final double MUTATE_ADD_NODE = 0.10;
@@ -60,7 +60,7 @@ public class Evolution {
     //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {
         this.bodySettings = bodySettings;
-        INPUT_NODES = bodySettings.legs * bodySettings.segments + 1;
+        INPUT_NODES = bodySettings.legs * bodySettings.segments + 1 + 3;
         OUTPUT_NODES = bodySettings.legs * bodySettings.segments;
 
         for (int i = 0; i < GENERATION_SIZE; i++) {
@@ -95,7 +95,7 @@ public class Evolution {
         long startTime = System.currentTimeMillis(); //start time measurement
 
         //MEASURE FITNESSES
-        ParallelFitnessResolver resolver = new FixedParallelFitnessResolver(generation, bodySettings);
+        ParallelFitnessResolver resolver = new ParallelFitnessResolver(generation, bodySettings);
         ArrayList<FitnessResult> fitnesses = resolver.resolve();
         Collections.sort(fitnesses);
         logger.log("GEN " + generation.size() + " FIT " + fitnesses.size());
@@ -241,7 +241,7 @@ public class Evolution {
         //LOG RESULTS
         long time = System.currentTimeMillis() - startTime;
         logger.log("finished in " + time + "ms");
-        logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\nsum: " + sum + "\navg: " + sum / species.size() + "\nspecies: " + species.size() + "\nsize: " + generation.size());
+        logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\navg: " + sum / species.size() + "\nspecies: " + species.size() + "\nsize: " + generation.size());
         logger.logGeneration(fitnesses, generationNo);
         logger.flush();
     }

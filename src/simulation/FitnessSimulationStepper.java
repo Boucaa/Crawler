@@ -24,22 +24,27 @@ public class FitnessSimulationStepper {
 
     FitnessSimulationStepper(World world, BodySettings bodySettings, Genotype g) {
         WorldSettings worldSettings = new WorldSettings(10.0f, WorldSettings.BASE_FLAT);
-        robot = WorldBuilder.build(world, worldSettings, bodySettings);
+        WorldBuilder worldBuilder = new WorldBuilder(world, bodySettings, worldSettings);
+        robot = worldBuilder.build();
         this.world = world;
         phenotype = new Phenotype(g);
     }
 
     void step(boolean stepWorld) {
-        double[] inputs = new double[robot.joints.size() + 1];
+        int extraInputs = 4; //1 for bias and 3 for body angle and position
+        double[] inputs = new double[robot.joints.size() + extraInputs];
         inputs[0] = 1;
-        for (int j = 1; j < inputs.length; j++) {
-            inputs[j] = robot.joints.get(j - 1).getJointAngle();
+        inputs[1] = robot.body.getAngle();
+        inputs[2] = robot.body.getPosition().x;
+        inputs[3] = robot.body.getPosition().y;
+        for (int j = extraInputs; j < inputs.length; j++) {
+            inputs[j] = robot.joints.get(j - extraInputs).getJointAngle();
         }
-        double[] outputs = phenotype.step(inputs);
+        double[] outputs = getPhenotype().step(inputs);
         for (int j = 0; j < outputs.length; j++) {
             double angleStart = -ANGLE_LIMIT;
             double angleEnd = j < outputs.length / 2 ? ANGLE_LIMIT : 0;
-            if (inRange(robot.joints.get(j).getJointAngle(),angleStart, angleEnd) || (robot.joints.get(j).getJointAngle() <angleStart && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > angleStart && outputs[j] < 0)) {
+            if (inRange(robot.joints.get(j).getJointAngle(), angleStart, angleEnd) || (robot.joints.get(j).getJointAngle() < angleStart && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > angleStart && outputs[j] < 0)) {
                 robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER));
             } else {
                 robot.joints.get(j).setMotorSpeed(0);
@@ -50,5 +55,11 @@ public class FitnessSimulationStepper {
 
     private boolean inRange(double value, double min, double max) {
         return value > min && value < max;
+    }
+
+
+    //TODO to be removed?
+    public Phenotype getPhenotype() {
+        return phenotype;
     }
 }

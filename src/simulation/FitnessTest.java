@@ -31,15 +31,16 @@ public class FitnessTest implements Comparable<FitnessTest> {
 
     public FitnessTest compute() {
         float maxX = 0f;
+        boolean failed = false;
         for (int i = 0; i < ITERATIONS + (LIMIT_HEIGHT ? CONFIRM_ITERATIONS : 0); i++) {
             stepper.step(true);
             if (stepper.robot.body.getPosition().x > maxX && i < ITERATIONS) maxX = stepper.robot.body.getPosition().x;
             if (LIMIT_HEIGHT && stepper.robot.legs.stream().anyMatch(leg -> leg.getPosition().y < -13.7)) {//&& stepper.robot.body.getPosition().y < -8.3) {
-                maxX = 0;
+                failed = true;
                 break;
             }
         }
-        result = maxX;
+        result = failed ? 0 : Math.max(maxX, 0.01);
         //free up memory ASAP
         world = null;
         System.gc();
