@@ -16,6 +16,9 @@ public class FitnessSimulationStepper {
     final int POS_ITERATIONS = 3;
     final double SPEED_MULTIPLIER = 8;
     final double ANGLE_LIMIT = 1.3;
+    final int STARTUP_FRAMES = 30; //frames at the start when the robot is falling and is not allowed to move
+
+    private int framesElapsed = 0;
 
     private World world;
     Robot robot;
@@ -31,33 +34,24 @@ public class FitnessSimulationStepper {
     }
 
     void step(boolean stepWorld) {
-        int extraInputs = 4; //1 for bias and 3 for body angle and position
-        double[] inputs = new double[robot.joints.size() + extraInputs];
-        inputs[0] = 1;
-        inputs[1] = robot.body.getAngle();
-        inputs[2] = robot.body.getPosition().x;
-        inputs[3] = robot.body.getPosition().y;
-        for (int j = extraInputs; j < inputs.length; j++) {
-            inputs[j] = robot.joints.get(j - extraInputs).getJointAngle();
-        }
-        double[] outputs = getPhenotype().step(inputs);
-        for (int j = 0; j < outputs.length; j++) {
-            double angleStart = -ANGLE_LIMIT;
-            double angleEnd = j < outputs.length / 2 ? ANGLE_LIMIT : 0;
-            if (inRange(robot.joints.get(j).getJointAngle(), angleStart, angleEnd) || (robot.joints.get(j).getJointAngle() < angleStart && outputs[j] > 0) || (robot.joints.get(j).getJointAngle() > angleStart && outputs[j] < 0)) {
+        if (++framesElapsed > STARTUP_FRAMES) {
+            int extraInputs = 4; //1 for bias and 3 for body angle and position
+            double[] inputs = new double[robot.joints.size() + extraInputs];
+            inputs[0] = 1;
+            inputs[1] = robot.body.getAngle();
+            inputs[2] = robot.body.getPosition().x;
+            inputs[3] = robot.body.getPosition().y;
+            for (int j = extraInputs; j < inputs.length; j++) {
+                inputs[j] = robot.joints.get(j - extraInputs).getJointAngle();
+            }
+            double[] outputs = getPhenotype().step(inputs);
+            for (int j = 0; j < outputs.length; j++) {
                 robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER));
-            } else {
-                robot.joints.get(j).setMotorSpeed(0);
             }
         }
         if (stepWorld) world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);
     }
-
-    private boolean inRange(double value, double min, double max) {
-        return value > min && value < max;
-    }
-
-
+    
     //TODO to be removed?
     public Phenotype getPhenotype() {
         return phenotype;

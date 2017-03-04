@@ -11,6 +11,7 @@ import worldbuilding.BodySettings;
  * Class used to measure the fitness of a single genotype.
  */
 public class FitnessTest implements Comparable<FitnessTest> {
+    public static final double HEIGHT_LIMIT = -13.0;
     final int ITERATIONS = 3000;
     final int CONFIRM_ITERATIONS = 1500;
     final private boolean LIMIT_HEIGHT = true;
@@ -35,7 +36,7 @@ public class FitnessTest implements Comparable<FitnessTest> {
         for (int i = 0; i < ITERATIONS + (LIMIT_HEIGHT ? CONFIRM_ITERATIONS : 0); i++) {
             stepper.step(true);
             if (stepper.robot.body.getPosition().x > maxX && i < ITERATIONS) maxX = stepper.robot.body.getPosition().x;
-            if (LIMIT_HEIGHT && stepper.robot.legs.stream().anyMatch(leg -> leg.getPosition().y < -13.7)) {//&& stepper.robot.body.getPosition().y < -8.3) {
+            if (LIMIT_HEIGHT && stepper.robot.legs.stream().anyMatch(leg -> leg.getPosition().y < HEIGHT_LIMIT)) {//&& stepper.robot.body.getPosition().y < -8.3) {
                 failed = true;
                 break;
             }
