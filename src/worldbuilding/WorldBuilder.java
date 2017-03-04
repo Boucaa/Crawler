@@ -15,6 +15,7 @@ import java.util.ArrayList;
  */
 public class WorldBuilder {
 
+    public static final int TORQUE = 50000;
     private final int BODY_POS_X = 0;
     private final float BODY_POS_Y = -8f;
     private final int FLAT_BASE_WIDTH = 200;
@@ -25,7 +26,7 @@ public class WorldBuilder {
     private WorldSettings worldSettings;
 
     private Body mainBody;
-    private ArrayList<Body> legList = new ArrayList<>();
+    private ArrayList<Body> segmentList = new ArrayList<>();
     private ArrayList<RevoluteJoint> jointList = new ArrayList<>();
 
     public WorldBuilder(World world, BodySettings bodySettings, WorldSettings worldSettings) {
@@ -58,123 +59,79 @@ public class WorldBuilder {
         mainBody.createFixture(mainBodyFixtureDef);
         //body.createFixture(bodyShape, 5.0f);
 
-        RevoluteJoint[][] joints = new RevoluteJoint[bodySettings.legs][bodySettings.segments];
-        Body[][] segments = new Body[bodySettings.legs][bodySettings.segments];
-        for (int i = 0; i < joints[0].length; i++) { // i is the vertical position of the segment from top
-            for (int j = 0; j < joints.length; j++) { // j is the horizontal position of the segment from left
-                PolygonShape legShape = new PolygonShape();
-                legShape.setAsBox(bodySettings.segmentWidth, bodySettings.segmentHeight);
-                double x = BODY_POS_X - bodySettings.bodyWidth + (j - j % 2) * 2.0 * bodySettings.bodyWidth / (bodySettings.legs / 2);
-                double y = BODY_POS_Y - bodySettings.bodyHeight - i * bodySettings.segmentHeight;
-                BodyDef legDef = new BodyDef();
-                legDef.position.set((float) x, (float) y);
-                legDef.type = BodyType.DYNAMIC;
-                Body legBody = world.createBody(legDef);
-                FixtureDef fixDef = new FixtureDef();
-                fixDef.density = bodySettings.density;
-                fixDef.shape = legShape;
-                fixDef.filter.categoryBits = 2;
-                fixDef.filter.maskBits = 4;
-                //fixDef.friction = 0.25f;
-                legBody.createFixture(fixDef);
-                segments[j][i] = legBody;
-
-                legList.add(legBody);
-
-                RevoluteJointDef jointDef = new RevoluteJointDef();
-                if (i == 0) {
-                    jointDef.bodyA = mainBody;
-                    jointDef.bodyB = legBody;
-                    jointDef.type = JointType.REVOLUTE;
-                    jointDef.localAnchorA.set((float) x, 0);
-                    jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
-                    joints[j][i] = (RevoluteJoint) world.createJoint(jointDef);
-                    jointList.add(joints[j][i]);
-                } else {
-                    jointDef.bodyA = segments[j][i - 1];
-                    jointDef.bodyB = legBody;
-                    jointDef.type = JointType.REVOLUTE;
-                    jointDef.localAnchorA.set(0, -bodySettings.segmentHeight);
-                    jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
-                    joints[j][i] = (RevoluteJoint) world.createJoint(jointDef);
-                    joints[j][i].enableMotor(true);
-                    joints[j][i].setMaxMotorTorque(50000);
-                    jointList.add(joints[j][i]);
-                }
-
-            }
+        for (int i = 0; i < bodySettings.legs; i++) {
+            double x = BODY_POS_X - bodySettings.bodyWidth + (i - i % 2) * 2.0 * bodySettings.bodyWidth / (bodySettings.legs / 2);
+            buildLeg((float) x);
         }
 
-        for (int i = 0; i < segments.length; i++) {
-            Body seg = segments[i][1];
-            CircleShape ballShape = new CircleShape();
-            ballShape.m_radius = bodySettings.segmentWidth;
-            BodyDef ballDef = new BodyDef();
-            ballDef.position = seg.getPosition();
-            //ballDef.position.y -= 5f;//bodySettings.segmentHeight;
-            ballDef.type = BodyType.DYNAMIC;
-            Body ballBody = world.createBody(ballDef);
-            FixtureDef ballFixDef = new FixtureDef();
-            ballFixDef.density = bodySettings.density;
-            ballFixDef.shape = ballShape;
-            ballFixDef.filter.categoryBits = 2;
-            ballFixDef.filter.maskBits = 4;
-            ballBody.createFixture(ballFixDef);
-            WeldJointDef jdef = new WeldJointDef();
-            jdef.bodyA = seg;
-            jdef.bodyB = ballBody;
-            jdef.collideConnected = false;
-            jdef.type = JointType.WELD;
-            jdef.localAnchorA.set(0, -bodySettings.segmentHeight);
-            jdef.localAnchorB.set(0, 0);
-            world.createJoint(jdef);
-        }
-
-        for (int i = 0; i < segments.length; i++) {
-        }
-        return new Robot(mainBody, legList, jointList);
+        return new Robot(mainBody, segmentList, jointList);
     }
 
-    private void buildLeg(float x, float y) {
-        /*PolygonShape legShape = new PolygonShape();
-        legShape.setAsBox(bodySettings.segmentWidth, bodySettings.segmentHeight);
-        double x = BODY_POS_X - bodySettings.bodyWidth + (j - j % 2) * 2.0 * bodySettings.bodyWidth / (bodySettings.legs / 2);
-        double y = BODY_POS_Y - bodySettings.bodyHeight - i * bodySettings.segmentHeight;
-        BodyDef legDef = new BodyDef();
-        legDef.position.set((float) x, (float) y);
-        legDef.type = BodyType.DYNAMIC;
-        Body legBody = world.createBody(legDef);
+    private void buildLeg(float x) {
+        ArrayList<Body> segments = new ArrayList<>();
+        for (int i = 0; i < bodySettings.segments; i++) {
+            Body segmentBody = buildSegment(x, BODY_POS_Y - bodySettings.bodyHeight - i * bodySettings.segmentHeight);
+            RevoluteJointDef jointDef = new RevoluteJointDef();
+            jointDef.type = JointType.REVOLUTE;
+            if (i == 0) {
+                jointDef.bodyA = mainBody;
+                jointDef.bodyB = segmentBody;
+                jointDef.localAnchorA.set(x, 0);
+                jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
+            } else {
+                jointDef.bodyA = segments.get(segments.size() - 1);
+                jointDef.bodyB = segmentBody;
+                jointDef.localAnchorA.set(0, -bodySettings.segmentHeight);
+                jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
+            }
+            RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
+            joint.enableMotor(true);
+            joint.setMaxMotorTorque(TORQUE);
+            jointList.add(joint);
+            segments.add(segmentBody);
+        }
+
+        //attach ball at the end of the leg
+        Body seg = segments.get(segments.size() - 1);
+        CircleShape ballShape = new CircleShape();
+        ballShape.m_radius = bodySettings.segmentWidth;
+        BodyDef ballDef = new BodyDef();
+        ballDef.position = seg.getPosition();
+        //ballDef.position.y -= 5f;//bodySettings.segmentHeight;
+        ballDef.type = BodyType.DYNAMIC;
+        Body ballBody = world.createBody(ballDef);
+        FixtureDef ballFixDef = new FixtureDef();
+        ballFixDef.density = bodySettings.density;
+        ballFixDef.shape = ballShape;
+        ballFixDef.filter.categoryBits = 2;
+        ballFixDef.filter.maskBits = 4;
+        ballBody.createFixture(ballFixDef);
+        WeldJointDef jdef = new WeldJointDef();
+        jdef.bodyA = seg;
+        jdef.bodyB = ballBody;
+        jdef.collideConnected = false;
+        jdef.type = JointType.WELD;
+        jdef.localAnchorA.set(0, -bodySettings.segmentHeight);
+        jdef.localAnchorB.set(0, 0);
+        world.createJoint(jdef);
+    }
+
+    private Body buildSegment(float x, float y) {
+        PolygonShape segmentShape = new PolygonShape();
+        segmentShape.setAsBox(bodySettings.segmentWidth, bodySettings.segmentHeight);
+        BodyDef segmentBodyDef = new BodyDef();
+        segmentBodyDef.position.set(x, y);
+        segmentBodyDef.type = BodyType.DYNAMIC;
+        Body segmentBody = world.createBody(segmentBodyDef);
         FixtureDef fixDef = new FixtureDef();
         fixDef.density = bodySettings.density;
-        fixDef.shape = legShape;
+        fixDef.shape = segmentShape;
         fixDef.filter.categoryBits = 2;
         fixDef.filter.maskBits = 4;
         fixDef.friction = 0.25f;
-        legBody.createFixture(fixDef);
-        segments[j][i] = legBody;
-
-        legList.add(legBody);
-
-        RevoluteJointDef jointDef = new RevoluteJointDef();
-        if (i == 0) {
-            jointDef.bodyA = mainBody;
-            jointDef.bodyB = legBody;
-            jointDef.type = JointType.REVOLUTE;
-            jointDef.localAnchorA.set((float) x, 0);
-            jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
-            joints[j][i] = (RevoluteJoint) world.createJoint(jointDef);
-            jointList.add(joints[j][i]);
-        } else {
-            jointDef.bodyA = segments[j][i - 1];
-            jointDef.bodyB = legBody;
-            jointDef.type = JointType.REVOLUTE;
-            jointDef.localAnchorA.set(0, -bodySettings.segmentHeight);
-            jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
-            joints[j][i] = (RevoluteJoint) world.createJoint(jointDef);
-            joints[j][i].enableMotor(true);
-            joints[j][i].setMaxMotorTorque(10000);
-            jointList.add(joints[j][i]);
-        }*/
+        segmentBody.createFixture(fixDef);
+        segmentList.add(segmentBody);
+        return segmentBody;
     }
 
     private void buildBaseFlat(World world) {
