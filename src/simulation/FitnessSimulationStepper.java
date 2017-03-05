@@ -51,7 +51,7 @@ public class FitnessSimulationStepper {
         }
         if (stepWorld) world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);
     }
-    
+
     //TODO to be removed?
     public Phenotype getPhenotype() {
         return phenotype;

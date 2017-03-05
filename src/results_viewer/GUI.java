@@ -181,10 +181,11 @@ public class GUI extends JFrame {
         //recreate the testbed panel
         TestbedModel testbedModel = new TestbedModel();
         testbedModel.getSettings().getSetting("Help").enabled = false;
-        if (this.testbedPanel != null) this.displayPanel.remove((Component) this.testbedPanel);
+        if (this.testbedPanel != null) this.displayPanel.remove(this.testbedPanel);
         this.testbedPanel = new TestPanelJ2D(testbedModel);
-        this.displayPanel.add((Component) testbedPanel);
         this.testbedPanel.setPreferredSize(new Dimension(TESTBED_WIDTH, TESTBED_HEIGHT));
+        this.testbedPanel.setSize(TESTBED_WIDTH, TESTBED_HEIGHT);
+        this.displayPanel.add(testbedPanel);
         displayPanel.revalidate();
         testbedModel.setDebugDraw(testbedPanel.getDebugDraw());
 

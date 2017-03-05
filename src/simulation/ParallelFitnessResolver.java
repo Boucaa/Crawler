@@ -23,7 +23,7 @@ public class ParallelFitnessResolver extends FitnessResolver {
         }
         markedGenotypes.parallelStream().forEach(genoPair -> {
             FitnessTest test = new FitnessTest(genoPair.getKey(), settings, genoPair.getValue());
-            results.add(new FitnessResult(test.compute().result, genoPair.getKey()));
+            results.add(new FitnessResult(test.compute().result, genoPair.getKey(), genoPair.getValue()));
         });
         return results;
     }
