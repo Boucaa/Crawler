@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class WorldBuilder {
 
-    public static final int TORQUE = 10000;
+    public static final int TORQUE = 5000;
     private final int BODY_POS_X = 0;
     private final float BODY_POS_Y = -8.2f;
     private final int FLAT_BASE_WIDTH = 200;

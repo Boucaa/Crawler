@@ -2,8 +2,13 @@ package simulation;
 
 import neat.Genotype;
 import neat.Util;
+import org.jbox2d.callbacks.ContactImpulse;
+import org.jbox2d.callbacks.ContactListener;
+import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.contacts.Contact;
 import worldbuilding.BodySettings;
 
 /**
@@ -31,17 +36,40 @@ public class FitnessTest implements Comparable<FitnessTest> {
     }
 
     public FitnessTest compute() {
+        final boolean[] failed = {false};
+        stepper.world.setContactListener(new ContactListener() {
+            @Override
+            public void beginContact(Contact contact) {
+                if ((contact.getFixtureA().getBody().getType() == BodyType.STATIC || contact.getFixtureB().getBody().getType() == BodyType.STATIC) && (stepper.robot.legs.contains(contact.getFixtureA().getBody()) || stepper.robot.legs.contains(contact.getFixtureB().getBody()))) {
+                    failed[0] = true;
+                }
+            }
+
+            @Override
+            public void endContact(Contact contact) {
+
+            }
+
+            @Override
+            public void preSolve(Contact contact, Manifold manifold) {
+
+            }
+
+            @Override
+            public void postSolve(Contact contact, ContactImpulse contactImpulse) {
+
+            }
+        });
         float maxX = 0f;
-        boolean failed = false;
         for (int i = 0; i < ITERATIONS + (LIMIT_HEIGHT ? CONFIRM_ITERATIONS : 0); i++) {
             stepper.step(true);
             if (stepper.robot.body.getPosition().x > maxX && i < ITERATIONS) maxX = stepper.robot.body.getPosition().x;
             if (LIMIT_HEIGHT && stepper.robot.legs.stream().anyMatch(leg -> leg.getPosition().y < HEIGHT_LIMIT)) {//&& stepper.robot.body.getPosition().y < -8.3) {
-                failed = true;
+                failed[0] = true;
                 break;
             }
         }
-        result = failed ? 0 : Math.max(maxX, 0.01);
+        result = failed[0] ? 0 : Math.max(maxX, 0.01);
         //free up memory ASAP
         world = null;
         System.gc();

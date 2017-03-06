@@ -21,7 +21,7 @@ public class FitnessSimulationStepper {
 
     private int framesElapsed = 0;
 
-    private World world;
+    public World world;
     Robot robot;
     public Genotype genotype;
     private Phenotype phenotype;
