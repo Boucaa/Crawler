@@ -37,9 +37,9 @@ public class Phenotype {
         }
     }
 
-    public double[] step(double[] inputs) {
+    public double[] step(ArrayList<Double> inputs) {
         for (int i = 0; i < this.inputs.size(); i++) {
-            this.inputs.get(i).currentValue = inputs[i];
+            this.inputs.get(i).currentValue = inputs.get(i);
         }
         for (int i = 0; i < hidden.size(); i++) {
             triggerNode(hidden.get(i));

@@ -86,7 +86,7 @@ public class WorldBuilder {
                 jointDef.bodyB = segmentBody;
                 jointDef.localAnchorA.set(0, -bodySettings.segmentHeight);
                 jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
-                jointDef.lowerAngle = -1;
+                jointDef.lowerAngle = -2.5f;
                 jointDef.upperAngle = 0;
             }
             RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);

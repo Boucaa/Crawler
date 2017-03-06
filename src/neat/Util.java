@@ -77,13 +77,6 @@ public class Util {
                 }
             }
         }
-
-        /*boolean[][] mat = getEdgeMatrix(g);
-        for (int i = 0; i < mat.length; i++) {
-            for (int j = 0; j < mat[0].length; j++) {
-                if (!mat[i][j]) list.add(new Pair<>(i, j));
-            }
-        }*/
         return list;
     }
 

@@ -6,6 +6,8 @@ import worldbuilding.BodySettings;
 import worldbuilding.WorldBuilder;
 import worldbuilding.WorldSettings;
 
+import java.util.ArrayList;
+
 /**
  * Created by colander on 1/18/17.
  * Class used to commit the actual steps (frames) of the simulation.
@@ -15,7 +17,6 @@ public class FitnessSimulationStepper {
     final int VEL_ITERATIONS = 8;
     final int POS_ITERATIONS = 3;
     final double SPEED_MULTIPLIER = 8;
-    final double ANGLE_LIMIT = 1.3;
     final int STARTUP_FRAMES = 30; //frames at the start when the robot is falling and is not allowed to move
 
     private int framesElapsed = 0;
@@ -35,14 +36,21 @@ public class FitnessSimulationStepper {
 
     void step(boolean stepWorld) {
         if (++framesElapsed > STARTUP_FRAMES) {
-            int extraInputs = 4; //1 for bias and 3 for body angle and position
-            double[] inputs = new double[robot.joints.size() + extraInputs];
-            inputs[0] = 1;
-            inputs[1] = robot.body.getAngle();
-            inputs[2] = robot.body.getPosition().x;
-            inputs[3] = robot.body.getPosition().y;
-            for (int j = extraInputs; j < inputs.length; j++) {
-                inputs[j] = robot.joints.get(j - extraInputs).getJointAngle();
+            ArrayList<Double> inputs = new ArrayList<>();
+            //int extraInputs = 4; //1 for bias and 3 for body angle and position
+            //double[] inputs = new double[robot.joints.size() + extraInputs];
+            inputs.add(1d);
+            inputs.add((double) (framesElapsed % 60));
+            inputs.add((double) robot.body.getAngle());
+            inputs.add((double) robot.body.getPosition().x);
+            inputs.add((double) robot.body.getPosition().y);
+            for (int j = 0; j < robot.joints.size(); j++) {
+                inputs.add((double) robot.joints.get(j).getJointAngle());
+            }
+            for (int i = 0; i < robot.legs.size(); i++) {
+                inputs.add((double) robot.legs.get(i).getPosition().x);
+                inputs.add((double) robot.legs.get(i).getPosition().y);
+                inputs.add((double) robot.legs.get(i).getAngle());
             }
             double[] outputs = getPhenotype().step(inputs);
             for (int j = 0; j < outputs.length; j++) {

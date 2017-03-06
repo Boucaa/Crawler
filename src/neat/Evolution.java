@@ -6,6 +6,7 @@ import results_viewer.FitnessFrame;
 import simulation.*;
 import worldbuilding.BodySettings;
 
+import javax.xml.soap.Node;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -19,23 +20,21 @@ public class Evolution {
     private final double DEFAULT_WEIGHT_RANGE = 4.5;
 
     //mutation chances
-    private final double MUTATE_ADD_NODE = 0.10;
-    private final double MUTATE_ADD_CONNECTION = 0.10;
-    private final double MUTATE_ENABLE_DISABLE = 0.05; //0
+    private final double MUTATE_ADD_NODE = 0.07;
+    private final double MUTATE_ADD_CONNECTION = 0.07;
+    private final double MUTATE_ENABLE_DISABLE = 0.0; //0
     private final double MUTATE_WEIGHT = 0.8; //the chance of mutating connection weights //0.8
     private final double MUTATE_WEIGHT_SMALL = 0.9; //if the connections are to be changed, this decides the small/random ratio
     private final double MUTATE_SINGLE_INSTEAD = 0.1; //chance of mutating only a single weight
 
     private final double MUTATE_SMALL_LIMIT = 0.05; //0.05
 
-    private final double COMPAT_1 = 2.0;
-    private final double COMPAT_2 = 1.0;
+    private final double COMPAT_1 = 1.8;
+    private final double COMPAT_2 = 0.9;
     private final double DELTA_T = 3.0;
 
     private final double CROSSOVER = 0.75;
     private final double KILL_OFF = 0.5;
-
-    private final double ELITISM = 0.1;
 
     private final double SPECIES_RESET_COUNTER = 15;
 
@@ -45,7 +44,7 @@ public class Evolution {
 
     private BodySettings bodySettings;
 
-    private int innovation = 1;
+    private int innovation = 0;
     private ArrayList<Genotype> generation = new ArrayList<>();
     private ArrayList<Species> species = new ArrayList<>();
 
@@ -60,26 +59,19 @@ public class Evolution {
     //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {
         this.bodySettings = bodySettings;
-        INPUT_NODES = bodySettings.legs * bodySettings.segments + 1 + 3;
+        INPUT_NODES = bodySettings.legs * bodySettings.segments + 1 + 1 + 3 + bodySettings.legs * bodySettings.segments * 3;
         OUTPUT_NODES = bodySettings.legs * bodySettings.segments;
 
+        ArrayList<NodeGene> defaultNodes = new ArrayList<>();
+        for (int i = 0; i < INPUT_NODES; i++) {
+            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_INPUT));
+        }
+        for (int i = 0; i < OUTPUT_NODES; i++) {
+            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_OUTPUT));
+        }
+        Genotype prototype = new Genotype(defaultNodes, new ArrayList<>(), bodySettings);
         for (int i = 0; i < GENERATION_SIZE; i++) {
-            generation.add(new Genotype(new ArrayList<>(), new ArrayList<>(), bodySettings));
-        }
-        for (int i = 0; i < GENERATION_SIZE; i++) {
-            generation.get(i).nodeGenes.add(new NodeGene(0, NodeGene.TYPE_INPUT));
-        }
-        for (int j = 0; j < INPUT_NODES - 1; j++) {
-            for (int i = 0; i < GENERATION_SIZE; i++) {
-                generation.get(i).nodeGenes.add(new NodeGene(innovation, NodeGene.TYPE_INPUT));
-            }
-            innovation++;
-        }
-        for (int j = 0; j < OUTPUT_NODES; j++) {
-            for (int i = 0; i < GENERATION_SIZE; i++) {
-                generation.get(i).nodeGenes.add(new NodeGene(innovation, NodeGene.TYPE_OUTPUT));
-            }
-            innovation++;
+            generation.add(Util.copyGenotype(prototype));
         }
     }
 
