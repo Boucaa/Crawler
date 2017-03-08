@@ -181,11 +181,11 @@ public class GUI extends JFrame {
         //recreate the testbed panel
         TestbedModel testbedModel = new TestbedModel();
         testbedModel.getSettings().getSetting("Help").enabled = false;
-        if (this.testbedPanel != null) this.displayPanel.remove(this.testbedPanel);
+        this.displayPanel.removeAll();
         this.testbedPanel = new TestPanelJ2D(testbedModel);
         this.testbedPanel.setPreferredSize(new Dimension(TESTBED_WIDTH, TESTBED_HEIGHT));
         this.testbedPanel.setSize(TESTBED_WIDTH, TESTBED_HEIGHT);
-        this.displayPanel.add(testbedPanel);
+        this.displayPanel.add(testbedPanel, BorderLayout.NORTH);
         displayPanel.revalidate();
         testbedModel.setDebugDraw(testbedPanel.getDebugDraw());
 
@@ -196,7 +196,8 @@ public class GUI extends JFrame {
             String genotypeText = fileText.substring(fileText.indexOf("\n"));
             Genotype genotype = new Genotype(genotypeText);
             FitnessResult fitnessResult = new FitnessResult(fitness, genotype);
-            testbedModel.addTest(new TestbedFitnessTest(fitnessResult.genotype, fitnessResult.genotype.bodySettings, fitnessResult.result));
+            TestbedFitnessTest test = new TestbedFitnessTest(fitnessResult.genotype, fitnessResult.genotype.bodySettings, fitnessResult.result);
+            testbedModel.addTest(test);
         }
         FixedController controller = new FixedController(testbedModel, testbedPanel, TestbedController.UpdateBehavior.UPDATE_CALLED);
         controller.start(++id);

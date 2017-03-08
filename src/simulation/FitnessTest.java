@@ -37,29 +37,31 @@ public class FitnessTest implements Comparable<FitnessTest> {
 
     public FitnessTest compute() {
         final boolean[] failed = {false};
-        stepper.world.setContactListener(new ContactListener() {
-            @Override
-            public void beginContact(Contact contact) {
-                if ((contact.getFixtureA().getBody().getType() == BodyType.STATIC || contact.getFixtureB().getBody().getType() == BodyType.STATIC) && (stepper.robot.legs.contains(contact.getFixtureA().getBody()) || stepper.robot.legs.contains(contact.getFixtureB().getBody()))) {
-                    failed[0] = true;
+        if (LIMIT_HEIGHT) {
+            stepper.world.setContactListener(new ContactListener() {
+                @Override
+                public void beginContact(Contact contact) {
+                    if ((contact.getFixtureA().getBody().getType() == BodyType.STATIC || contact.getFixtureB().getBody().getType() == BodyType.STATIC) && (stepper.robot.legs.contains(contact.getFixtureA().getBody()) || stepper.robot.legs.contains(contact.getFixtureB().getBody()))) {
+                        failed[0] = true;
+                    }
                 }
-            }
 
-            @Override
-            public void endContact(Contact contact) {
+                @Override
+                public void endContact(Contact contact) {
 
-            }
+                }
 
-            @Override
-            public void preSolve(Contact contact, Manifold manifold) {
+                @Override
+                public void preSolve(Contact contact, Manifold manifold) {
 
-            }
+                }
 
-            @Override
-            public void postSolve(Contact contact, ContactImpulse contactImpulse) {
+                @Override
+                public void postSolve(Contact contact, ContactImpulse contactImpulse) {
 
-            }
-        });
+                }
+            });
+        }
         float maxX = 0f;
         for (int i = 0; i < ITERATIONS + (LIMIT_HEIGHT ? CONFIRM_ITERATIONS : 0); i++) {
             stepper.step(true);

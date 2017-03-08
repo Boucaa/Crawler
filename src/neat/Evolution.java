@@ -149,10 +149,12 @@ public class Evolution {
             sum += spec.avgFitness;
         }
 
+
         //BREEDING
         logger.log("breeding");
         ArrayList<Genotype> children = new ArrayList<>();
         ArrayList<Genotype> noMutateChildren = new ArrayList<>();
+        species.forEach(s -> s.genotypes.sort(Comparator.comparingDouble(Pair::getValue)));
 
         for (int i = 0; i < species.size(); i++) {
             if (species.get(i).avgFitness == -1) {
@@ -168,7 +170,7 @@ public class Evolution {
             //breed the next generation
             int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 /*- ELITISM*/)) - 1;
             if (sum == 0) toBreed = GENERATION_SIZE / species.size();
-            logger.log("species #" + i + ": breeding " + toBreed);
+            logger.log("species #" + i + ": " + "avg: " + species.get(i).avgFitness + " breeding " + toBreed);
             if (toBreed >= 0) {
                 noMutateChildren.add(Util.copyGenotype(species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey()));
             }
