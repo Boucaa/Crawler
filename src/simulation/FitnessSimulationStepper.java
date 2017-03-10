@@ -40,7 +40,7 @@ public class FitnessSimulationStepper {
             //int extraInputs = 4; //1 for bias and 3 for body angle and position
             //double[] inputs = new double[robot.joints.size() + extraInputs];
             inputs.add(1d);
-            inputs.add((double) (framesElapsed % 60));
+            inputs.add((double) (framesElapsed));
             inputs.add((double) robot.body.getAngle());
             inputs.add((double) robot.body.getPosition().x);
             inputs.add((double) robot.body.getPosition().y);

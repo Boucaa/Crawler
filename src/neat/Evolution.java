@@ -64,10 +64,10 @@ public class Evolution {
 
         ArrayList<NodeGene> defaultNodes = new ArrayList<>();
         for (int i = 0; i < INPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_INPUT));
+            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_INPUT, 0));
         }
         for (int i = 0; i < OUTPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_OUTPUT));
+            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_OUTPUT, random.nextInt(NodeGene.NO_FUNCTIONS)));
         }
         Genotype prototype = new Genotype(defaultNodes, new ArrayList<>(), bodySettings);
         for (int i = 0; i < GENERATION_SIZE; i++) {
@@ -262,7 +262,7 @@ public class Evolution {
     private void mutateSplitConnection(Genotype g) {
         ConnectionGene toSplit = g.connectionGenes.get(random.nextInt(g.connectionGenes.size()));
         int nodeInnov = ++innovation;
-        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN));
+        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, g.nodeGenes.stream().filter(gene -> gene.innov == toSplit.in).findFirst().get().activateFunction));
         g.connectionGenes.add(new ConnectionGene(toSplit.in, nodeInnov, 1.0, true, ++innovation));
         g.connectionGenes.add(new ConnectionGene(nodeInnov, toSplit.out, toSplit.weight, true, ++innovation));
         toSplit.active = false;
@@ -280,6 +280,10 @@ public class Evolution {
 
     private void mutateWeightRandom(ConnectionGene connectionGene) {
         connectionGene.weight = random.nextDouble() * 2 * DEFAULT_WEIGHT_RANGE - DEFAULT_WEIGHT_RANGE;
+    }
+
+    private void mutateFunction(Genotype g) {//TODO: do not trigger on inputs
+        g.nodeGenes.get(random.nextInt(g.nodeGenes.size() - 1)).activateFunction = NodeGene.NO_FUNCTIONS;
     }
 
     //genotype a is the fitter one (decides disjoint and excess genes)

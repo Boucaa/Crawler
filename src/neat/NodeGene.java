@@ -6,13 +6,23 @@ package neat;
 public class NodeGene {
     public final int innov;
     public final int type;
+    public int activateFunction;
 
     public final static int TYPE_INPUT = 0;
     public final static int TYPE_OUTPUT = 1;
     public final static int TYPE_HIDDEN = 2;
 
-    NodeGene(int innov, int type) {
+    public final static int FUNCTION_SIGMOID = 0;
+    public final static int FUNCTION_SIN = 1;
+    public final static int FUNCTION_COS = 2;
+    public final static int FUNCTION_LINEAR = 3;
+    public final static int FUNCTION_ABS = 4;
+
+    public final static int NO_FUNCTIONS = 5;
+
+    NodeGene(int innov, int type, int activateFunction) {
         this.innov = innov;
         this.type = type;
+        this.activateFunction = activateFunction;
     }
 }

@@ -25,7 +25,7 @@ public class Genotype {
         StringBuilder sb = new StringBuilder();
         sb.append(nodeGenes.size()).append(" ").append(connectionGenes.size()).append("\n");
         for (int i = 0; i < nodeGenes.size(); i++) {
-            sb.append(nodeGenes.get(i).innov).append(" ").append(nodeGenes.get(i).type).append("\n");
+            sb.append(nodeGenes.get(i).innov).append(" ").append(nodeGenes.get(i).type).append(" ").append(nodeGenes.get(i).activateFunction).append("\n");
         }
         for (int i = 0; i < connectionGenes.size(); i++) {
             ConnectionGene gene = connectionGenes.get(i);
@@ -43,7 +43,7 @@ public class Genotype {
         int connections = scanner.nextInt();
 
         for (int i = 0; i < nodes; i++) {
-            nodeGenes.add(new NodeGene(scanner.nextInt(), scanner.nextInt()));
+            nodeGenes.add(new NodeGene(scanner.nextInt(), scanner.nextInt(), scanner.nextInt()));
         }
         for (int i = 0; i < connections; i++) {
             connectionGenes.add(new ConnectionGene(scanner.nextInt(), scanner.nextInt(), scanner.nextDouble(), scanner.nextBoolean(), scanner.nextInt()));

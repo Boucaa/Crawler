@@ -80,7 +80,7 @@ public class WorldBuilder {
                 jointDef.localAnchorA.set(x, 0);
                 jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
                 jointDef.lowerAngle = -1;
-                jointDef.upperAngle = (float) Math.PI;
+                jointDef.upperAngle = (float) Math.PI/2;
             } else {
                 jointDef.bodyA = segments.get(segments.size() - 1);
                 jointDef.bodyB = segmentBody;

@@ -10,10 +10,12 @@ public class NetworkNode {
     final int innov;
     ArrayList<NetworkNode> inputs = new ArrayList<>();
     ArrayList<Double> inputWeights = new ArrayList<>();
+    int activationFunction;
 
     double currentValue = 0;
 
-    NetworkNode(int innov) {
+    NetworkNode(int innov, int activationFunction) {
         this.innov = innov;
+        this.activationFunction = activationFunction;
     }
 }

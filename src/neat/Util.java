@@ -85,7 +85,7 @@ public class Util {
     }
 
     public static NodeGene copyNode(NodeGene nodeGene) {
-        return new NodeGene(nodeGene.innov, nodeGene.type);
+        return new NodeGene(nodeGene.innov, nodeGene.type, nodeGene.activateFunction);
     }
 
     public static Genotype copyGenotype(Genotype g) {

@@ -22,7 +22,7 @@ public class Phenotype {
     public Phenotype(Genotype g) {
         for (int i = 0; i < g.nodeGenes.size(); i++) {
             int nodeInnov = g.nodeGenes.get(i).innov;
-            NetworkNode node = new NetworkNode(nodeInnov);
+            NetworkNode node = new NetworkNode(nodeInnov, g.nodeGenes.get(i).activateFunction);
             nodesByInnov.put(nodeInnov, node);
             network.add(node);
             if (g.nodeGenes.get(i).type == NodeGene.TYPE_INPUT) inputs.add(node);
@@ -58,10 +58,28 @@ public class Phenotype {
         for (int i = 0; i < node.inputs.size(); i++) {
             sum += node.inputs.get(i).currentValue * node.inputWeights.get(i);
         }
-        node.currentValue = sigmoid(sum);
-    }
 
-    public double sigmoid(double sum) {
-        return 1 / (1 + Math.exp(-4.9 * sum)) - 0.5; //see PAPER/4.1
+        switch (node.activationFunction) {
+            case NodeGene.FUNCTION_SIGMOID:
+                node.currentValue = ActivationFunctions.sigmoid(sum);
+                break;
+            case NodeGene.FUNCTION_SIN:
+                node.currentValue = ActivationFunctions.sin(sum);
+                break;
+            case NodeGene.FUNCTION_COS:
+                node.currentValue = ActivationFunctions.cos(sum);
+                break;
+            case NodeGene.FUNCTION_LINEAR:
+                node.currentValue = ActivationFunctions.linear(sum);
+                break;
+            case NodeGene.FUNCTION_ABS:
+                node.currentValue = ActivationFunctions.abs(sum);
+                break;
+
+            default:
+                System.err.println("WRONG ACTIVATION FUNCTION VALUE");
+                System.exit(1);
+                break;
+        }
     }
 }
