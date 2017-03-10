@@ -26,6 +26,7 @@ public class Evolution {
     private final double MUTATE_WEIGHT = 0.8; //the chance of mutating connection weights //0.8
     private final double MUTATE_WEIGHT_SMALL = 0.9; //if the connections are to be changed, this decides the small/random ratio
     private final double MUTATE_SINGLE_INSTEAD = 0.1; //chance of mutating only a single weight
+    private final double MUTATE_FUNCTION = 0.07;
 
     private final double MUTATE_SMALL_LIMIT = 0.05; //0.05
 
@@ -207,6 +208,9 @@ public class Evolution {
                     }
                 }
             }
+            if (random.nextDouble() < MUTATE_FUNCTION) {
+                mutateFunction(children.get(i));
+            }
         }
 
         children.addAll(noMutateChildren);
@@ -283,7 +287,7 @@ public class Evolution {
     }
 
     private void mutateFunction(Genotype g) {//TODO: do not trigger on inputs
-        g.nodeGenes.get(random.nextInt(g.nodeGenes.size() - 1)).activateFunction = NodeGene.NO_FUNCTIONS;
+        g.nodeGenes.get(random.nextInt(g.nodeGenes.size() - 1)).activateFunction = random.nextInt(NodeGene.NO_FUNCTIONS);
     }
 
     //genotype a is the fitter one (decides disjoint and excess genes)
