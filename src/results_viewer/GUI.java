@@ -12,7 +12,9 @@ import simulation.TestbedFitnessTest;
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Arrays;
+import java.util.Scanner;
 import java.util.TimerTask;
 
 /**
@@ -136,10 +138,10 @@ public class GUI extends JFrame {
         }
         if (runSelectList.getSelectedIndex() == -1) return;
         File selectedRunFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(runSelectList.getSelectedIndex()));
-        File[] genFolders = selectedRunFolder.listFiles();
-        Arrays.sort(genFolders);
-        for (int i = generationSelectModel.size(); generationSelectModel.size() < genFolders.length - 1; i++) { //-1 to compensate for the evolution.log file
-            generationSelectModel.addElement(genFolders[i].getName());
+        File[] genFiles = selectedRunFolder.listFiles();
+        Arrays.sort(genFiles);
+        for (int i = generationSelectModel.size(); generationSelectModel.size() < genFiles.length - 1; i++) { //-1 to compensate for the evolution.log file
+            generationSelectModel.addElement(genFiles[i].getName());
         }
     }
 
@@ -164,16 +166,8 @@ public class GUI extends JFrame {
     private void selectGeneration(int index) {
         genotypeSelectModel.clear();
         if (generationSelectModel.isEmpty() || index < 0) return;
-        File genFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(runSelectList.getSelectedIndex()) + "/" + generationSelectModel.get(index));
+        File genFile = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(runSelectList.getSelectedIndex()) + "/" + generationSelectModel.get(index));
         DefaultListModel newJListModel = new DefaultListModel();
-        File[] gtpFiles = genFolder.listFiles();
-        if (gtpFiles == null) return;
-        Arrays.sort(gtpFiles);
-        for (int i = 0; i < gtpFiles.length; i++) {
-            newJListModel.addElement(gtpFiles[i].getName());
-        }
-        genotypeSelectList.setModel(newJListModel);
-        genotypeSelectModel = newJListModel;
 
         //stop the current test
         if (this.controller != null) this.controller.stop();
@@ -189,26 +183,32 @@ public class GUI extends JFrame {
         displayPanel.revalidate();
         testbedModel.setDebugDraw(testbedPanel.getDebugDraw());
 
+        Scanner sc = null;
+        try {
+            sc = new Scanner(genFile.getAbsoluteFile());
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
         //load the genotypes and add the tests to the testbed
-        for (File file : gtpFiles) {
-            String fileText = IOHandler.readFile(file.getAbsolutePath());
-            double fitness = Double.parseDouble(fileText.substring(0, fileText.indexOf("\n")));
-            String genotypeText = fileText.substring(fileText.indexOf("\n"));
-            Genotype genotype = new Genotype(genotypeText);
+        int i = 0;
+        while (sc.hasNext()) {
+            newJListModel.addElement(i++ + "");
+            double fitness = sc.nextDouble();
+            Genotype genotype = new Genotype(sc);
             FitnessResult fitnessResult = new FitnessResult(fitness, genotype);
             TestbedFitnessTest test = new TestbedFitnessTest(fitnessResult.genotype, fitnessResult.genotype.bodySettings, fitnessResult.result);
             testbedModel.addTest(test);
         }
+        genotypeSelectList.setModel(newJListModel);
         FixedController controller = new FixedController(testbedModel, testbedPanel, TestbedController.UpdateBehavior.UPDATE_CALLED);
         controller.start(++id);
         controller.playTest(0);
         this.controller = controller;
-
     }
 
     //when changing the tests rapidly, this does sometimes yield a NullPointerExcepiton, because of a race condition bug in the JBox2D TestbedTest
     private void selectGenotype(int index) {
-        if (index < 0 || genotypeSelectModel.size() == 0 || this.controller == null) return;
+        if (index < 0 || this.genotypeSelectList.getModel().getSize() == 0 || this.controller == null) return;
         this.controller.playTest(index);
     }
 }

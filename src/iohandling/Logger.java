@@ -32,11 +32,13 @@ public class Logger {
 
     public void logGeneration(ArrayList<FitnessResult> results, int generationNo) {
         Collections.reverse(results); //reverse, so that the first genotype has the highest fitness
-        String genFolder = runDir + "/" + String.format("%04d", generationNo);
-        IOHandler.createDirectory(genFolder);
+        //String genFolder = runDir + "/" + String.format("%04d", generationNo);
+        //IOHandler.createDirectory(genFolder);
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < results.size(); i++) {
-            IOHandler.writeFile(genFolder + "/" + String.format("%02d", i) + ".gtp", results.get(i).result + "\n" + results.get(i).genotype.serialize());
+            sb.append(results.get(i).result + "\n" + results.get(i).genotype.serialize() + "\n");
         }
+        IOHandler.writeFile(runDir + "/" + String.format("%04d", generationNo) + ".gen", sb.toString());
     }
 
     public void log(String message) {

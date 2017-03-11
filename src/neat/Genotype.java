@@ -48,8 +48,25 @@ public class Genotype {
         for (int i = 0; i < connections; i++) {
             connectionGenes.add(new ConnectionGene(scanner.nextInt(), scanner.nextInt(), scanner.nextDouble(), scanner.nextBoolean(), scanner.nextInt()));
         }
-        //use the rest of the serialized string to load the BodySettings
-        scanner.useDelimiter("\\Z");
-        this.bodySettings = new BodySettings(scanner.next());
+        scanner.nextLine();
+        this.bodySettings = new BodySettings(scanner.nextLine());
+    }
+
+    //the following constructor is just a modified version of the one above,
+    //the only difference is that it reads from a scanner which may contain multiple genotypes
+    public Genotype(Scanner scanner) {
+        this.nodeGenes = new ArrayList<>();
+        this.connectionGenes = new ArrayList<>();
+        int nodes = scanner.nextInt();
+        int connections = scanner.nextInt();
+
+        for (int i = 0; i < nodes; i++) {
+            nodeGenes.add(new NodeGene(scanner.nextInt(), scanner.nextInt(), scanner.nextInt()));
+        }
+        for (int i = 0; i < connections; i++) {
+            connectionGenes.add(new ConnectionGene(scanner.nextInt(), scanner.nextInt(), scanner.nextDouble(), scanner.nextBoolean(), scanner.nextInt()));
+        }
+        scanner.nextLine();
+        this.bodySettings = new BodySettings(scanner.nextLine());
     }
 }
