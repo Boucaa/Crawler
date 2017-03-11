@@ -17,7 +17,7 @@ import worldbuilding.BodySettings;
  */
 public class FitnessTest implements Comparable<FitnessTest> {
     public static final double HEIGHT_LIMIT = -13.0;
-    final int ITERATIONS = 3000;
+    final int ITERATIONS = 10000;
     final int CONFIRM_ITERATIONS = 1500;
     final private boolean LIMIT_HEIGHT = true;
 

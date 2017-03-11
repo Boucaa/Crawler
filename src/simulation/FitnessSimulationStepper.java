@@ -54,7 +54,7 @@ public class FitnessSimulationStepper {
             }
             double[] outputs = getPhenotype().step(inputs);
             for (int j = 0; j < outputs.length; j++) {
-                robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER));
+                robot.joints.get(j).setMotorSpeed((float) (outputs[j] * SPEED_MULTIPLIER - robot.joints.get(j).getJointAngle() * 6));
             }
         }
         if (stepWorld) world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);

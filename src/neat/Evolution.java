@@ -2,11 +2,9 @@ package neat;
 
 import iohandling.Logger;
 import javafx.util.Pair;
-import results_viewer.FitnessFrame;
 import simulation.*;
 import worldbuilding.BodySettings;
 
-import javax.xml.soap.Node;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -31,10 +29,11 @@ public class Evolution {
     private final double MUTATE_SMALL_LIMIT = 0.05; //0.05
 
     private final double COMPAT_1 = 1.8;
-    private final double COMPAT_2 = 0.9;
+    private final double COMPAT_2 = 0.7;
     private final double DELTA_T = 3.0;
 
     private final double CROSSOVER = 0.75;
+    private final double INHERIT_FUNC_FROM_WEAKER = 0.25;
     private final double KILL_OFF = 0.5;
 
     private final double SPECIES_RESET_COUNTER = 15;
@@ -55,8 +54,6 @@ public class Evolution {
 
     private Logger logger = new Logger();
 
-    private final boolean DEBUG_DISPLAY = false;
-
     //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {
         this.bodySettings = bodySettings;
@@ -68,12 +65,13 @@ public class Evolution {
             defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_INPUT, 0));
         }
         for (int i = 0; i < OUTPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_OUTPUT, random.nextInt(NodeGene.NO_FUNCTIONS)));
+            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_OUTPUT, -1));
         }
         Genotype prototype = new Genotype(defaultNodes, new ArrayList<>(), bodySettings);
         for (int i = 0; i < GENERATION_SIZE; i++) {
             generation.add(Util.copyGenotype(prototype));
         }
+        generation.forEach(genotype -> genotype.nodeGenes.stream().filter(n -> n.type != NodeGene.TYPE_HIDDEN).forEach(n -> n.activateFunction = random.nextInt(NodeGene.NO_FUNCTIONS)));
     }
 
     public void run() {
@@ -95,10 +93,6 @@ public class Evolution {
 
         if (fitnesses.get(fitnesses.size() - 1).result > best) {
             best = fitnesses.get(fitnesses.size() - 1).result;
-            //display new best genotype fitness test, only for debug purposes - to be removed
-            if (DEBUG_DISPLAY) {
-                new FitnessFrame(fitnesses.get(fitnesses.size() - 1));
-            }
         }
 
         //SPECIATION
@@ -179,8 +173,16 @@ public class Evolution {
                 if (random.nextDouble() > CROSSOVER) {
                     children.add(Util.copyGenotype(species.get(i).genotypes.get(random.nextInt(species.get(i).genotypes.size())).getKey()));
                 } else {
-                    Genotype a = species.get(i).genotypes.get(random.nextInt(species.get(i).genotypes.size())).getKey();
-                    Genotype b = species.get(i).genotypes.get(random.nextInt(species.get(i).genotypes.size())).getKey();
+                    int indexA = random.nextInt(species.get(i).genotypes.size());
+                    int indexB = random.nextInt(species.get(i).genotypes.size());
+                    if (species.get(i).genotypes.get(indexA).getValue() < species.get(i).genotypes.get(indexB).getValue()) {
+                        int temp = indexA;
+                        indexA = indexB;
+                        indexB = temp;
+                    }
+                    Genotype a = species.get(i).genotypes.get(indexA).getKey();
+                    Genotype b = species.get(i).genotypes.get(indexB).getKey();
+
                     children.add(crossOver(a, b));
                 }
             }
