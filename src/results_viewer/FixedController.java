@@ -90,6 +90,9 @@ public class FixedController implements Runnable {
             public void keyReleased(KeyEvent e) {
                 char key = e.getKeyChar();
                 int code = e.getKeyCode();
+                if (code >= 512) {
+                    return;
+                }
                 if (key != '\uffff') {
                     FixedController.this.model.getKeys()[key] = false;
                 }
