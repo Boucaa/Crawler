@@ -59,8 +59,9 @@ public class WorldBuilder {
         mainBody.createFixture(mainBodyFixtureDef);
         //body.createFixture(bodyShape, 5.0f);
 
-        for (int i = 0; i < bodySettings.legs; i++) {
-            double x = BODY_POS_X - bodySettings.bodyWidth + (i - i % 2) * 2.0 * bodySettings.bodyWidth / (bodySettings.legs / 2);
+        for (int i = 0; i < bodySettings.legs / 2; i++) {
+            double x = BODY_POS_X - bodySettings.bodyWidth + (i / ((bodySettings.legs / 2.0) - 1)) * 2 * bodySettings.bodyWidth;
+            buildLeg((float) x);
             buildLeg((float) x);
         }
 
@@ -79,15 +80,15 @@ public class WorldBuilder {
                 jointDef.bodyB = segmentBody;
                 jointDef.localAnchorA.set(x, 0);
                 jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
-                jointDef.lowerAngle = -1;
-                jointDef.upperAngle = (float) Math.PI/2;
+                jointDef.lowerAngle = (float) -Math.PI / 2;
+                jointDef.upperAngle = (float) Math.PI / 2;
             } else {
                 jointDef.bodyA = segments.get(segments.size() - 1);
                 jointDef.bodyB = segmentBody;
                 jointDef.localAnchorA.set(0, -bodySettings.segmentHeight);
                 jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
                 jointDef.lowerAngle = -2.5f;
-                jointDef.upperAngle = 0;
+                jointDef.upperAngle = 2.5f;
             }
             RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
             joint.enableMotor(true);
