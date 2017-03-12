@@ -32,8 +32,8 @@ public class Evolution {
     private final double COMPAT_2 = 0.7;
     private final double DELTA_T = 3.0;
 
-    private final double CROSSOVER = 0.75;
-    private final double INHERIT_FUNC_FROM_WEAKER = 0.25;
+    private final double CROSSOVER = 0.15;
+    private final double INHERIT_FUNC_FROM_WEAKER = 0.25; //TODO: implement
     private final double KILL_OFF = 0.5;
 
     private final double SPECIES_RESET_COUNTER = 15;
@@ -62,16 +62,16 @@ public class Evolution {
 
         ArrayList<NodeGene> defaultNodes = new ArrayList<>();
         for (int i = 0; i < INPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_INPUT, 0));
+            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_INPUT, -1));
         }
         for (int i = 0; i < OUTPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_OUTPUT, -1));
+            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_OUTPUT, 0));
         }
         Genotype prototype = new Genotype(defaultNodes, new ArrayList<>(), bodySettings);
         for (int i = 0; i < GENERATION_SIZE; i++) {
             generation.add(Util.copyGenotype(prototype));
         }
-        generation.forEach(genotype -> genotype.nodeGenes.stream().filter(n -> n.type != NodeGene.TYPE_HIDDEN).forEach(n -> n.activateFunction = random.nextInt(NodeGene.NO_FUNCTIONS)));
+        //generation.forEach(genotype -> genotype.nodeGenes.stream().filter(n -> n.type != NodeGene.TYPE_HIDDEN).forEach(n -> n.activateFunction = random.nextInt(NodeGene.NO_FUNCTIONS)));
     }
 
     public void run() {
@@ -156,19 +156,21 @@ public class Evolution {
                 noMutateChildren.add(Util.copyGenotype(species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey()));
                 continue;
             }
+
+            //breed the next generation
+            int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 /*- ELITISM*/)) - 1; //TODO: FIX?
+            if (sum == 0) toBreed = GENERATION_SIZE / species.size();
+            logger.log("species #" + i + ": avg " + String.format("%.4f", species.get(i).avgFitness) + ", breeding " + toBreed + "/" + species.get(i).genotypes.size());
+            if (toBreed >= 0) {
+                noMutateChildren.add(Util.copyGenotype(species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey()));
+            }
+
             //kill off the weak members
             int targetSize = Math.max((int) (species.get(i).genotypes.size() * KILL_OFF), 1);
             while (species.get(i).genotypes.size() > targetSize) {
                 species.get(i).genotypes.remove(0);
             }
 
-            //breed the next generation
-            int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 /*- ELITISM*/)) - 1;
-            if (sum == 0) toBreed = GENERATION_SIZE / species.size();
-            logger.log("species #" + i + ": " + "avg: " + species.get(i).avgFitness + " breeding " + toBreed);
-            if (toBreed >= 0) {
-                noMutateChildren.add(Util.copyGenotype(species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey()));
-            }
             for (int j = 0; j < toBreed; j++) {
                 if (random.nextDouble() > CROSSOVER) {
                     children.add(Util.copyGenotype(species.get(i).genotypes.get(random.nextInt(species.get(i).genotypes.size())).getKey()));
@@ -250,13 +252,7 @@ public class Evolution {
         //retrieves the list of all non-edges to choose from
         ArrayList<Pair<Integer, Integer>> nonEdgeList = Util.getNonEdgeList(g);
         //remove all non-edges leading to an input
-        Iterator<Pair<Integer, Integer>> it = nonEdgeList.iterator();
-        while (it.hasNext()) {
-            Pair<Integer, Integer> cur = it.next();
-            if (cur.getValue() < INPUT_NODES || cur.getKey() < INPUT_NODES + OUTPUT_NODES && cur.getKey() >= INPUT_NODES)
-                it.remove();
-
-        }
+        nonEdgeList.removeIf(cur -> cur.getValue() < INPUT_NODES || (cur.getKey() < INPUT_NODES + OUTPUT_NODES && cur.getKey() >= INPUT_NODES));
         if (nonEdgeList.size() == 0) {
             logger.log("NON EDGE LIST EMPTY\n" + g.serialize()); //just for debug purposes
             return;
@@ -268,7 +264,7 @@ public class Evolution {
     private void mutateSplitConnection(Genotype g) {
         ConnectionGene toSplit = g.connectionGenes.get(random.nextInt(g.connectionGenes.size()));
         int nodeInnov = ++innovation;
-        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, g.nodeGenes.stream().filter(gene -> gene.innov == toSplit.in).findFirst().get().activateFunction));
+        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, NodeGene.FUNCTION_LINEAR));//g.nodeGenes.stream().filter(gene -> gene.innov == toSplit.in).findFirst().get().activateFunction));
         g.connectionGenes.add(new ConnectionGene(toSplit.in, nodeInnov, 1.0, true, ++innovation));
         g.connectionGenes.add(new ConnectionGene(nodeInnov, toSplit.out, toSplit.weight, true, ++innovation));
         toSplit.active = false;
@@ -288,8 +284,10 @@ public class Evolution {
         connectionGene.weight = random.nextDouble() * 2 * DEFAULT_WEIGHT_RANGE - DEFAULT_WEIGHT_RANGE;
     }
 
-    private void mutateFunction(Genotype g) {//TODO: do not trigger on inputs
-        g.nodeGenes.get(random.nextInt(g.nodeGenes.size() - 1)).activateFunction = random.nextInt(NodeGene.NO_FUNCTIONS);
+    private void mutateFunction(Genotype g) {
+        ArrayList<NodeGene> genes = g.nodeGenes.stream().filter(gene -> gene.type == NodeGene.TYPE_HIDDEN).collect(Collectors.toCollection(ArrayList::new));
+        if (genes.size() == 0) return;
+        genes.get(random.nextInt(genes.size())).activateFunction = random.nextInt(NodeGene.NO_FUNCTIONS);
     }
 
     //genotype a is the fitter one (decides disjoint and excess genes)
