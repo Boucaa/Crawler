@@ -13,6 +13,7 @@ class NetworkNode {
     int activationFunction;
 
     double currentValue = 0;
+    boolean triggered = false;
 
     NetworkNode(int innov, int activationFunction) {
         this.innov = innov;

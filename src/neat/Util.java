@@ -1,9 +1,13 @@
+
 package neat;
 
 import javafx.util.Pair;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.stream.Collectors;
 
 /**
  * Created by colander on 1/3/17.
@@ -51,34 +55,51 @@ public class Util {
         return mat;
     }
 
-    static ArrayList<Pair<Integer, Integer>> getNonEdgeList(Genotype g) {
-        //create an edge "matrix" for the connection graph
-        HashMap<Integer, HashMap<Integer, Boolean>> map = new HashMap<>();
-        for (int i = 0; i < g.nodeGenes.size(); i++) {
-            int innov = g.nodeGenes.get(i).innov;
-            HashMap<Integer, Boolean> record = new HashMap<>();
-            for (int j = 0; j < g.nodeGenes.size(); j++) {
-                record.put(g.nodeGenes.get(j).innov, false);
+    private static HashMap<Pair<Integer, Integer>, Boolean> generateEdgeMatrix(Genotype g) {
+        HashMap<Pair<Integer, Integer>, Boolean> map = new HashMap<>();
+        for (NodeGene gene1 : g.nodeGenes) {
+            for (NodeGene gene2 : g.nodeGenes) {
+                map.put(new Pair<>(gene1.innov, gene2.innov), false);
             }
-            map.put(innov, record);
         }
 
-        //fill the "matrix" with existing edges
-        for (int i = 0; i < g.connectionGenes.size(); i++) {
-            ConnectionGene con = g.connectionGenes.get(i);
-            map.get(con.in).put(con.out, true);
+        for (ConnectionGene gene : g.connectionGenes) {
+            map.replace(new Pair<>(gene.in, gene.out), true);
         }
+        return map;
+    }
+
+    static ArrayList<Pair<Integer, Integer>> getNonEdgeList(Genotype g) {
+        //create an edge "matrix" for the connection graph
+        HashMap<Pair<Integer, Integer>, Boolean> map = generateEdgeMatrix(g);
 
         //convert the "matrix" to a list
         ArrayList<Pair<Integer, Integer>> list = new ArrayList<>();
-        for (int i = 0; i < g.nodeGenes.size(); i++) {
-            for (int j = 0; j < g.nodeGenes.size(); j++) {
-                if (!map.get(g.nodeGenes.get(i).innov).get(g.nodeGenes.get(j).innov)) {
-                    list.add(new Pair<>(g.nodeGenes.get(i).innov, g.nodeGenes.get(j).innov));
+        for (NodeGene gene1 : g.nodeGenes) {
+            for (NodeGene gene2 : g.nodeGenes) {
+                if (!map.get(new Pair<>(gene1.innov, gene2.innov))) {
+                    list.add(new Pair<>(gene1.innov, gene2.innov));
                 }
             }
         }
         return list;
+    }
+
+    //TODO: TEST
+    private static boolean allowedToConnect(Genotype g, int a, int b) {
+        //check if a is dependant on b (bfs)
+        Queue<Integer> q = new LinkedList<>();
+        q.add(b);
+        while (!q.isEmpty()) {
+            int cur = q.poll();
+            if (cur == a) return false;
+            g.connectionGenes.stream().filter(connection -> connection.out == cur).forEach(connection -> q.add(connection.in));
+        }
+        return true;
+    }
+
+    public static ArrayList<Pair<Integer, Integer>> getAllowedConnectionList(Genotype g) {
+        return getNonEdgeList(g).stream().filter(edge -> allowedToConnect(g, edge.getKey(), edge.getValue())).collect(Collectors.toCollection(ArrayList::new));
     }
 
     static ConnectionGene copyConnection(ConnectionGene connectionGene) {

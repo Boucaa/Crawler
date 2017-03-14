@@ -79,7 +79,7 @@ public class Evolution {
         }
     }
 
-    public void nextGeneration() {
+    private void nextGeneration() {
         generationNo++;
         logger.log("GENERATION #" + generationNo);
         long startTime = System.currentTimeMillis(); //start time measurement
@@ -133,9 +133,6 @@ public class Evolution {
             }
             spec.lastInnovate++;
             double curSum = spec.genotypes.stream().map(Pair::getValue).reduce(Double::sum).get();
-            /*for (int j = 0; j < spec.genotypes.size(); j++) {
-                curSum += spec.genotypes.get(j).getValue();
-            }*/
             spec.avgFitness = Math.max(0, curSum / spec.genotypes.size());
             sum += spec.avgFitness;
         }
@@ -196,15 +193,14 @@ public class Evolution {
             if (random.nextDouble() < MUTATE_ENABLE_DISABLE && !child.connectionGenes.isEmpty())
                 mutateEnableDisableConnection(child);
             if (random.nextDouble() < MUTATE_WEIGHT && !child.connectionGenes.isEmpty()) {
-                Genotype g = child;
                 if (random.nextDouble() < MUTATE_SINGLE_INSTEAD) {
-                    mutateWightSmall(g.connectionGenes.get(random.nextInt(g.connectionGenes.size())));
+                    mutateWightSmall(child.connectionGenes.get(random.nextInt(child.connectionGenes.size())));
                 } else {
-                    for (int j = 0; j < g.connectionGenes.size(); j++) {
+                    for (int j = 0; j < child.connectionGenes.size(); j++) {
                         if (random.nextDouble() < MUTATE_WEIGHT_SMALL) {
-                            mutateWightSmall(g.connectionGenes.get(j));
+                            mutateWightSmall(child.connectionGenes.get(j));
                         } else {
-                            mutateWeightRandom(g.connectionGenes.get(j));
+                            mutateWeightRandom(child.connectionGenes.get(j));
                         }
                     }
                 }
@@ -215,17 +211,6 @@ public class Evolution {
         }
 
         children.addAll(noMutateChildren);
-
-        //fill the rest of the next generation with copies of the best genotypes from the current generation
-        /*for (int i = 0; i < species.size(); i++) {
-            ArrayList<Pair<Genotype, Double>> genotypes = species.get(i).genotypes;
-            children.add(Util.copyGenotype(genotypes.get(genotypes.size() - 1).getKey()));
-        }*/
-
-        /*while (children.size() < GENERATION_SIZE) {
-            logger.log("REFILLING");
-            children.add(Util.copyGenotype(fitnesses.get(children.size()).genotype));
-        }*/
 
         //CLEANUP
         //clear species, new archetypes
@@ -246,12 +231,12 @@ public class Evolution {
     }
 
     private void mutateAddConnection(Genotype g) {
-        //retrieves the list of all non-edges to choose from
-        ArrayList<Pair<Integer, Integer>> nonEdgeList = Util.getNonEdgeList(g);
-        //remove all non-edges leading to an input
+        //retrieves the list of all edges that are allowed to add (existing and recurrent connections are removed)
+        ArrayList<Pair<Integer, Integer>> nonEdgeList = Util.getAllowedConnectionList(g);
+        //remove all edges leading to an input
         nonEdgeList.removeIf(cur -> cur.getValue() < INPUT_NODES || (cur.getKey() < INPUT_NODES + OUTPUT_NODES && cur.getKey() >= INPUT_NODES));
         if (nonEdgeList.size() == 0) {
-            logger.log("NON EDGE LIST EMPTY\n" + g.serialize()); //just for debug purposes
+            logger.log("NO EDGES TO ADD\n" + g.serialize()); //just for debug purposes, should by very unlikely to happen
             return;
         }
         Pair<Integer, Integer> coord = nonEdgeList.get(random.nextInt(nonEdgeList.size()));

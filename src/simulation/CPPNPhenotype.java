@@ -6,6 +6,7 @@ import neat.NodeGene;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Stack;
 
 /**
  * Created by colander on 1/3/17.
@@ -38,11 +39,9 @@ class CPPNPhenotype {
     }
 
     double[] step(ArrayList<Double> inputs) {
+        network.forEach(node -> node.triggered = false);
         for (int i = 0; i < this.inputs.size(); i++) {
             this.inputs.get(i).currentValue = inputs.get(i);
-        }
-        for (NetworkNode hiddenNode : hidden) {
-            triggerNode(hiddenNode);
         }
 
         double[] out = new double[outputs.size()];
@@ -54,6 +53,7 @@ class CPPNPhenotype {
     }
 
     private void triggerNode(NetworkNode node) {
+        node.inputs.stream().filter(input -> !input.triggered).forEach(this::triggerNode);
         double sum = 0;
         for (int i = 0; i < node.inputs.size(); i++) {
             sum += node.inputs.get(i).currentValue * node.inputWeights.get(i);
@@ -81,5 +81,6 @@ class CPPNPhenotype {
                 System.exit(1);
                 break;
         }
+        node.triggered = true;
     }
 }
