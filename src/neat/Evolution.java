@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 /**
  * Created by colander on 1/3/17.
- * The main NEAT class.
+ * The main CPPN-NEAT class.
  */
 public class Evolution {
     private final int GENERATIONS = 10000;
@@ -32,19 +32,20 @@ public class Evolution {
     private final double COMPAT_2 = 0.7;
     private final double DELTA_T = 3.0;
 
-    private final double CROSSOVER = 0.15;
+    private final double CROSSOVER = 0.75;
     private final double INHERIT_FUNC_FROM_WEAKER = 0.25; //TODO: implement
     private final double KILL_OFF = 0.5;
 
     private final double SPECIES_RESET_COUNTER = 15;
 
     private final Random random = new Random(1337 * 420);
-    private final int INPUT_NODES;
-    private final int OUTPUT_NODES;
+    private final int INPUT_NODES = 5; //x1, y1, x2, y2, bias
+    private final int OUTPUT_NODES = 2; //weights input->hidden and hidden->output
 
     private BodySettings bodySettings;
 
     private int innovation = 0;
+    private int speciesID = 0;
     private ArrayList<Genotype> generation = new ArrayList<>();
     private ArrayList<Species> species = new ArrayList<>();
 
@@ -57,8 +58,6 @@ public class Evolution {
     //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {
         this.bodySettings = bodySettings;
-        INPUT_NODES = bodySettings.legs * bodySettings.segments + 1 + 1 + 3 + bodySettings.legs * bodySettings.segments * 3;
-        OUTPUT_NODES = bodySettings.legs * bodySettings.segments;
 
         ArrayList<NodeGene> defaultNodes = new ArrayList<>();
         for (int i = 0; i < INPUT_NODES; i++) {
@@ -96,29 +95,26 @@ public class Evolution {
         }
 
         //SPECIATION
-        for (int i = 0; i < fitnesses.size(); i++) {
+        for (FitnessResult fitness : fitnesses) {
             //find a species to put the genotype in
             boolean found = false;
-            for (int j = 0; j < species.size(); j++) {
-                if (distance(fitnesses.get(i).genotype, species.get(j).archetype) < DELTA_T) {
+            for (Species curSpecies : species) {
+                if (distance(fitness.genotype, curSpecies.archetype) < DELTA_T) {
                     found = true;
-                    species.get(j).genotypes.add(new Pair<>(fitnesses.get(i).genotype, fitnesses.get(i).result));
+                    curSpecies.genotypes.add(new Pair<>(fitness.genotype, fitness.result));
                     break;
                 }
             }
             //if no compatible species found, create a new one
             if (!found) {
-                Species nspecies = new Species(fitnesses.get(i).genotype);
-                nspecies.genotypes.add(new Pair<>(fitnesses.get(i).genotype, fitnesses.get(i).result));
+                Species nspecies = new Species(fitness.genotype, speciesID++);
+                nspecies.genotypes.add(new Pair<>(fitness.genotype, fitness.result));
                 species.add(nspecies);
             }
         }
 
         //remove empty species
-        Iterator<Species> it = species.iterator();
-        while (it.hasNext()) {
-            if (it.next().genotypes.isEmpty()) it.remove();
-        }
+        species.removeIf(species -> species.genotypes.isEmpty());
 
         double sum = 0;
         for (int i = 0; i < species.size(); i++) {
@@ -136,10 +132,10 @@ public class Evolution {
                 }
             }
             spec.lastInnovate++;
-            double curSum = 0;
-            for (int j = 0; j < spec.genotypes.size(); j++) {
+            double curSum = spec.genotypes.stream().map(Pair::getValue).reduce(Double::sum).get();
+            /*for (int j = 0; j < spec.genotypes.size(); j++) {
                 curSum += spec.genotypes.get(j).getValue();
-            }
+            }*/
             spec.avgFitness = Math.max(0, curSum / spec.genotypes.size());
             sum += spec.avgFitness;
         }
@@ -151,39 +147,40 @@ public class Evolution {
         ArrayList<Genotype> noMutateChildren = new ArrayList<>();
         species.forEach(s -> s.genotypes.sort(Comparator.comparingDouble(Pair::getValue)));
 
-        for (int i = 0; i < species.size(); i++) {
-            if (species.get(i).avgFitness == -1) {
-                noMutateChildren.add(Util.copyGenotype(species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey()));
+        for (Species curSpec : species) {
+            //Species cursp = species.get(i);
+            if (curSpec.avgFitness == -1) {
+                noMutateChildren.add(Util.copyGenotype(curSpec.genotypes.get(curSpec.genotypes.size() - 1).getKey()));
                 continue;
             }
 
             //breed the next generation
-            int toBreed = (int) ((species.get(i).avgFitness / sum) * GENERATION_SIZE * (1 /*- ELITISM*/)) - 1; //TODO: FIX?
+            int toBreed = (int) ((curSpec.avgFitness / sum) * GENERATION_SIZE * (1 /*- ELITISM*/)) - 1;
             if (sum == 0) toBreed = GENERATION_SIZE / species.size();
-            logger.log("species #" + i + ": avg " + String.format("%.4f", species.get(i).avgFitness) + ", breeding " + toBreed + "/" + species.get(i).genotypes.size());
+            logger.log("species #" + curSpec.uid + ": avg " + String.format("%.4f", curSpec.avgFitness) + ", breeding " + toBreed + "/" + curSpec.genotypes.size());
             if (toBreed >= 0) {
-                noMutateChildren.add(Util.copyGenotype(species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey()));
+                noMutateChildren.add(Util.copyGenotype(curSpec.genotypes.get(curSpec.genotypes.size() - 1).getKey()));
             }
 
             //kill off the weak members
-            int targetSize = Math.max((int) (species.get(i).genotypes.size() * KILL_OFF), 1);
-            while (species.get(i).genotypes.size() > targetSize) {
-                species.get(i).genotypes.remove(0);
+            int targetSize = Math.max((int) (curSpec.genotypes.size() * (1 - KILL_OFF)), 1);
+            while (curSpec.genotypes.size() > targetSize) {
+                curSpec.genotypes.remove(0);
             }
 
             for (int j = 0; j < toBreed; j++) {
                 if (random.nextDouble() > CROSSOVER) {
-                    children.add(Util.copyGenotype(species.get(i).genotypes.get(random.nextInt(species.get(i).genotypes.size())).getKey()));
+                    children.add(Util.copyGenotype(curSpec.genotypes.get(random.nextInt(curSpec.genotypes.size())).getKey()));
                 } else {
-                    int indexA = random.nextInt(species.get(i).genotypes.size());
-                    int indexB = random.nextInt(species.get(i).genotypes.size());
-                    if (species.get(i).genotypes.get(indexA).getValue() < species.get(i).genotypes.get(indexB).getValue()) {
+                    int indexA = random.nextInt(curSpec.genotypes.size());
+                    int indexB = random.nextInt(curSpec.genotypes.size());
+                    if (curSpec.genotypes.get(indexA).getValue() < curSpec.genotypes.get(indexB).getValue()) {
                         int temp = indexA;
                         indexA = indexB;
                         indexB = temp;
                     }
-                    Genotype a = species.get(i).genotypes.get(indexA).getKey();
-                    Genotype b = species.get(i).genotypes.get(indexB).getKey();
+                    Genotype a = curSpec.genotypes.get(indexA).getKey();
+                    Genotype b = curSpec.genotypes.get(indexB).getKey();
 
                     children.add(crossOver(a, b));
                 }
@@ -192,14 +189,14 @@ public class Evolution {
 
 
         //MUTATE
-        for (int i = 0; i < children.size(); i++) {
-            if (random.nextDouble() < MUTATE_ADD_CONNECTION) mutateAddConnection(children.get(i));
-            if (random.nextDouble() < MUTATE_ADD_NODE && !children.get(i).connectionGenes.isEmpty())
-                mutateSplitConnection(children.get(i));
-            if (random.nextDouble() < MUTATE_ENABLE_DISABLE && !children.get(i).connectionGenes.isEmpty())
-                mutateEnableDisableConnection(children.get(i));
-            if (random.nextDouble() < MUTATE_WEIGHT && !children.get(i).connectionGenes.isEmpty()) {
-                Genotype g = children.get(i);
+        for (Genotype child : children) {
+            if (random.nextDouble() < MUTATE_ADD_CONNECTION) mutateAddConnection(child);
+            if (random.nextDouble() < MUTATE_ADD_NODE && !child.connectionGenes.isEmpty())
+                mutateSplitConnection(child);
+            if (random.nextDouble() < MUTATE_ENABLE_DISABLE && !child.connectionGenes.isEmpty())
+                mutateEnableDisableConnection(child);
+            if (random.nextDouble() < MUTATE_WEIGHT && !child.connectionGenes.isEmpty()) {
+                Genotype g = child;
                 if (random.nextDouble() < MUTATE_SINGLE_INSTEAD) {
                     mutateWightSmall(g.connectionGenes.get(random.nextInt(g.connectionGenes.size())));
                 } else {
@@ -213,7 +210,7 @@ public class Evolution {
                 }
             }
             if (random.nextDouble() < MUTATE_FUNCTION) {
-                mutateFunction(children.get(i));
+                mutateFunction(child);
             }
         }
 
@@ -232,9 +229,9 @@ public class Evolution {
 
         //CLEANUP
         //clear species, new archetypes
-        for (int i = 0; i < species.size(); i++) {
-            species.get(i).archetype = species.get(i).genotypes.get(species.get(i).genotypes.size() - 1).getKey();
-            species.get(i).genotypes.clear();
+        for (Species spec : species) {
+            spec.archetype = spec.genotypes.get(spec.genotypes.size() - 1).getKey();
+            spec.genotypes.clear();
 
         }
         //set the new generation as the current one
@@ -307,11 +304,11 @@ public class Evolution {
             if (!found) dominantConnections.add(a.connectionGenes.get(i));
         }
         ArrayList<ConnectionGene> connectionGenes = new ArrayList<>();
-        for (int i = 0; i < commonConnections.size(); i++) {
+        for (Pair<ConnectionGene, ConnectionGene> commonConnection : commonConnections) {
             if (random.nextBoolean()) {
-                connectionGenes.add(commonConnections.get(i).getKey());
+                connectionGenes.add(commonConnection.getKey());
             } else {
-                connectionGenes.add(commonConnections.get(i).getValue());
+                connectionGenes.add(commonConnection.getValue());
             }
         }
         connectionGenes.addAll(dominantConnections);

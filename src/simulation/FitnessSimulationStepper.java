@@ -13,27 +13,27 @@ import java.util.ArrayList;
  * Class used to commit the actual steps (frames) of the simulation.
  */
 public class FitnessSimulationStepper {
-    public static final int RESISTANCE = 3;
-    final float TIME_STEP = 1 / 60f;
-    final int VEL_ITERATIONS = 8;
-    final int POS_ITERATIONS = 3;
-    final float SPEED_MULTIPLIER = 8;
-    final int STARTUP_FRAMES = 30; //frames at the start when the robot is falling and is not allowed to move
-    final float SPEED_LIMIT = 2f;
+    private static final int RESISTANCE = 3;
+    private final float TIME_STEP = 1 / 60f;
+    private final int VEL_ITERATIONS = 8;
+    private final int POS_ITERATIONS = 3;
+    private final float SPEED_MULTIPLIER = 8;
+    private final int STARTUP_FRAMES = 30; //frames at the start when the robot is falling and is not allowed to move
+    private final float SPEED_LIMIT = 2f;
 
     private int framesElapsed = 0;
 
-    public World world;
+    World world;
     Robot robot;
     public Genotype genotype;
-    private Phenotype phenotype;
+    private CPPNPhenotype cppnPhenotype;
 
     FitnessSimulationStepper(World world, BodySettings bodySettings, Genotype g) {
         WorldSettings worldSettings = new WorldSettings(10.0f, WorldSettings.BASE_FLAT);
         WorldBuilder worldBuilder = new WorldBuilder(world, bodySettings, worldSettings);
         robot = worldBuilder.build();
         this.world = world;
-        phenotype = new Phenotype(g);
+        cppnPhenotype = new CPPNPhenotype(g);
     }
 
     void step(boolean stepWorld) {
@@ -54,7 +54,7 @@ public class FitnessSimulationStepper {
                 inputs.add((double) robot.legs.get(i).getPosition().y);
                 inputs.add((double) robot.legs.get(i).getAngle());
             }
-            double[] outputs = getPhenotype().step(inputs);
+            double[] outputs = getCppnPhenotype().step(inputs);
             for (int j = 0; j < outputs.length; j++) {
                 float calculatedSpeed = (float) (outputs[j] * SPEED_MULTIPLIER - Math.pow(robot.joints.get(j).getJointAngle() * RESISTANCE, 3));
                 float limitedSpeed = Math.max(-SPEED_LIMIT, Math.min(SPEED_LIMIT, calculatedSpeed));
@@ -65,7 +65,7 @@ public class FitnessSimulationStepper {
     }
 
     //TODO to be removed?
-    public Phenotype getPhenotype() {
-        return phenotype;
+    CPPNPhenotype getCppnPhenotype() {
+        return cppnPhenotype;
     }
 }

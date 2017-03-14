@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 /**
  * Created by colander on 1/3/17.
+ * Helpful utilities mainly for deep copying and debugging.
  */
 public class Util {
     public static void printGenotype(Genotype genotype) {
@@ -50,7 +51,7 @@ public class Util {
         return mat;
     }
 
-    public static ArrayList<Pair<Integer, Integer>> getNonEdgeList(Genotype g) {
+    static ArrayList<Pair<Integer, Integer>> getNonEdgeList(Genotype g) {
         //create an edge "matrix" for the connection graph
         HashMap<Integer, HashMap<Integer, Boolean>> map = new HashMap<>();
         for (int i = 0; i < g.nodeGenes.size(); i++) {
@@ -80,15 +81,15 @@ public class Util {
         return list;
     }
 
-    public static ConnectionGene copyConnection(ConnectionGene connectionGene) {
+    static ConnectionGene copyConnection(ConnectionGene connectionGene) {
         return new ConnectionGene(connectionGene.in, connectionGene.out, connectionGene.weight, connectionGene.active, connectionGene.innovation);
     }
 
-    public static NodeGene copyNode(NodeGene nodeGene) {
+    static NodeGene copyNode(NodeGene nodeGene) {
         return new NodeGene(nodeGene.innov, nodeGene.type, nodeGene.activateFunction);
     }
 
-    public static Genotype copyGenotype(Genotype g) {
+    static Genotype copyGenotype(Genotype g) {
         ArrayList<NodeGene> nodeGenes = new ArrayList<>();
         ArrayList<ConnectionGene> connectionGenes = new ArrayList<>();
         for (int i = 0; i < g.nodeGenes.size(); i++) {

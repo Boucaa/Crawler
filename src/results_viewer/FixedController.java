@@ -41,8 +41,8 @@ import org.slf4j.LoggerFactory;
 
 
 /*********************************************************************
- *This class is just a copy of the TestbedController,                *
- *but introduces some fixes in order to improve stability of the GUI *
+ *This class is just a modified copy of the TestbedController,       *
+ *introduces some fixes in order to improve stability of the GUI     *
  *********************************************************************/
 
 /**

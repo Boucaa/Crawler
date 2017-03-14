@@ -7,14 +7,16 @@ import java.util.ArrayList;
 /**
  * Created by colander on 1/14/17.
  */
-public class Species {
+class Species {
     ArrayList<Pair<Genotype, Double>> genotypes = new ArrayList<>();
     Genotype archetype;
     double avgFitness = 0;
     int lastInnovate = 0;
     double bestFitness = 0;
+    final int uid;
 
-    public Species(Genotype archetype) {
+    Species(Genotype archetype, int uid) {
         this.archetype = archetype;
+        this.uid = uid;
     }
 }

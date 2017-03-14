@@ -20,15 +20,14 @@ public class Genotype {
         this.bodySettings = bodySettings;
     }
 
-    //custom DIY serialization (mainly for the sake of performance and simplicity)
+    //custom DIY serialization (mainly for performance and simplicity - makes genotypes human-readable)
     public String serialize() {
         StringBuilder sb = new StringBuilder();
         sb.append(nodeGenes.size()).append(" ").append(connectionGenes.size()).append("\n");
-        for (int i = 0; i < nodeGenes.size(); i++) {
-            sb.append(nodeGenes.get(i).innov).append(" ").append(nodeGenes.get(i).type).append(" ").append(nodeGenes.get(i).activateFunction).append("\n");
+        for (NodeGene nodeGene : nodeGenes) {
+            sb.append(nodeGene.innov).append(" ").append(nodeGene.type).append(" ").append(nodeGene.activateFunction).append("\n");
         }
-        for (int i = 0; i < connectionGenes.size(); i++) {
-            ConnectionGene gene = connectionGenes.get(i);
+        for (ConnectionGene gene : connectionGenes) {
             sb.append(gene.in).append(" ").append(gene.out).append(" ").append(gene.weight).append(" ").append(gene.active).append(" ").append(gene.innovation).append("\n");
         }
         sb.append(bodySettings.serialize());
