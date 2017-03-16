@@ -254,7 +254,7 @@ public class Evolution {
         if (g.connectionGenes.isEmpty()) return;
         ConnectionGene toSplit = g.connectionGenes.get(random.nextInt(g.connectionGenes.size()));
         int nodeInnov = getNextInnov();
-        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, NodeGene.FUNCTION_LINEAR));//g.nodeGenes.stream().filter(gene -> gene.innov == toSplit.in).findFirst().get().activateFunction));
+        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, /*NodeGene.FUNCTION_LINEAR));//*/random.nextInt(NodeGene.NO_FUNCTIONS)));
         g.connectionGenes.add(new ConnectionGene(toSplit.in, nodeInnov, 1.0, true, getNextInnov()));
         g.connectionGenes.add(new ConnectionGene(nodeInnov, toSplit.out, toSplit.weight, true, getNextInnov()));
         toSplit.active = false;
