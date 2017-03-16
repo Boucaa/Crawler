@@ -11,12 +11,10 @@ import java.util.ArrayList;
  */
 public class Robot {
     Body body;
-    ArrayList<Body> legs;
-    ArrayList<RevoluteJoint> joints;
+    ArrayList<RobotLeg> legs;
 
-    public Robot(Body body, ArrayList<Body> legs, ArrayList<RevoluteJoint> joints) {
+    public Robot(Body body, ArrayList<RobotLeg> legs) {
         this.body = body;
         this.legs = legs;
-        this.joints = joints;
     }
 }

@@ -124,7 +124,9 @@ public class GUI extends JFrame {
         for (int i = runSelectModel.size(); runSelectModel.size() < runFolders.length; i++) {
             runSelectModel.addElement(runFolders[i].getName());
         }
-        runSelectList.setSelectedIndex(0);
+        if (runSelectModel.size() > 0) {
+            runSelectList.setSelectedIndex(runSelectModel.size() - 1);
+        }
         generationSelectList.setSelectedIndex(generationSelectModel.size() - 1);
     }
 

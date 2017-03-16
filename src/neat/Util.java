@@ -69,7 +69,7 @@ public class Util {
         return map;
     }
 
-    static ArrayList<Pair<Integer, Integer>> getNonEdgeList(Genotype g) {
+    private static ArrayList<Pair<Integer, Integer>> getNonEdgeList(Genotype g) {
         //create an edge "matrix" for the connection graph
         HashMap<Pair<Integer, Integer>, Boolean> map = generateEdgeMatrix(g);
 
@@ -87,12 +87,15 @@ public class Util {
 
     //TODO: TEST
     private static boolean allowedToConnect(Genotype g, int a, int b) {
+        if (a == b) {
+            return false;
+        }
         //check if a is dependant on b (bfs)
         Queue<Integer> q = new LinkedList<>();
-        q.add(b);
+        q.add(a);
         while (!q.isEmpty()) {
             int cur = q.poll();
-            if (cur == a) return false;
+            if (cur == b) return false;
             g.connectionGenes.stream().filter(connection -> connection.out == cur).forEach(connection -> q.add(connection.in));
         }
         return true;

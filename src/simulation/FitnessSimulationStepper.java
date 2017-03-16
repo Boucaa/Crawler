@@ -7,6 +7,7 @@ import worldbuilding.WorldBuilder;
 import worldbuilding.WorldSettings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by colander on 1/18/17.
@@ -26,46 +27,43 @@ public class FitnessSimulationStepper {
     World world;
     Robot robot;
     public Genotype genotype;
-    private CPPNPhenotype cppnPhenotype;
+    public ANNPhenotype annPhenotype;
 
     FitnessSimulationStepper(World world, BodySettings bodySettings, Genotype g) {
         WorldSettings worldSettings = new WorldSettings(10.0f, WorldSettings.BASE_FLAT);
         WorldBuilder worldBuilder = new WorldBuilder(world, bodySettings, worldSettings);
         robot = worldBuilder.build();
         this.world = world;
-        cppnPhenotype = new CPPNPhenotype(g);
+        CPPNPhenotype cppnPhenotype = new CPPNPhenotype(g);
+        this.annPhenotype = new ANNPhenotype(cppnPhenotype, bodySettings);
     }
 
     void step(boolean stepWorld) {
         if (++framesElapsed > STARTUP_FRAMES) {
-            ArrayList<Double> inputs = new ArrayList<>();
-            //int extraInputs = 4; //1 for bias and 3 for body angle and position
-            //double[] inputs = new double[robot.joints.size() + extraInputs];
-            inputs.add(1d);
-            inputs.add((double) (framesElapsed));
-            inputs.add((double) robot.body.getAngle());
-            inputs.add((double) robot.body.getPosition().x);
-            inputs.add((double) robot.body.getPosition().y);
-            for (int j = 0; j < robot.joints.size(); j++) {
-                inputs.add((double) robot.joints.get(j).getJointAngle());
+            double[][] inputs = new double[this.annPhenotype.substrateWidth][this.annPhenotype.substrateHeight];
+            for (int i = 0; i < robot.legs.size(); i += 2) {
+                inputs[i / 2][0] = robot.legs.get(i).joints.get(1).getJointAngle();
+                inputs[i / 2][1] = robot.legs.get(i).joints.get(0).getJointAngle();
+                inputs[i / 2][2] = robot.legs.get(i + 1).joints.get(0).getJointAngle();
+                inputs[i / 2][3] = robot.legs.get(i + 1).joints.get(1).getJointAngle();
             }
-            for (int i = 0; i < robot.legs.size(); i++) {
-                inputs.add((double) robot.legs.get(i).getPosition().x);
-                inputs.add((double) robot.legs.get(i).getPosition().y);
-                inputs.add((double) robot.legs.get(i).getAngle());
-            }
-            double[] outputs = getCppnPhenotype().step(inputs);
-            for (int j = 0; j < outputs.length; j++) {
-                float calculatedSpeed = (float) (outputs[j] * SPEED_MULTIPLIER - Math.pow(robot.joints.get(j).getJointAngle() * RESISTANCE, 3));
-                float limitedSpeed = Math.max(-SPEED_LIMIT, Math.min(SPEED_LIMIT, calculatedSpeed));
-                robot.joints.get(j).setMotorSpeed(limitedSpeed);
+            inputs[inputs.length - 1] = new double[]{1, Math.sin(framesElapsed / 60.0), Math.cos(framesElapsed / 60.0), 1};//TODO:const?
+/*            for (int i = 0; i < inputs.length; i++) {
+                String line = "";
+                for (int j = 0; j < inputs[i].length; j++) {
+                    line += inputs[i][j] + " ";
+                }
+                System.out.println(line);
+            }*/
+            double[][] outputs = this.annPhenotype.step(inputs);
+
+            for (int i = 0; i < robot.legs.size(); i += 2) {
+                robot.legs.get(i).joints.get(1).setMotorSpeed((float) outputs[i / 2][0] * SPEED_MULTIPLIER);
+                robot.legs.get(i).joints.get(0).setMotorSpeed((float) outputs[i / 2][1] * SPEED_MULTIPLIER);
+                robot.legs.get(i + 1).joints.get(0).setMotorSpeed((float) outputs[i / 2][2] * SPEED_MULTIPLIER);
+                robot.legs.get(i + 1).joints.get(1).setMotorSpeed((float) outputs[i / 2][3] * SPEED_MULTIPLIER);
             }
         }
         if (stepWorld) world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);
-    }
-
-    //TODO to be removed?
-    CPPNPhenotype getCppnPhenotype() {
-        return cppnPhenotype;
     }
 }

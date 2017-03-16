@@ -6,6 +6,7 @@ import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.joints.*;
 import simulation.Robot;
+import simulation.RobotLeg;
 
 import java.util.ArrayList;
 
@@ -59,17 +60,19 @@ public class WorldBuilder {
         mainBody.createFixture(mainBodyFixtureDef);
         //body.createFixture(bodyShape, 5.0f);
 
+        ArrayList<RobotLeg> legs = new ArrayList<>();
         for (int i = 0; i < bodySettings.legs / 2; i++) {
             double x = BODY_POS_X - bodySettings.bodyWidth + (i / ((bodySettings.legs / 2.0) - 1)) * 2 * bodySettings.bodyWidth;
-            buildLeg((float) x);
-            buildLeg((float) x);
+            legs.add(buildLeg((float) x));
+            legs.add(buildLeg((float) x));
         }
 
-        return new Robot(mainBody, segmentList, jointList);
+        return new Robot(mainBody, legs);
     }
 
-    private void buildLeg(float x) {
+    private RobotLeg buildLeg(float x) {
         ArrayList<Body> segments = new ArrayList<>();
+        ArrayList<RevoluteJoint> joints = new ArrayList<>();
         for (int i = 0; i < bodySettings.segments; i++) {
             Body segmentBody = buildSegment(x, BODY_POS_Y - bodySettings.bodyHeight - i * bodySettings.segmentHeight);
             RevoluteJointDef jointDef = new RevoluteJointDef();
@@ -93,7 +96,7 @@ public class WorldBuilder {
             RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
             joint.enableMotor(true);
             joint.setMaxMotorTorque(TORQUE);
-            jointList.add(joint);
+            joints.add(joint);
             segments.add(segmentBody);
         }
 
@@ -120,6 +123,7 @@ public class WorldBuilder {
         jdef.localAnchorA.set(0, -bodySettings.segmentHeight);
         jdef.localAnchorB.set(0, 0);
         world.createJoint(jdef);
+        return new RobotLeg(segments, joints);
     }
 
     private Body buildSegment(float x, float y) {

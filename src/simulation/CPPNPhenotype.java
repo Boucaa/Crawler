@@ -6,21 +6,20 @@ import neat.NodeGene;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Stack;
 
 /**
  * Created by colander on 1/3/17.
  * Class used as the single phenotype constructed from a genotype.
  */
-class CPPNPhenotype {
+public class CPPNPhenotype {
 
-    private HashMap<Integer, NetworkNode> nodesByInnov = new HashMap<>();
+    public HashMap<Integer, NetworkNode> nodesByInnov = new HashMap<>();
     ArrayList<NetworkNode> network = new ArrayList<>();
     ArrayList<NetworkNode> inputs = new ArrayList<>();
     ArrayList<NetworkNode> outputs = new ArrayList<>();
     ArrayList<NetworkNode> hidden = new ArrayList<>();
 
-    CPPNPhenotype(Genotype g) {
+    public CPPNPhenotype(Genotype g) {
         for (int i = 0; i < g.nodeGenes.size(); i++) {
             int nodeInnov = g.nodeGenes.get(i).innov;
             NetworkNode node = new NetworkNode(nodeInnov, g.nodeGenes.get(i).activateFunction);
@@ -33,15 +32,17 @@ class CPPNPhenotype {
 
         for (int i = 0; i < g.connectionGenes.size(); i++) {
             ConnectionGene connectionGene = g.connectionGenes.get(i);
+            if (!connectionGene.active) continue;
             nodesByInnov.get(connectionGene.out).inputs.add(nodesByInnov.get(connectionGene.in));
             nodesByInnov.get(connectionGene.out).inputWeights.add(connectionGene.weight);
         }
+        this.network.forEach(node -> node.triggered = true);
     }
 
-    double[] step(ArrayList<Double> inputs) {
-        network.forEach(node -> node.triggered = false);
+    double[] step(double[] inputs) {
+        hidden.forEach(node -> node.triggered = false);
         for (int i = 0; i < this.inputs.size(); i++) {
-            this.inputs.get(i).currentValue = inputs.get(i);
+            this.inputs.get(i).currentValue = inputs[i];
         }
 
         double[] out = new double[outputs.size()];

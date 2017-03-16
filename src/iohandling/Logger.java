@@ -31,22 +31,26 @@ public class Logger {
     }
 
     public void logGeneration(ArrayList<FitnessResult> results, int generationNo) {
-        Collections.reverse(results); //reverse, so that the first genotype has the highest fitness
+        //make a copy which we can reverse without changing the original list
+        ArrayList<FitnessResult> modifiableResults = new ArrayList<>();
+        modifiableResults.addAll(results);
+
+        Collections.reverse(modifiableResults); //reverse, so that the first genotype has the highest fitness
         //String genFolder = runDir + "/" + String.format("%04d", generationNo);
         //IOHandler.createDirectory(genFolder);
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < results.size(); i++) {
-            sb.append(results.get(i).result + "\n" + results.get(i).genotype.serialize() + "\n");
+        for (FitnessResult result : modifiableResults) {
+            sb.append(result.result).append("\n").append(result.genotype.serialize()).append("\n");
         }
         IOHandler.writeFile(runDir + "/" + String.format("%04d", generationNo) + ".gen", sb.toString());
     }
 
     public void log(String message) {
         String[] split = message.split("\n");
-        for (int i = 0; i < split.length; i++) {
-            System.out.println(System.currentTimeMillis() + "|" + split[i]); //TODO REMOVE when the project is done
+        for (String s : split) {
+            System.out.println(System.currentTimeMillis() + "|" + s); //TODO REMOVE when the project is done
             try {
-                logWriter.write(System.currentTimeMillis() + "|" + split[i]);
+                logWriter.write(System.currentTimeMillis() + "|" + s);
                 logWriter.newLine();
             } catch (IOException e) {
                 e.printStackTrace();

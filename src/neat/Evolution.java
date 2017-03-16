@@ -18,18 +18,18 @@ public class Evolution {
     private final double DEFAULT_WEIGHT_RANGE = 4.5;
 
     //mutation chances
-    private final double MUTATE_ADD_NODE = 0.07;
-    private final double MUTATE_ADD_CONNECTION = 0.07;
+    private final double MUTATE_ADD_NODE = 0.05;
+    private final double MUTATE_ADD_CONNECTION = 0.15;
     private final double MUTATE_ENABLE_DISABLE = 0.0; //0
     private final double MUTATE_WEIGHT = 0.8; //the chance of mutating connection weights //0.8
     private final double MUTATE_WEIGHT_SMALL = 0.9; //if the connections are to be changed, this decides the small/random ratio
     private final double MUTATE_SINGLE_INSTEAD = 0.1; //chance of mutating only a single weight
-    private final double MUTATE_FUNCTION = 0.07;
+    private final double MUTATE_FUNCTION = 0.2;
 
     private final double MUTATE_SMALL_LIMIT = 0.05; //0.05
 
-    private final double COMPAT_1 = 1.8;
-    private final double COMPAT_2 = 0.7;
+    private final double COMPAT_1 = 1.5;
+    private final double COMPAT_2 = 1.5;
     private final double DELTA_T = 3.0;
 
     private final double CROSSOVER = 0.75;
@@ -61,10 +61,10 @@ public class Evolution {
 
         ArrayList<NodeGene> defaultNodes = new ArrayList<>();
         for (int i = 0; i < INPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_INPUT, -1));
+            defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_INPUT, -1));
         }
         for (int i = 0; i < OUTPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(innovation++, NodeGene.TYPE_OUTPUT, 0));
+            defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_OUTPUT, 0));
         }
         Genotype prototype = new Genotype(defaultNodes, new ArrayList<>(), bodySettings);
         for (int i = 0; i < GENERATION_SIZE; i++) {
@@ -227,28 +227,36 @@ public class Evolution {
         logger.log("finished in " + time + "ms");
         logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\navg: " + sum / species.size() + "\nspecies: " + species.size() + "\nsize: " + generation.size());
         logger.logGeneration(fitnesses, generationNo);
+        //fitnesses.forEach(f -> mutateSplitConnection(f.genotype));
+        //logger.logGeneration(fitnesses, generationNo * 1000);
         logger.flush();
     }
 
     private void mutateAddConnection(Genotype g) {
         //retrieves the list of all edges that are allowed to add (existing and recurrent connections are removed)
-        ArrayList<Pair<Integer, Integer>> nonEdgeList = Util.getAllowedConnectionList(g);
+        ArrayList<Pair<Integer, Integer>> possibleConnections = Util.getAllowedConnectionList(g);
         //remove all edges leading to an input
-        nonEdgeList.removeIf(cur -> cur.getValue() < INPUT_NODES || (cur.getKey() < INPUT_NODES + OUTPUT_NODES && cur.getKey() >= INPUT_NODES));
-        if (nonEdgeList.size() == 0) {
+        possibleConnections.removeIf(cur -> cur.getValue() < INPUT_NODES || (cur.getKey() < INPUT_NODES + OUTPUT_NODES && cur.getKey() >= INPUT_NODES));
+        if (possibleConnections.size() == 0) {
             logger.log("NO EDGES TO ADD\n" + g.serialize()); //just for debug purposes, should by very unlikely to happen
             return;
         }
-        Pair<Integer, Integer> coord = nonEdgeList.get(random.nextInt(nonEdgeList.size()));
-        g.connectionGenes.add(new ConnectionGene(coord.getKey(), coord.getValue(), random.nextDouble() * 2 * DEFAULT_WEIGHT_RANGE - DEFAULT_WEIGHT_RANGE, true, ++innovation));
+        Pair<Integer, Integer> coord = possibleConnections.get(random.nextInt(possibleConnections.size()));
+        if (Objects.equals(coord.getKey(), coord.getValue())) {
+            System.out.println("FOUND BULLSHIT");
+        }
+        double weightRange = random.nextBoolean() ? DEFAULT_WEIGHT_RANGE : 0.05;
+        double weight = random.nextDouble() * 2 * weightRange - weightRange;
+        g.connectionGenes.add(new ConnectionGene(coord.getKey(), coord.getValue(), weight, true, getNextInnov()));
     }
 
     private void mutateSplitConnection(Genotype g) {
+        if (g.connectionGenes.isEmpty()) return;
         ConnectionGene toSplit = g.connectionGenes.get(random.nextInt(g.connectionGenes.size()));
-        int nodeInnov = ++innovation;
+        int nodeInnov = getNextInnov();
         g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, NodeGene.FUNCTION_LINEAR));//g.nodeGenes.stream().filter(gene -> gene.innov == toSplit.in).findFirst().get().activateFunction));
-        g.connectionGenes.add(new ConnectionGene(toSplit.in, nodeInnov, 1.0, true, ++innovation));
-        g.connectionGenes.add(new ConnectionGene(nodeInnov, toSplit.out, toSplit.weight, true, ++innovation));
+        g.connectionGenes.add(new ConnectionGene(toSplit.in, nodeInnov, 1.0, true, getNextInnov()));
+        g.connectionGenes.add(new ConnectionGene(nodeInnov, toSplit.out, toSplit.weight, true, getNextInnov()));
         toSplit.active = false;
     }
 
@@ -323,5 +331,9 @@ public class Evolution {
         int D = a.connectionGenes.size() + b.connectionGenes.size() - 2 * common;
         int N = Math.max(1, Math.max(a.connectionGenes.size(), b.connectionGenes.size()));
         return (COMPAT_1 / N * D) + (COMPAT_2 * W);
+    }
+
+    private int getNextInnov() {
+        return innovation++;
     }
 }
