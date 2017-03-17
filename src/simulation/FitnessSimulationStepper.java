@@ -15,10 +15,11 @@ import java.util.Arrays;
  */
 public class FitnessSimulationStepper {
     private static final int RESISTANCE = 3;
+    public static final double FUNC_DIVIDER = 40.0;
     private final float TIME_STEP = 1 / 60f;
     private final int VEL_ITERATIONS = 8;
     private final int POS_ITERATIONS = 3;
-    private final float SPEED_MULTIPLIER = 8;
+    private final float SPEED_MULTIPLIER = 4.5f;
     private final int STARTUP_FRAMES = 30; //frames at the start when the robot is falling and is not allowed to move
     private final float SPEED_LIMIT = 2f;
 
@@ -47,21 +48,14 @@ public class FitnessSimulationStepper {
                 inputs[i / 2][2] = robot.legs.get(i + 1).joints.get(0).getJointAngle();
                 inputs[i / 2][3] = robot.legs.get(i + 1).joints.get(1).getJointAngle();
             }
-            inputs[inputs.length - 1] = new double[]{1, Math.sin(framesElapsed / 60.0), Math.cos(framesElapsed / 60.0), 1};//TODO:const?
-/*            for (int i = 0; i < inputs.length; i++) {
-                String line = "";
-                for (int j = 0; j < inputs[i].length; j++) {
-                    line += inputs[i][j] + " ";
-                }
-                System.out.println(line);
-            }*/
+            inputs[inputs.length - 1] = new double[]{1, Math.sin(framesElapsed / FUNC_DIVIDER), Math.cos(framesElapsed / FUNC_DIVIDER), 1};//TODO:const?
             double[][] outputs = this.annPhenotype.step(inputs);
 
             for (int i = 0; i < robot.legs.size(); i += 2) {
-                robot.legs.get(i).joints.get(1).setMotorSpeed((float) outputs[i / 2][0] * SPEED_MULTIPLIER);
-                robot.legs.get(i).joints.get(0).setMotorSpeed((float) outputs[i / 2][1] * SPEED_MULTIPLIER);
-                robot.legs.get(i + 1).joints.get(0).setMotorSpeed((float) outputs[i / 2][2] * SPEED_MULTIPLIER);
-                robot.legs.get(i + 1).joints.get(1).setMotorSpeed((float) outputs[i / 2][3] * SPEED_MULTIPLIER);
+                robot.legs.get(i).joints.get(1).setMotorSpeed((float) (outputs[i / 2][0] * (Math.PI / 2) - robot.legs.get(i).joints.get(1).getJointAngle()) * SPEED_MULTIPLIER);
+                robot.legs.get(i).joints.get(0).setMotorSpeed((float) (outputs[i / 2][1] * (Math.PI / 2) - robot.legs.get(i).joints.get(0).getJointAngle()) * SPEED_MULTIPLIER);
+                robot.legs.get(i + 1).joints.get(0).setMotorSpeed((float) (outputs[i / 2][2] * (Math.PI / 2) - robot.legs.get(i + 1).joints.get(0).getJointAngle()) * SPEED_MULTIPLIER);
+                robot.legs.get(i + 1).joints.get(1).setMotorSpeed((float) (outputs[i / 2][3] * (Math.PI / 2) - robot.legs.get(i + 1).joints.get(1).getJointAngle()) * SPEED_MULTIPLIER);
             }
         }
         if (stepWorld) world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);

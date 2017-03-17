@@ -17,8 +17,9 @@ public class NodeGene {
     public final static int FUNCTION_COS = 2;
     public final static int FUNCTION_LINEAR = 3;
     public final static int FUNCTION_ABS = 4;
+    public final static int FUNCTION_GAUSS = 5;
 
-    public final static int NO_FUNCTIONS = 5;
+    public final static int NO_FUNCTIONS = 6;
 
     NodeGene(int innov, int type, int activateFunction) {
         this.innov = innov;

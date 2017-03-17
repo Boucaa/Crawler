@@ -16,8 +16,11 @@ import java.util.Random;
  */
 public class GraphDrawer {
     public static final Color3f GRAY_COLOR = new Color3f(0.2f, 0.2f, 0.2f);
+    public static final Color3f PINK_COLOR = new Color3f(1f, 0.412f, 0.706f);
+    public static final Color3f BROWN_COLOR = new Color3f(0.545f, 0.271f, 0.075f);
+    public static final Color3f YELLOW_COLOR = new Color3f(0.855f, 0.647f, 0.125f);
     ArrayList<Pair<Integer[], Boolean>> lines = new ArrayList<>();
-    HashMap<Integer, Vec2> nodesById = new HashMap<>();
+    HashMap<Integer, Pair<Vec2, Integer>> nodesById = new HashMap<>();
     final int X_OFFSET = 200;
     final int Y_OFFSET = 200;
 
@@ -33,22 +36,47 @@ public class GraphDrawer {
                 x = 2 * X_OFFSET + 50;
                 y = Y_OFFSET + 30 * (nodeGene.innov - 5);
             }
-            nodesById.put(nodeGene.innov, new Vec2(x, y));
+            nodesById.put(nodeGene.innov, new Pair<>(new Vec2(x, y), nodeGene.activateFunction));
         });
         g.connectionGenes.forEach(connectionGene -> lines.add(new Pair<>(new Integer[]{
-                ((int) nodesById.get(connectionGene.in).x),
-                ((int) nodesById.get(connectionGene.in).y),
-                ((int) nodesById.get(connectionGene.out).x),
-                ((int) nodesById.get(connectionGene.out).y),
+                ((int) nodesById.get(connectionGene.in).getKey().x),
+                ((int) nodesById.get(connectionGene.in).getKey().y),
+                ((int) nodesById.get(connectionGene.out).getKey().x),
+                ((int) nodesById.get(connectionGene.out).getKey().y),
         }, connectionGene.active)));
 
     }
 
     public void draw(DebugDraw debugDraw) {
         for (Integer id : nodesById.keySet()) {
-            debugDraw.drawString(new Vec2(nodesById.get(id).x, nodesById.get(id).y), id + "", Color3f.GREEN);
+            Color3f colour = null;
+            switch (nodesById.get(id).getValue()) {
+                case NodeGene.FUNCTION_SIGMOID:
+                    colour = Color3f.BLUE;
+                    break;
+                case NodeGene.FUNCTION_LINEAR:
+                    colour = Color3f.GREEN;
+                    break;
+                case NodeGene.FUNCTION_SIN:
+                    colour = Color3f.RED;
+                    break;
+                case NodeGene.FUNCTION_COS:
+                    colour = PINK_COLOR;
+                    break;
+                case NodeGene.FUNCTION_ABS:
+                    colour = BROWN_COLOR;
+                    break;
+                case NodeGene.FUNCTION_GAUSS:
+                    colour = YELLOW_COLOR;
+                    break;
+                case -1:
+                    colour = Color3f.WHITE;
+                    break;
+                default:
+                    System.out.println("WRONG COLOUR " + nodesById.get(id).getValue());
+            }
+            debugDraw.drawString(new Vec2(nodesById.get(id).getKey().x, nodesById.get(id).getKey().y), id + "", colour);
         }
-        int i = 0;
         for (Pair<Integer[], Boolean> line : lines) {
             Integer[] coords = line.getKey();
             debugDraw.drawSegment(

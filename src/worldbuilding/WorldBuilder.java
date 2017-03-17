@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class WorldBuilder {
 
-    public static final int TORQUE = 10000;
+    public static final int TORQUE = 12000;
     private final int BODY_POS_X = 0;
     private final float BODY_POS_Y = -8.2f;
     private final int FLAT_BASE_WIDTH = 200;
@@ -90,8 +90,8 @@ public class WorldBuilder {
                 jointDef.bodyB = segmentBody;
                 jointDef.localAnchorA.set(0, -bodySettings.segmentHeight);
                 jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
-                jointDef.lowerAngle = -2.5f;
-                jointDef.upperAngle = 2.5f;
+                jointDef.lowerAngle = (float) -Math.PI / 2;
+                jointDef.upperAngle = (float) Math.PI / 2;
             }
             RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
             joint.enableMotor(true);

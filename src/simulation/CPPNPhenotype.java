@@ -76,7 +76,9 @@ public class CPPNPhenotype {
             case NodeGene.FUNCTION_ABS:
                 node.currentValue = ActivationFunctions.abs(sum);
                 break;
-
+            case NodeGene.FUNCTION_GAUSS:
+                node.currentValue = ActivationFunctions.gauss(sum);
+                break;
             default:
                 System.err.println("WRONG ACTIVATION FUNCTION VALUE: " + node.activationFunction + ", node innov: " + node.innov);
                 System.exit(1);

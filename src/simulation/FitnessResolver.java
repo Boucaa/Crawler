@@ -20,7 +20,6 @@ public class FitnessResolver {
         this.settings = settings;
     }
 
-    @Deprecated
     public ArrayList<FitnessResult> resolve() {
         ArrayList<FitnessResult> results = new ArrayList<>();
         for (int i = 0; i < genotypes.size(); i++) {

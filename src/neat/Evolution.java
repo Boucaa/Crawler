@@ -18,13 +18,13 @@ public class Evolution {
     private final double DEFAULT_WEIGHT_RANGE = 4.5;
 
     //mutation chances
-    private final double MUTATE_ADD_NODE = 0.05;
+    private final double MUTATE_ADD_NODE = 0.07;
     private final double MUTATE_ADD_CONNECTION = 0.15;
-    private final double MUTATE_ENABLE_DISABLE = 0.0; //0
+    private final double MUTATE_ENABLE_DISABLE = 0.4; //0
     private final double MUTATE_WEIGHT = 0.8; //the chance of mutating connection weights //0.8
     private final double MUTATE_WEIGHT_SMALL = 0.9; //if the connections are to be changed, this decides the small/random ratio
     private final double MUTATE_SINGLE_INSTEAD = 0.1; //chance of mutating only a single weight
-    private final double MUTATE_FUNCTION = 0.2;
+    private final double MUTATE_FUNCTION = 0.15;
 
     private final double MUTATE_SMALL_LIMIT = 0.05; //0.05
 
@@ -87,6 +87,7 @@ public class Evolution {
         //MEASURE FITNESSES
         ParallelFitnessResolver resolver = new ParallelFitnessResolver(generation, bodySettings);
         ArrayList<FitnessResult> fitnesses = resolver.resolve();
+        fitnesses.forEach(System.out::println);
         Collections.sort(fitnesses);
         logger.log("GEN " + generation.size() + " FIT " + fitnesses.size());
 
