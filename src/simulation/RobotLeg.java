@@ -12,6 +12,9 @@ public class RobotLeg {
 
     ArrayList<Body> segments;
     ArrayList<RevoluteJoint> joints;
+    Body soleBody;
+    boolean touch = false;
+    double touchValue = 0;
 
     public RobotLeg(ArrayList<Body> segments, ArrayList<RevoluteJoint> joints) {
         this.segments = segments;

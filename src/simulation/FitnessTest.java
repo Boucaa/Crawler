@@ -46,52 +46,19 @@ public class FitnessTest implements Comparable<FitnessTest> {
     }
 
     FitnessTest compute() {
-        final int[] framesTouched = {0};
         final boolean[] failed = {false};
-        double ySum = 0;
-        if (LIMIT_HEIGHT) {
-            stepper.world.setContactListener(new ContactListener() {
-                @Override
-                public void beginContact(Contact contact) {
-                    if ((contact.getFixtureA().getBody().getType() == BodyType.STATIC || contact.getFixtureB().getBody().getType() == BodyType.STATIC) && (stepper.robot.legs.contains(contact.getFixtureA().getBody()) || stepper.robot.legs.contains(contact.getFixtureB().getBody()))) {
-                        failed[0] = true;
-                        //framesTouched[0]++;
-                        contacts.add(contact);
-                    }
-                }
-
-                @Override
-                public void endContact(Contact contact) {
-                    if (contacts.contains(contact)) contacts.remove(contact);
-                }
-
-                @Override
-                public void preSolve(Contact contact, Manifold manifold) {
-
-                }
-
-                @Override
-                public void postSolve(Contact contact, ContactImpulse contactImpulse) {
-
-                }
-            });
-        }
-        int touches = 0;
         float maxX = 0f;
 
         for (int i = 0; i < ITERATIONS + (LIMIT_HEIGHT ? CONFIRM_ITERATIONS : 0); i++) {
             stepper.step(true);
             if (stepper.robot.body.getPosition().x > maxX && i < ITERATIONS) maxX = stepper.robot.body.getPosition().x;
-            if (LIMIT_HEIGHT && stepper.robot.legs.stream().anyMatch(leg -> leg.segments.stream().anyMatch(segment -> segment.getPosition().y < HEIGHT_LIMIT))) {//&& stepper.robot.body.getPosition().y < -8.3) {
+            if (LIMIT_HEIGHT && stepper.robot.legs.stream().anyMatch(leg -> leg.segments.stream().anyMatch(segment -> segment.getPosition().y < HEIGHT_LIMIT))) {
                 failed[0] = true;
                 break;
             }
-            touches += contacts.size();
-            ySum += stepper.robot.body.getPosition().x - GROUND_Y;
         }
 
-        //double pos = stepper.robot.legs.stream().map(leg -> leg.segments.stream().map(segment -> segment.getPosition().x).reduce(Float::sum)).mapToDouble(Optional::get).reduce(Double::sum).getAsDouble();
-        result = failed[0] ? 0 : maxX;//* ySum / ITERATIONS;// (touches / 100 + 1);//failed[0] ? 0 : pos;/*.reduce(Float::sum).get());*///Math.max(maxX, 0.0001);
+        result = failed[0] ? 0 : maxX;
         result = Math.max(result, 0.000001);
         //free up memory ASAP
         world = null;

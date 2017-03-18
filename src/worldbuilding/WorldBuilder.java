@@ -19,7 +19,7 @@ public class WorldBuilder {
     public static final int TORQUE = 12000;
     private final int BODY_POS_X = 0;
     private final float BODY_POS_Y = -8.2f;
-    private final int FLAT_BASE_WIDTH = 200;
+    private final int FLAT_BASE_WIDTH = 250;
     private final int FLAT_BASE_HEIGHT = 5;
 
     private World world;
@@ -99,6 +99,7 @@ public class WorldBuilder {
             joints.add(joint);
             segments.add(segmentBody);
         }
+        if (1 == 1) return new RobotLeg(segments, joints);
 
         //attach ball at the end of the leg
         Body seg = segments.get(segments.size() - 1);
@@ -149,7 +150,7 @@ public class WorldBuilder {
         base.setAsBox(FLAT_BASE_WIDTH, FLAT_BASE_HEIGHT);
         BodyDef baseDef = new BodyDef();
         baseDef.type = BodyType.STATIC;
-        baseDef.position.set(FLAT_BASE_WIDTH * 2 / 5, -20);
+        baseDef.position.set(FLAT_BASE_WIDTH * 4 / 5, -20);
         Body baseBody = world.createBody(baseDef);
         FixtureDef fixtureDef = new FixtureDef();
         fixtureDef.shape = base;

@@ -11,18 +11,17 @@ public class ANNPhenotype {
     //the substrate weight matrices
     private double[][][][] inputToHiddenWeights;
     private double[][][][] hiddenToOutputWeights;
-    int substrateWidth;
-    int substrateHeight;
+    final int substrateWidth = 3; //2 for 2 pairs of legs + 1 in the middle for extras
+    final int substrateHeight = 6; // 2 * 2 for segments + 2 for touch
+    private final int startX = -1;
+    private final int startY = -3;
+    private final int[] yValues = {-3, -2, -1, 1, 2, 3};
     double[][] lastInput = new double[1][1];
     double[][] lastOutput = new double[1][1];
 
     public ANNPhenotype(CPPNPhenotype cppnPhenotype, BodySettings bodySettings) {
-        this.substrateWidth = bodySettings.legs / 2 + 1; //+1 for extras - bias, sine...
-        this.substrateHeight = bodySettings.segments * 2;
         inputToHiddenWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
         hiddenToOutputWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
-        int startX = -bodySettings.legs / 4;
-        int startY = -bodySettings.segments;
 
 //ಠ_ಠ that indent though
         for (int i = 0; i < substrateWidth; i++) {
@@ -30,9 +29,9 @@ public class ANNPhenotype {
                 for (int k = 0; k < substrateWidth; k++) {
                     for (int l = 0; l < substrateHeight; l++) {
                         int x1 = startX + i;
-                        int y1 = startY + j;
+                        int y1 = yValues[j];
                         int x2 = startX + k;
-                        int y2 = startY + l;
+                        int y2 = yValues[l];
                         double[] output = cppnPhenotype.step(new double[]{x1, y1, x2, y2, 1});
                         inputToHiddenWeights[i][j][k][l] = output[0];
                         hiddenToOutputWeights[i][j][k][l] = output[1];
@@ -43,9 +42,9 @@ public class ANNPhenotype {
         }
     }
 
-    public double[][] step(double[][] inputs) {
+    double[][] step(double[][] inputs) {
         this.lastInput = inputs;
-        double[][] hiddenLayer = new double[inputToHiddenWeights.length][inputToHiddenWeights[0].length];
+        double[][] hiddenLayer = new double[substrateWidth][substrateHeight];
         for (int i = 0; i < hiddenLayer.length; i++) {
             for (int j = 0; j < hiddenLayer[0].length; j++) {
                 //compute value for each hidden node with coordinates [i,j]
