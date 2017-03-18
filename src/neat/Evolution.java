@@ -87,7 +87,8 @@ public class Evolution {
         //MEASURE FITNESSES
         ParallelFitnessResolver resolver = new ParallelFitnessResolver(generation, bodySettings);
         ArrayList<FitnessResult> fitnesses = resolver.resolve();
-        fitnesses.forEach(System.out::println);
+        //sometimes a null object appears, not sure why, happens once every ~1000 generations, non-deterministically
+        fitnesses = fitnesses.stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
         Collections.sort(fitnesses);
         logger.log("GEN " + generation.size() + " FIT " + fitnesses.size());
 
