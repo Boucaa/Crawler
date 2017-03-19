@@ -4,7 +4,6 @@ import neat.Genotype;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
@@ -12,22 +11,17 @@ import worldbuilding.BodySettings;
 import worldbuilding.WorldBuilder;
 import worldbuilding.WorldSettings;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 /**
  * Created by colander on 1/18/17.
  * Class used to commit the actual steps (frames) of the simulation.
  */
 public class FitnessSimulationStepper {
-    private static final int RESISTANCE = 3;
     private static final double FUNC_DIVIDER = 40.0;
     private final float TIME_STEP = 1 / 60f;
     private final int VEL_ITERATIONS = 8;
     private final int POS_ITERATIONS = 3;
     private final float SPEED_MULTIPLIER = 4.5f;
     private final int STARTUP_FRAMES = 30; //frames at the start when the robot is falling and is not allowed to move
-    private final float SPEED_LIMIT = 2f;
     private final double TOUCH_CHANGE_SPEED = 0.08;
 
     private int framesElapsed = 0;
@@ -43,7 +37,7 @@ public class FitnessSimulationStepper {
         robot = worldBuilder.build();
         this.world = world;
         CPPNPhenotype cppnPhenotype = new CPPNPhenotype(g);
-        this.annPhenotype = new ANNPhenotype(cppnPhenotype, bodySettings);
+        this.annPhenotype = new ANNPhenotype(cppnPhenotype);
 
         this.world.setContactListener(new ContactListener() {
             @Override
@@ -75,7 +69,6 @@ public class FitnessSimulationStepper {
             }
         });
     }
-
 
     void step(boolean stepWorld) {
         if (++framesElapsed > STARTUP_FRAMES) {

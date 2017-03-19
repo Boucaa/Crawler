@@ -22,24 +22,19 @@ import java.util.stream.Stream;
  * Created by colander on 1/13/17.
  * Class used to measure the fitness of a single genotype.
  */
-public class FitnessTest implements Comparable<FitnessTest> {
+public class FitnessTest {
     private static final double HEIGHT_LIMIT = -13.0;
     private final int ITERATIONS = 3000;
     private final int CONFIRM_ITERATIONS = 1500;
     final private boolean LIMIT_HEIGHT = true;
-    final private float GROUND_Y = -14.28f;
 
     private World world;
     public Genotype genotype;
     private FitnessSimulationStepper stepper;
-    int id;
 
     double result;
 
-    ArrayList<Contact> contacts = new ArrayList<>();
-
-    FitnessTest(Genotype g, BodySettings bodySettings, int id) {
-        this.id = id;
+    FitnessTest(Genotype g, BodySettings bodySettings) {
         this.genotype = g;
         this.world = new World(new Vec2(0f, 0f)); //setting the gravity is a responsibility of the WorldBuilder
         stepper = new FitnessSimulationStepper(world, bodySettings, g);
@@ -65,10 +60,5 @@ public class FitnessTest implements Comparable<FitnessTest> {
         System.gc();
 
         return this;
-    }
-
-    @Override
-    public int compareTo(FitnessTest o) {
-        return Double.compare(this.result, o.result) == 0 ? Integer.compare(id, o.id) : Double.compare(this.result, o.result);
     }
 }

@@ -33,7 +33,6 @@ public class Evolution {
     private final double DELTA_T = 3.0;
 
     private final double CROSSOVER = 0.75;
-    private final double INHERIT_FUNC_FROM_WEAKER = 0.25; //TODO: implement
     private final double KILL_OFF = 0.5;
 
     private final double SPECIES_RESET_COUNTER = 15;
@@ -59,6 +58,7 @@ public class Evolution {
     public Evolution(BodySettings bodySettings) {
         this.bodySettings = bodySettings;
 
+        //generate the initial population
         ArrayList<NodeGene> defaultNodes = new ArrayList<>();
         for (int i = 0; i < INPUT_NODES; i++) {
             defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_INPUT, -1));
@@ -70,7 +70,6 @@ public class Evolution {
         for (int i = 0; i < GENERATION_SIZE; i++) {
             generation.add(Util.copyGenotype(prototype));
         }
-        //generation.forEach(genotype -> genotype.nodeGenes.stream().filter(n -> n.type != NodeGene.TYPE_HIDDEN).forEach(n -> n.activateFunction = random.nextInt(NodeGene.NO_FUNCTIONS)));
     }
 
     public void run() {
@@ -90,7 +89,6 @@ public class Evolution {
         //sometimes a null object appears, not sure why, happens once every ~1000 generations, non-deterministically
         fitnesses = fitnesses.stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
         Collections.sort(fitnesses);
-        logger.log("GEN " + generation.size() + " FIT " + fitnesses.size());
 
         if (fitnesses.get(fitnesses.size() - 1).result > best) {
             best = fitnesses.get(fitnesses.size() - 1).result;
@@ -109,9 +107,9 @@ public class Evolution {
             }
             //if no compatible species found, create a new one
             if (!found) {
-                Species nspecies = new Species(fitness.genotype, speciesID++);
-                nspecies.genotypes.add(new Pair<>(fitness.genotype, fitness.result));
-                species.add(nspecies);
+                Species createdSpecies = new Species(fitness.genotype, speciesID++);
+                createdSpecies.genotypes.add(new Pair<>(fitness.genotype, fitness.result));
+                species.add(createdSpecies);
             }
         }
 
@@ -119,8 +117,7 @@ public class Evolution {
         species.removeIf(species -> species.genotypes.isEmpty());
 
         double sum = 0;
-        for (int i = 0; i < species.size(); i++) {
-            Species spec = species.get(i);
+        for (Species spec : species) {
             if (spec.genotypes.get(spec.genotypes.size() - 1).getValue() > spec.bestFitness) {
                 spec.bestFitness = spec.genotypes.get(spec.genotypes.size() - 1).getValue();
                 spec.lastInnovate = 0;
@@ -129,13 +126,13 @@ public class Evolution {
                 if (spec.lastInnovate > SPECIES_RESET_COUNTER) {
                     spec.lastInnovate = 0;
                     spec.avgFitness = -1;
-                    logger.log("purge: i=" + i);
+                    logger.log("purging species #" + spec.uid);
                     continue;
                 }
             }
             spec.lastInnovate++;
-            double curSum = spec.genotypes.stream().map(Pair::getValue).reduce(Double::sum).get();
-            spec.avgFitness = Math.max(0, curSum / spec.genotypes.size());
+            double fitnessSum = spec.genotypes.stream().map(Pair::getValue).reduce(Double::sum).get();
+            spec.avgFitness = Math.max(0, fitnessSum / spec.genotypes.size());
             sum += spec.avgFitness;
         }
 
@@ -147,14 +144,13 @@ public class Evolution {
         species.forEach(s -> s.genotypes.sort(Comparator.comparingDouble(Pair::getValue)));
 
         for (Species curSpec : species) {
-            //Species cursp = species.get(i);
             if (curSpec.avgFitness == -1) {
                 noMutateChildren.add(Util.copyGenotype(curSpec.genotypes.get(curSpec.genotypes.size() - 1).getKey()));
                 continue;
             }
 
             //breed the next generation
-            int toBreed = (int) ((curSpec.avgFitness / sum) * GENERATION_SIZE * (1 /*- ELITISM*/)) - 1;
+            int toBreed = (int) ((curSpec.avgFitness / sum) * GENERATION_SIZE) - 1;
             if (sum == 0) toBreed = GENERATION_SIZE / species.size();
             logger.log("species #" + curSpec.uid + ": avg " + String.format("%.4f", curSpec.avgFitness) + ", breeding " + toBreed + "/" + curSpec.genotypes.size());
             if (toBreed >= 0) {
@@ -198,11 +194,11 @@ public class Evolution {
                 if (random.nextDouble() < MUTATE_SINGLE_INSTEAD) {
                     mutateWightSmall(child.connectionGenes.get(random.nextInt(child.connectionGenes.size())));
                 } else {
-                    for (int j = 0; j < child.connectionGenes.size(); j++) {
+                    for (ConnectionGene connectionGene : child.connectionGenes) {
                         if (random.nextDouble() < MUTATE_WEIGHT_SMALL) {
-                            mutateWightSmall(child.connectionGenes.get(j));
+                            mutateWightSmall(connectionGene);
                         } else {
-                            mutateWeightRandom(child.connectionGenes.get(j));
+                            mutateWeightRandom(connectionGene);
                         }
                     }
                 }
@@ -240,13 +236,9 @@ public class Evolution {
         //remove all edges leading to an input
         possibleConnections.removeIf(cur -> cur.getValue() < INPUT_NODES || (cur.getKey() < INPUT_NODES + OUTPUT_NODES && cur.getKey() >= INPUT_NODES));
         if (possibleConnections.size() == 0) {
-            logger.log("NO EDGES TO ADD\n" + g.serialize()); //just for debug purposes, should by very unlikely to happen
             return;
         }
         Pair<Integer, Integer> coord = possibleConnections.get(random.nextInt(possibleConnections.size()));
-        if (Objects.equals(coord.getKey(), coord.getValue())) {
-            System.out.println("FOUND BULLSHIT");
-        }
         double weightRange = random.nextBoolean() ? DEFAULT_WEIGHT_RANGE : 0.05;
         double weight = random.nextDouble() * 2 * weightRange - weightRange;
         g.connectionGenes.add(new ConnectionGene(coord.getKey(), coord.getValue(), weight, true, getNextInnov()));
@@ -256,7 +248,7 @@ public class Evolution {
         if (g.connectionGenes.isEmpty()) return;
         ConnectionGene toSplit = g.connectionGenes.get(random.nextInt(g.connectionGenes.size()));
         int nodeInnov = getNextInnov();
-        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, /*NodeGene.FUNCTION_LINEAR));//*/random.nextInt(NodeGene.NO_FUNCTIONS)));
+        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, random.nextInt(NodeGene.NO_FUNCTIONS)));
         g.connectionGenes.add(new ConnectionGene(toSplit.in, nodeInnov, 1.0, true, getNextInnov()));
         g.connectionGenes.add(new ConnectionGene(nodeInnov, toSplit.out, toSplit.weight, true, getNextInnov()));
         toSplit.active = false;
@@ -335,6 +327,7 @@ public class Evolution {
         return (COMPAT_1 / N * D) + (COMPAT_2 * W);
     }
 
+    //returns the next innovation id
     private int getNextInnov() {
         return innovation++;
     }

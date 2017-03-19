@@ -1,25 +1,23 @@
 package simulation;
 
-import worldbuilding.BodySettings;
-
 /**
  * Created by colander on 14.3.17.
  * The ANN class, which uses the CPPN to describe itself.
  */
 public class ANNPhenotype {
 
+    private static final double WEIGHT_LIMIT = 1;
     //the substrate weight matrices
     private double[][][][] inputToHiddenWeights;
     private double[][][][] hiddenToOutputWeights;
     final int substrateWidth = 3; //2 for 2 pairs of legs + 1 in the middle for extras
     final int substrateHeight = 6; // 2 * 2 for segments + 2 for touch
     private final int startX = -1;
-    private final int startY = -3;
     private final int[] yValues = {-3, -2, -1, 1, 2, 3};
     double[][] lastInput = new double[1][1];
     double[][] lastOutput = new double[1][1];
 
-    public ANNPhenotype(CPPNPhenotype cppnPhenotype, BodySettings bodySettings) {
+    public ANNPhenotype(CPPNPhenotype cppnPhenotype) {
         inputToHiddenWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
         hiddenToOutputWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
 
