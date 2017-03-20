@@ -35,7 +35,7 @@ public class Evolution {
     private final double CROSSOVER = 0.75;
     private final double KILL_OFF = 0.5;
 
-    private final double SPECIES_RESET_COUNTER = 8;
+    private final double SPECIES_RESET_COUNTER = 10;
 
     private final Random random = new Random(1337 * 420);
     private final int INPUT_NODES = 5; //x1, y1, x2, y2, bias
@@ -122,7 +122,6 @@ public class Evolution {
                 spec.bestFitness = spec.genotypes.get(spec.genotypes.size() - 1).getValue();
                 spec.lastInnovate = 0;
             } else {
-
                 if (spec.lastInnovate > SPECIES_RESET_COUNTER) {
                     spec.lastInnovate = 0;
                     spec.avgFitness = -1;

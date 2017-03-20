@@ -6,7 +6,7 @@ package simulation;
  */
 public class ANNPhenotype {
 
-    private static final double WEIGHT_LIMIT = 1;
+    public static final double WEIGHT_MULTIPLIER = 1.1;
     //the substrate weight matrices
     private double[][][][] inputToHiddenWeights;
     private double[][][][] hiddenToOutputWeights;
@@ -31,8 +31,8 @@ public class ANNPhenotype {
                         int x2 = startX + k;
                         int y2 = yValues[l];
                         double[] output = cppnPhenotype.step(new double[]{x1, y1, x2, y2, 1});
-                        inputToHiddenWeights[i][j][k][l] = output[0];
-                        hiddenToOutputWeights[i][j][k][l] = output[1];
+                        inputToHiddenWeights[i][j][k][l] = output[0] * WEIGHT_MULTIPLIER;
+                        hiddenToOutputWeights[i][j][k][l] = output[1] * WEIGHT_MULTIPLIER;
 
                     }
                 }
