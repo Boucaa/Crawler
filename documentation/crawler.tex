@@ -10,9 +10,9 @@
 %titulni strana 
 \begin{titlepage} 
 \begin{center} 
-{\Huge\textsc{Gymnázium Jana Keplera}\\} 
+{\huge\textsc{Gymnázium Jana Keplera}\\} 
 {\large{obor vzdělání Gymnázium 79-41-K/81}\\[0.7cm]} 
-{\huge{Maturitní práce z informatiky}\\[0.5cm]} 
+{\Huge{Maturitní práce z informatiky}\\[0.5cm]} 
 {\Large{Jan Bouček}\\} 
 {\large{vedoucí práce: Tomáš Obdržálek}\\} 
 {\large{Praha 2017}} 
@@ -26,6 +26,8 @@ Prohlašuji, že jsem jediným autorem této maturitní práce a všechny citace
 {\large{V Praze dne 24. 3. 2017} \hfill Jan Bouček} 
 %anotace 
 \newpage 
+\tableofcontents
+\newpage
 %TODO zrušit mezeru na začátku 
 {\Large\textbf{Anotace}\par}
 Jeden z problémů moderní robotiky je chůze, čehož se tato práce narozdíl od konvenčních metod snaží dosáhnout pomocí strojového učení, konkrétně neuroevolučního algoritmu s nepřímým kódováním. Ten za pomoci techniky HyperNEAT generuje simulaci primitivního mozku, který chůzi robota ovládá.\par 
@@ -44,6 +46,8 @@ Cílem projektu pak je dosáhnout podobnou metodou stabilní, vzpřímené a rep
  
 \section{Teorie}
 Chůzi lze definovat jakožto sérii stavů kráčivého tělesa, kde každý stav lze zjednodušit jako soubor informací popisující jednotlivé pohyblivé prvky robota. V rámci tohoto projektu budeme pracovat s dvojrozměrnou simulací čtyřnohého robota, jehož každá noha je ovládána dvěmi klouby. Stav robota tak lze vystihnout jako osmirozměrný vektor $\vec{s}$. Hledáme pak ovladač robota, který pro každý stav malezne osmirozměrný vektor $\vec{\omega}$, který každému kloubu určuje úhlovou rychlost.
+\subsection{Evoluční algoritmy}
+
 \section{Výsledky} 
 \section{Implementace?}%sem? 
 \section{Závěr} 
