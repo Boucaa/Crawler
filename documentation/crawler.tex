@@ -1,50 +1,53 @@
-\documentclass[a4]{article}
-\usepackage[czech]{babel}
-\usepackage[utf8]{inputenc}
-\usepackage{graphicx}
-\usepackage{a4wide}
-\usepackage{amsmath,amsfonts,amssymb,amsthm}
-%TODO pridat geometry a udelat spravne okraje
-\begin{document}
-
-%titulni strana
-\begin{titlepage}
-\begin{center}
-{\Huge\textsc{Gymnázium Jana Keplera}\\}
-{\large{obor vzdělání Gymnázium 79-41-K/81}\\[0.7cm]}
-{\huge{Maturitní práce z informatiky}\\[0.5cm]}
-{\Large{Jan Bouček}\\}
-{\large{vedoucí práce: Tomáš Obdržálek}\\}
-{\large{Praha 2017}}
-\end{center}
-\end{titlepage}
-
-%prohlaseni
-\newpage
-Prohlašuji, že jsem jediným autorem této maturitní práce a všechny citace, použitá literatura a další zdroje jsou v práci uvedené. Tímto dle zákona 121/2000 Sb. (tzv. Autorský zákon) ve znění pozdějších předpisů uděluji bezúplatně škole Gymnázium Jana Keplera, Praha 6, Parléřova 2 oprávnění k výkonu práva na rozmnožování díla (§~13) a práva na sdělování díla veřejnosti (§~18) na dobu časově neomezenou a bez omezení územního rozsahu.\\[0.7cm]
-\vspace{10cm}
-{\large{V Praze dne 24. 3. 2017} \hfill Jan Bouček}
-%anotace
-\newpage
-%TODO zrušit mezeru na začátku
+\documentclass[a4]{article} 
+\usepackage[czech]{babel} 
+\usepackage[utf8]{inputenc} 
+\usepackage{graphicx} 
+\usepackage{a4wide} 
+\usepackage{amsmath,amsfonts,amssymb,amsthm} 
+%TODO pridat geometry a udelat spravne okraje 
+\begin{document} 
+ 
+%titulni strana 
+\begin{titlepage} 
+\begin{center} 
+{\Huge\textsc{Gymnázium Jana Keplera}\\} 
+{\large{obor vzdělání Gymnázium 79-41-K/81}\\[0.7cm]} 
+{\huge{Maturitní práce z informatiky}\\[0.5cm]} 
+{\Large{Jan Bouček}\\} 
+{\large{vedoucí práce: Tomáš Obdržálek}\\} 
+{\large{Praha 2017}} 
+\end{center} 
+\end{titlepage} 
+ 
+%prohlaseni 
+\newpage 
+Prohlašuji, že jsem jediným autorem této maturitní práce a všechny citace, použitá literatura a další zdroje jsou v práci uvedené. Tímto dle zákona 121/2000 Sb. (tzv. Autorský zákon) ve znění pozdějších předpisů uděluji bezúplatně škole Gymnázium Jana Keplera, Praha 6, Parléřova 2 oprávnění k výkonu práva na rozmnožování díla (§~13) a práva na sdělování díla veřejnosti (§~18) na dobu časově neomezenou a bez omezení územního rozsahu.\\[0.7cm] 
+\vspace{10cm} 
+{\large{V Praze dne 24. 3. 2017} \hfill Jan Bouček} 
+%anotace 
+\newpage 
+%TODO zrušit mezeru na začátku 
 {\Large\textbf{Anotace}\par}
-Jeden z problémů moderní robotiky je chůze, čehož se tato práce narozdíl od konvenčních metod snaží dosáhnout pomocí strojového učení, konkrétně neuroevolučního algoritmu s nepřímým kódováním. Ten za pomoci techniky HyperNEAT generuje simulaci primitivního mozku, který chůzi robota ovládá.\par
-
-{\Huge{POŘEŠIT, PŘELOŽIT}}
-%samotna prace
-\title{Vývoj chůze pomocí neuroevolučních algoritmů}
-\author{Jan Bouček}
-\date{}
-\maketitle
-
-\section{Úvod}
-
+Jeden z problémů moderní robotiky je chůze, čehož se tato práce narozdíl od konvenčních metod snaží dosáhnout pomocí strojového učení, konkrétně neuroevolučního algoritmu s nepřímým kódováním. Ten za pomoci techniky HyperNEAT generuje simulaci primitivního mozku, který chůzi robota ovládá.\par 
+ 
+{\Huge{POŘEŠIT, PŘELOŽIT}} 
+%samotna prace 
+\title{Vývoj chůze pomocí neuroevolučních algoritmů} 
+\author{Jan Bouček} 
+\date{} 
+\maketitle 
+ 
+\section{Úvod} 
+Jeden z cílů dnesšní robotiky je konstruovat roboty, kteří jsou všestranně využitelní díky své mobilitě. Toho lze dosáhnout různými způsoby, pro svou jednoduchost se často používá jízda, která ale neumožňuje spolehlivé zdolávání členitého terénu, nebo pohyb přímo ve strukturách stavěných člověkem, zejména pak zdolávání schodů.\par
+Tato práce se inspiruje čtyřnohými kráčivými roboty firmy Boston Dynamics, kteří dosahují stabilní chůze exaktními metodami. Podobné chůze by mělo být možné dosáhnout i pomocí organičtějších metod.\par
+Neuroevoluční algoritmy dokáží nabídnout přirozené řešení i na velmi komplexní problémy, či dokonce znovuobjevit řešení, které v přírodě už existuje, proto je možné generovat čtyřnohý pohyb i tímto způsobem.\par 
+ 
+\section{Teorie} 
+\section{Výsledky} 
+\section{Implementace?}%sem? 
+\section{Závěr} 
+\section{Uživatelská dokumentace} 
+\section{Diskuze?} 
+\section{TMP}
 Evoluční algoritmy se požívají na problémy, jejichž exaktní řešení neznáme, nebo je reálě nemožné. Jsou až tak blízké procesům v přírodě, že je často můžeme využít a k znovunalezení řešení, která v přírodě už existují. Právě proto se evoluční technika hodí pro vývoj chůze.
-
-\section{Teorie}
-\section{Výsledky}
-\section{Implementace?}%sem?
-\section{Závěr}
-\section{Uživatelská dokumentace}
-\section{Diskuze?}
 \end{document}

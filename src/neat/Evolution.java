@@ -238,6 +238,8 @@ public class Evolution {
             return;
         }
         Pair<Integer, Integer> coord = possibleConnections.get(random.nextInt(possibleConnections.size()));
+        if (Objects.equals(coord.getKey(), coord.getValue())) {
+        }
         double weightRange = random.nextBoolean() ? DEFAULT_WEIGHT_RANGE : 0.05;
         double weight = random.nextDouble() * 2 * weightRange - weightRange;
         g.connectionGenes.add(new ConnectionGene(coord.getKey(), coord.getValue(), weight, true, getNextInnov()));
