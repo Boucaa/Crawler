@@ -117,8 +117,7 @@ public class Evolution {
         species.removeIf(species -> species.genotypes.isEmpty());
 
         double sum = 0;
-        for (int i = 0; i < species.size(); i++) {
-            Species spec = species.get(i);
+        for (Species spec : species) {
             if (spec.genotypes.get(spec.genotypes.size() - 1).getValue() > spec.bestFitness) {
                 spec.bestFitness = spec.genotypes.get(spec.genotypes.size() - 1).getValue();
                 spec.lastInnovate = 0;
@@ -126,7 +125,7 @@ public class Evolution {
                 if (spec.lastInnovate > SPECIES_RESET_COUNTER) {
                     spec.lastInnovate = 0;
                     spec.avgFitness = -1;
-                    logger.log("purge: i=" + i);
+                    logger.log("purging species #" + spec.uid);
                     continue;
                 }
             }
@@ -237,12 +236,10 @@ public class Evolution {
         //remove all edges leading to an input
         possibleConnections.removeIf(cur -> cur.getValue() < INPUT_NODES || (cur.getKey() < INPUT_NODES + OUTPUT_NODES && cur.getKey() >= INPUT_NODES));
         if (possibleConnections.size() == 0) {
-            logger.log("NO EDGES TO ADD\n" + g.serialize()); //just for debug purposes, should by very unlikely to happen
             return;
         }
         Pair<Integer, Integer> coord = possibleConnections.get(random.nextInt(possibleConnections.size()));
         if (Objects.equals(coord.getKey(), coord.getValue())) {
-            System.out.println("FOUND BULLSHIT");
         }
         double weightRange = random.nextBoolean() ? DEFAULT_WEIGHT_RANGE : 0.05;
         double weight = random.nextDouble() * 2 * weightRange - weightRange;
