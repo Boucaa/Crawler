@@ -33,10 +33,9 @@ public class Evolution {
     private final double DELTA_T = 3.0;
 
     private final double CROSSOVER = 0.75;
-    private final double INHERIT_FUNC_FROM_WEAKER = 0.25; //TODO: implement
     private final double KILL_OFF = 0.5;
 
-    private final double SPECIES_RESET_COUNTER = 15;
+    private final double SPECIES_RESET_COUNTER = 10;
 
     private final Random random = new Random(1337 * 420);
     private final int INPUT_NODES = 5; //x1, y1, x2, y2, bias
@@ -70,7 +69,6 @@ public class Evolution {
         for (int i = 0; i < GENERATION_SIZE; i++) {
             generation.add(Util.copyGenotype(prototype));
         }
-        //generation.forEach(genotype -> genotype.nodeGenes.stream().filter(n -> n.type != NodeGene.TYPE_HIDDEN).forEach(n -> n.activateFunction = random.nextInt(NodeGene.NO_FUNCTIONS)));
     }
 
     public void run() {
@@ -125,7 +123,6 @@ public class Evolution {
                 spec.bestFitness = spec.genotypes.get(spec.genotypes.size() - 1).getValue();
                 spec.lastInnovate = 0;
             } else {
-                spec.lastInnovate++;
                 if (spec.lastInnovate > SPECIES_RESET_COUNTER) {
                     spec.lastInnovate = 0;
                     spec.avgFitness = -1;
