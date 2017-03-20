@@ -4,7 +4,7 @@ package simulation;
  * Created by colander on 10.3.17.
  */
 class ActivationFunctions {
-    static double sigmoid(double sum) {
+    static double shiftedSigmoid(double sum) {
         return 2 * (1 / (1 + Math.exp(-4.9 * sum)) - 0.5); //see Stanley et al., 2002, section 4.1
     }
 
@@ -27,5 +27,8 @@ class ActivationFunctions {
     static double gauss(double sum) {
         return Math.exp(-sum * sum / 2) / Math.sqrt(2 * Math.PI);
     }
-    //TODO: Gauss etc.
+
+    static double sigmoid(double sum) {
+        return 1 / (1 + Math.exp(-sum));
+    }
 }
