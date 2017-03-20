@@ -39,10 +39,11 @@ Jeden z problémů moderní robotiky je chůze, čehož se tato práce narozdíl
  
 \section{Úvod} 
 Jeden z cílů dnesšní robotiky je konstruovat roboty, kteří jsou všestranně využitelní díky své mobilitě. Toho lze dosáhnout různými způsoby, pro svou jednoduchost se často používá jízda, která ale neumožňuje spolehlivé zdolávání členitého terénu, nebo pohyb přímo ve strukturách stavěných člověkem, zejména pak zdolávání schodů.\par
-Tato práce se inspiruje čtyřnohými kráčivými roboty firmy Boston Dynamics, kteří dosahují stabilní chůze exaktními metodami. Podobné chůze by mělo být možné dosáhnout i pomocí organičtějších metod.\par
-Neuroevoluční algoritmy dokáží nabídnout přirozené řešení i na velmi komplexní problémy, či dokonce znovuobjevit řešení, které v přírodě už existuje, proto je možné generovat čtyřnohý pohyb i tímto způsobem.\par 
+Tato práce se inspiruje čtyřnohými kráčivými roboty firmy Boston Dynamics\cite{bostondynamics}, kteří dosahují stabilní chůze exaktními metodami.\cite{bdpaper} Podobné chůze by mělo být možné dosáhnout i pomocí organičtějších metod. Neuroevoluční algoritmy dokáží nabídnout přirozené řešení i na velmi komplexní problémy, či dokonce znovuobjevit řešení, které v přírodě už existuje, proto je možné generovat čtyřnohý pohyb i tímto způsobem.\cite{clunegait}\par
+Cílem projektu pak je dosáhnout podobnou metodou stabilní, vzpřímené a repetitivní kupředné chůze na simulaci čtyřnohého robota.
  
-\section{Teorie} 
+\section{Teorie}
+Chůzi lze definovat jakožto sérii stavů kráčivého tělesa, kde každý stav lze zjednodušit jako soubor informací popisující jednotlivé pohyblivé prvky robota. V rámci tohoto projektu budeme pracovat s dvojrozměrnou simulací čtyřnohého robota, jehož každá noha je ovládána dvěmi klouby. Stav robota tak lze vystihnout jako osmirozměrný vektor $\vec{s}$. Hledáme pak ovladač robota, který pro každý stav malezne osmirozměrný vektor $\vec{\omega}$, který každému kloubu určuje úhlovou rychlost.
 \section{Výsledky} 
 \section{Implementace?}%sem? 
 \section{Závěr} 
@@ -50,4 +51,11 @@ Neuroevoluční algoritmy dokáží nabídnout přirozené řešení i na velmi 
 \section{Diskuze?} 
 \section{TMP}
 Evoluční algoritmy se požívají na problémy, jejichž exaktní řešení neznáme, nebo je reálě nemožné. Jsou až tak blízké procesům v přírodě, že je často můžeme využít a k znovunalezení řešení, která v přírodě už existují. Právě proto se evoluční technika hodí pro vývoj chůze.
+\begin{thebibliography}{3}
+\bibitem{bostondynamics}
+Introducing Spot. In: \textit{Youtube} [online]. 9.2.2015 [cit. 2017-03-20]. Dostupné z: https://www.youtube.com/watch?v=M8YjvHYbZ9w. Kanál uživatele Boston Dynamics
+\bibitem{bdpaper}RAIBERT, Marc, Kevin BLANKESPOOR, Gabriel NELSON a Rob PLAYTER. \textit{BigDog, the Rough-Terrain Quadruped Robot} [online]. [cit. 2017-03-20]. DOI: 10.3182/20080706-5-KR-1001.01833. ISBN 10.3182/20080706-5-KR-1001.01833. Dostupné z: http://linkinghub.elsevier.com/retrieve/pii/S1474667016407020
+\bibitem{clunegait}
+CLUNE, Jeff, Benjamin E. BECKMANN, Charles OFRIA a Robert T. PENNOCK. Evolving coordinated quadruped gaits with the HyperNEAT generative encoding. In: \textit{2009 IEEE Congress on Evolutionary Computation}. IEEE, 2009, s. 2764-2771. DOI: 10.1109/CEC.2009.4983289. ISBN 978-1-4244-2958-5. Dostupné také z: http://ieeexplore.ieee.org/document/4983289/
+\end{thebibliography}
 \end{document}
