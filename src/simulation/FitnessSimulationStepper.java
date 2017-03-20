@@ -77,10 +77,10 @@ public class FitnessSimulationStepper {
                     //first row - leg 0 and 1
                     {
                             robot.legs.get(0).touchValue,
-                            robot.legs.get(0).joints.get(0).getJointAngle(),
-                            robot.legs.get(0).joints.get(1).getJointAngle(),
-                            robot.legs.get(1).joints.get(1).getJointAngle(),
-                            robot.legs.get(1).joints.get(0).getJointAngle(),
+                            angleToValue(robot.legs.get(0).joints.get(0).getJointAngle()),
+                            angleToValue(robot.legs.get(0).joints.get(1).getJointAngle()),
+                            angleToValue(robot.legs.get(1).joints.get(1).getJointAngle()),
+                            angleToValue(robot.legs.get(1).joints.get(0).getJointAngle()),
                             robot.legs.get(1).touchValue
                     },
                     //second row - extras
@@ -95,10 +95,10 @@ public class FitnessSimulationStepper {
                     //third row - leg 2 and 3
                     {
                             robot.legs.get(2).touchValue,
-                            robot.legs.get(2).joints.get(0).getJointAngle(),
-                            robot.legs.get(2).joints.get(1).getJointAngle(),
-                            robot.legs.get(3).joints.get(1).getJointAngle(),
-                            robot.legs.get(3).joints.get(0).getJointAngle(),
+                            angleToValue(robot.legs.get(2).joints.get(0).getJointAngle()),
+                            angleToValue(robot.legs.get(2).joints.get(1).getJointAngle()),
+                            angleToValue(robot.legs.get(3).joints.get(1).getJointAngle()),
+                            angleToValue(robot.legs.get(3).joints.get(0).getJointAngle()),
                             robot.legs.get(3).touchValue
                     }
             };
@@ -117,6 +117,14 @@ public class FitnessSimulationStepper {
     }
 
     private void setAngle(RevoluteJoint joint, double value) {
-        joint.setMotorSpeed((float) (value * (Math.PI / 2) - joint.getJointAngle()) * SPEED_MULTIPLIER);
+        joint.setMotorSpeed((float) (valueToAngle(value) - joint.getJointAngle()) * SPEED_MULTIPLIER);
+    }
+
+    private double angleToValue(double angle) {
+        return (angle / (Math.PI / 2)) / 2 + 0.5;
+    }
+
+    private double valueToAngle(double value) {
+        return (value - 0.5) * 2 * (Math.PI / 2);
     }
 }
