@@ -8,7 +8,7 @@ import worldbuilding.BodySettings;
  */
 public class ANNPhenotype {
 
-    public static final double WEIGHT_MULTIPLIER = 1.1;
+    public static final double WEIGHT_MULTIPLIER = 1.3;
     //the substrate weight matrices
     private double[][][][] inputToHiddenWeights;
     private double[][][][] hiddenToOutputWeights;

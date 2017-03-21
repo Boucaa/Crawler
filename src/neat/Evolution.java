@@ -225,8 +225,6 @@ public class Evolution {
         logger.log("finished in " + time + "ms");
         logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\navg: " + sum / species.size() + "\nspecies: " + species.size() + "\nsize: " + generation.size());
         logger.logGeneration(fitnesses, generationNo);
-        //fitnesses.forEach(f -> mutateSplitConnection(f.genotype));
-        //logger.logGeneration(fitnesses, generationNo * 1000);
         logger.flush();
     }
 
@@ -250,7 +248,7 @@ public class Evolution {
         if (g.connectionGenes.isEmpty()) return;
         ConnectionGene toSplit = g.connectionGenes.get(random.nextInt(g.connectionGenes.size()));
         int nodeInnov = getNextInnov();
-        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, /*NodeGene.FUNCTION_LINEAR));//*/random.nextInt(NodeGene.NO_FUNCTIONS)));
+        g.nodeGenes.add(new NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, random.nextInt(NodeGene.NO_FUNCTIONS)));
         g.connectionGenes.add(new ConnectionGene(toSplit.in, nodeInnov, 1.0, true, getNextInnov()));
         g.connectionGenes.add(new ConnectionGene(nodeInnov, toSplit.out, toSplit.weight, true, getNextInnov()));
         toSplit.active = false;
@@ -263,7 +261,6 @@ public class Evolution {
 
     private void mutateWightSmall(ConnectionGene connectionGene) {
         connectionGene.weight *= 1 + random.nextDouble() * (random.nextBoolean() ? MUTATE_SMALL_LIMIT : -MUTATE_SMALL_LIMIT);
-
     }
 
     private void mutateWeightRandom(ConnectionGene connectionGene) {
@@ -326,7 +323,7 @@ public class Evolution {
         if (common == 0) W = 0;
         int D = a.connectionGenes.size() + b.connectionGenes.size() - 2 * common;
         int N = Math.max(1, Math.max(a.connectionGenes.size(), b.connectionGenes.size()));
-        return (COMPAT_1 / N * D) + (COMPAT_2 * W);
+        return ((COMPAT_1 / N) * D) + (COMPAT_2 * W);
     }
 
     private int getNextInnov() {

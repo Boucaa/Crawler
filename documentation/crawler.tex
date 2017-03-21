@@ -1,11 +1,16 @@
 \documentclass[a4]{article} 
 \usepackage[czech]{babel} 
 \usepackage[utf8]{inputenc} 
-\usepackage{graphicx} 
+\usepackage{caption}
+\usepackage{subcaption}
 \usepackage{a4wide} 
 \usepackage{amsmath,amsfonts,amssymb,amsthm}
 \usepackage{graphicx}
 \graphicspath{ {images/} }
+\usepackage{float}
+\floatstyle{boxed} 
+\restylefloat{figure}
+
 %TODO pridat geometry a udelat spravne okraje 
 \begin{document} 
  
@@ -81,7 +86,29 @@ Po zmutování jsou všichni potomci prohlášeni za současnou generaci a algor
 \subsection{CPPN-NEAT}
 Tím, že v NEAT algoritmu umožníme každému neuronu využívat jinou aktivační funkci, můžeme dosáhnout sítí, které jsou dobře uzpůsobené ke generování fyzické geometrie živočichů. Metoda CPPN-NEAT\cite{cppn-neat} využívá různých vlastností funkcí -- symetrie, repetice apod. tak, že průchodem celou sítí jsou výsledná data nakombinována pomocí komplexní složené funkce, která si uchováva všechny tyto vlastnosti. Tvoří tak útvary, které mají velmi blízko k fyzickému rozložení v reálných živočiších, např. dokáže nakombinovat repetici s variací a generovat útvary podobné prstům u ruky.\par
 V samotném algoritmu stačí jen při tvoření nových neuronů určit náhodnou aktivační funkci a přidat mutační operátor, který změní funkci u náhodného neuronu.\par
-\begin{figure}\end{figure}
+
+%https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Subfloats
+\begin{figure}
+    \centering
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{cppn1}
+        \caption{symetrie}
+        \label{fig:sym}
+    \end{subfigure}
+    ~ 
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{cppn2}
+        \caption{nedokonalá symetrie}
+        \label{fig:imperfectsym}
+    \end{subfigure}
+    ~ 
+    \begin{subfigure}[b]{0.3\textwidth}
+        \includegraphics[width=\textwidth]{cppn3}
+        \caption{repetice s variací}
+        \label{fig:repvar}
+    \end{subfigure}
+    \caption{tvary vygenerované pomocí CPPN-NEAT, převzato\cite{hyperneat}}\label{fig:cppn}
+\end{figure}
 \subsection{HyperNEAT}
 
 \section{Výsledky} 
