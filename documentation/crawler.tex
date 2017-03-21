@@ -47,19 +47,26 @@ Cílem projektu pak je dosáhnout podobnou metodou stabilní, vzpřímené a rep
 \section{Teorie}
 Chůzi lze definovat jakožto sérii stavů kráčivého tělesa, kde každý stav lze zjednodušit jako soubor informací popisující jednotlivé pohyblivé prvky robota. V rámci tohoto projektu budeme pracovat s dvojrozměrnou simulací čtyřnohého robota, jehož každá noha je ovládána dvěmi klouby. Stav robota tak lze vystihnout jako osmirozměrný vektor $\vec{s}$. Hledáme pak ovladač robota, který pro každý stav malezne osmirozměrný vektor $\vec{\omega}$, který každému kloubu určuje úhlovou rychlost.
 \subsection{Evoluční algoritmy}
-
+Evoluční algoritmy jsou metodou, která dokáže mnohnásobnou selekcí, mutací a kombinací různých řešení postupně vyvíjet optimálnější. K tomu potřebuje funkci, která dokáže každé řešení ohodnotit, tzv. \emph{fitness funkci}. V našem případě hodnotíme maximální vzdálenost robota od počátku směrem do kladných hodnot $x$, a vzhledem k tomu, že cílem je chůze vzpřímená, tak u každého řešení, ve kterém některý článek robota klesne svou výškou těžiště pod experimentálně zjištěnou hodnotu $Y_{min}$, nastavíme výslednou \emph{fitness} ovladače na \emph{0}.\par
+Podobně jako v přírodě, evoluční algoritmus si udržuje \emph{populaci} řešení. V každém kroku ohodnotí výše zmíněnou funkcí každého \emph{živočicha}, podle své úspěšnosti jsou pak rozmnoženi (pohlavně, či nepohlavně) a zmutováni. Tento proces je podrobněji popsán v následující sekci.
+\subsection{Neuroevoluce}
+Neuroevoluční algoritmy jsou specifickou kategorií, která se zabývá trénováním umělých neuronových sítí, anglicky \emph{Artificial Neural Network} (ANN), které jsou abstraktním příblížením dějů v mozku, měly by být tedy schopné sloužit i jako ovladač našeho robota. Jejich struktura je popsána níže.
+\subsubsection{Neuronové sítě}
+Základní stavební jednotkou neuronové sítě je \emph{neuron}, ten je výpočetní jednotkou, která přijímá data ve formě spojů (z biologického hlediska \emph{dendrity}) s dalšími neurony. Pro každý z nich má nastavenou \emph{váhu} (anglicky \emph{weight}), která slouží jednoduše jako koeficient, který ovlivňuje \uv{důležitost} konkrétního spoje.\par
+Výstupem, který pak mohou použít další neurony, je výsledek \emph{aktivační funkce} lineární kombinace hodnot napojených neuronů a příslušných vah\cite{neuron}:
+\begin{center}$y_k=\phi(\sum_{j=0}^m w_{kj}*x_j)$\end{center}
 \section{Výsledky} 
 \section{Implementace?}%sem? 
 \section{Závěr} 
 \section{Uživatelská dokumentace} 
-\section{Diskuze?} 
-\section{TMP}
-Evoluční algoritmy se požívají na problémy, jejichž exaktní řešení neznáme, nebo je reálě nemožné. Jsou až tak blízké procesům v přírodě, že je často můžeme využít a k znovunalezení řešení, která v přírodě už existují. Právě proto se evoluční technika hodí pro vývoj chůze.
-\begin{thebibliography}{3}
+\section{Diskuze?}
+\begin{thebibliography}{4}
 \bibitem{bostondynamics}
 Introducing Spot. In: \textit{Youtube} [online]. 9.2.2015 [cit. 2017-03-20]. Dostupné z: https://www.youtube.com/watch?v=M8YjvHYbZ9w. Kanál uživatele Boston Dynamics
 \bibitem{bdpaper}RAIBERT, Marc, Kevin BLANKESPOOR, Gabriel NELSON a Rob PLAYTER. \textit{BigDog, the Rough-Terrain Quadruped Robot} [online]. [cit. 2017-03-20]. DOI: 10.3182/20080706-5-KR-1001.01833. ISBN 10.3182/20080706-5-KR-1001.01833. Dostupné z: http://linkinghub.elsevier.com/retrieve/pii/S1474667016407020
 \bibitem{clunegait}
 CLUNE, Jeff, Benjamin E. BECKMANN, Charles OFRIA a Robert T. PENNOCK. Evolving coordinated quadruped gaits with the HyperNEAT generative encoding. In: \textit{2009 IEEE Congress on Evolutionary Computation}. IEEE, 2009, s. 2764-2771. DOI: 10.1109/CEC.2009.4983289. ISBN 978-1-4244-2958-5. Dostupné také z: http://ieeexplore.ieee.org/document/4983289/
+\bibitem{neuron}
+Artificial neuron. In: \textit{Wikipedia: the free encyclopedia} [online]. San Francisco (CA): Wikimedia Foundation, 2001-2017 [cit. 2017-03-21]. Dostupné z: https://en.wikipedia.org/wiki/Artificial\_neuron
 \end{thebibliography}
 \end{document}
