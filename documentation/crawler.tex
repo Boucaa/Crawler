@@ -3,7 +3,9 @@
 \usepackage[utf8]{inputenc} 
 \usepackage{graphicx} 
 \usepackage{a4wide} 
-\usepackage{amsmath,amsfonts,amssymb,amsthm} 
+\usepackage{amsmath,amsfonts,amssymb,amsthm}
+\usepackage{graphicx}
+\graphicspath{ {images/} }
 %TODO pridat geometry a udelat spravne okraje 
 \begin{document} 
  
@@ -54,13 +56,40 @@ Neuroevoluční algoritmy jsou specifickou kategorií, která se zabývá tréno
 \subsubsection{Neuronové sítě}
 Základní stavební jednotkou neuronové sítě je \emph{neuron}, ten je výpočetní jednotkou, která přijímá data ve formě spojů (z biologického hlediska \emph{dendrity}) s dalšími neurony. Pro každý z nich má nastavenou \emph{váhu} (anglicky \emph{weight}), která slouží jednoduše jako koeficient, který ovlivňuje \uv{důležitost} konkrétního spoje.\par
 Výstupem, který pak mohou použít další neurony, je výsledek \emph{aktivační funkce} lineární kombinace hodnot napojených neuronů a příslušných vah\cite{neuron}:
-\begin{center}$y_k=\phi(\sum_{j=0}^m w_{kj}*x_j)$\end{center}
+\begin{center}$y_k=\phi(\sum_{j=0}^m w_{kj}\cdot x_j)$,\end{center}
+kde $w$ je váha hodnoty neuronu $x$ a $\phi$ aktivační funkce.\par
+Neurony pak lze tímto způsobem zapojovat do komplexnich sítí, kde hodnotu některých určujeme manuálně -- považujeme je za \emph{vstupy} sítě a u některých odečítáme hodnoty, čímž fungují jako \emph{výstupy} sítě.
+\subsubsection{NEAT}
+\emph{Neuroevolution of augmenting topologies}\cite{neat} (NEAT) je metodou, která definuje jeden ze způsobů, kterými lze vyvíjet neuronové sítě pomocí evolučního algoritmu. Revoluční ideou tohoto systému je způsob, kterým zapisuje neuronové sítě, jakožto \emph{živočicha}.\par
+Každou neuronovou síť popisuje jako ohodnocený graf pomocí dvou seznamů \emph{genů} -- seznam vrcholů a seznam hran. Každému vrcholu a hraně přisuzuje číselné identifikároy, pomocí kterých je dokáže přehledně propojovat a udržovat přehled o tom, kteří jedinci jsou \uv{geneticky} podobní.\par
+Stanley a Miikkulainen díky tomu zavádí i proces \emph{speciace}, který ještě před rozmnožováním roztřídí jedince do různých \emph{druhů} podle příbuznosti tak, aby se spolu křížily jen sítě s menšími rozdíly. Každý druh je pak ohodnocen svojí průměrnou hodnotou fitness, pomocí které se určí počet potomků v další generaci danného druhu.\par
+Při procesu rozmnožování se z každého druhu vybere \emph{silnější} část, ze které se vytvoří požadovaný počet potomků, z nichž každý může vzniknout křížením -- většinu genů zdědí po silnějším rodiči, ale část od slabšího, nebo bez křížení, kdy se pouze jedinec zkopíruje do další generace.\par
+Pak na všech potomcích proběhne mutace, přičemž je náhodně rozhodnuto, které z druhů mutací na něm proběhnou, Stanley a Miikkulainen popisují hned několik:
+\begin{itemize}
+\item{přidání nové hrany do sítě}
+\item{rozdělení hrany na dvě hrany s novým neuronem uprostřed}
+\item{změna všech vah o malou hodnotu, nebo na náhodnou hodnotu}
+\end{itemize}
+V tomto projektu je použito ještě několik dalších mutačních operátorů:
+\begin{itemize}
+\item{aktivace/deaktivace jedné hrany}
+\item{změna jedné váhy na náhodnou hodnotu}
+\item{změna jedné váhy o až $\pm 5\%$}
+\end{itemize}
+Díky této mírné úpravě dokáže algoritmus ladit neuronovou síť na trochu detailnějším měřítku.\par
+Po zmutování jsou všichni potomci prohlášeni za současnou generaci a algoritmus pokračuje znovu hodnocením jedinců.
+\subsection{CPPN-NEAT}
+Tím, že v NEAT algoritmu umožníme každému neuronu využívat jinou aktivační funkci, můžeme dosáhnout sítí, které jsou dobře uzpůsobené ke generování fyzické geometrie živočichů. Metoda CPPN-NEAT\cite{cppn-neat} využívá různých vlastností funkcí -- symetrie, repetice apod. tak, že průchodem celou sítí jsou výsledná data nakombinována pomocí komplexní složené funkce, která si uchováva všechny tyto vlastnosti. Tvoří tak útvary, které mají velmi blízko k fyzickému rozložení v reálných živočiších, např. dokáže nakombinovat repetici s variací a generovat útvary podobné prstům u ruky.\par
+V samotném algoritmu stačí jen při tvoření nových neuronů určit náhodnou aktivační funkci a přidat mutační operátor, který změní funkci u náhodného neuronu.\par
+\begin{figure}\end{figure}
+\subsection{HyperNEAT}
+
 \section{Výsledky} 
 \section{Implementace?}%sem? 
 \section{Závěr} 
 \section{Uživatelská dokumentace} 
 \section{Diskuze?}
-\begin{thebibliography}{4}
+\begin{thebibliography}{7}
 \bibitem{bostondynamics}
 Introducing Spot. In: \textit{Youtube} [online]. 9.2.2015 [cit. 2017-03-20]. Dostupné z: https://www.youtube.com/watch?v=M8YjvHYbZ9w. Kanál uživatele Boston Dynamics
 \bibitem{bdpaper}RAIBERT, Marc, Kevin BLANKESPOOR, Gabriel NELSON a Rob PLAYTER. \textit{BigDog, the Rough-Terrain Quadruped Robot} [online]. [cit. 2017-03-20]. DOI: 10.3182/20080706-5-KR-1001.01833. ISBN 10.3182/20080706-5-KR-1001.01833. Dostupné z: http://linkinghub.elsevier.com/retrieve/pii/S1474667016407020
@@ -68,5 +97,11 @@ Introducing Spot. In: \textit{Youtube} [online]. 9.2.2015 [cit. 2017-03-20]. Dos
 CLUNE, Jeff, Benjamin E. BECKMANN, Charles OFRIA a Robert T. PENNOCK. Evolving coordinated quadruped gaits with the HyperNEAT generative encoding. In: \textit{2009 IEEE Congress on Evolutionary Computation}. IEEE, 2009, s. 2764-2771. DOI: 10.1109/CEC.2009.4983289. ISBN 978-1-4244-2958-5. Dostupné také z: http://ieeexplore.ieee.org/document/4983289/
 \bibitem{neuron}
 Artificial neuron. In: \textit{Wikipedia: the free encyclopedia} [online]. San Francisco (CA): Wikimedia Foundation, 2001-2017 [cit. 2017-03-21]. Dostupné z: https://en.wikipedia.org/wiki/Artificial\_neuron
+\bibitem{neat}
+STANLEY, Kenneth O. a Risto MIIKKULAINEN. Evolving Neural Networks through Augmenting Topologies. \emph{Evolutionary Computation} [online]. 2002, \textbf{10}(2), 99-127 [cit. 2017-03-21]. DOI: 10.1162/106365602320169811. ISSN 1063-6560. Dostupné z: http://www.mitpressjournals.org/doi/10.1162/106365602320169811
+\bibitem{cppn-neat}
+STANLEY, Kenneth O. Compositional pattern producing networks: A novel abstraction of development. \emph{Genetic Programming and Evolvable Machines} [online]. 2007-6-6, \textbf{8}(2), 131-162 [cit. 2017-03-21]. DOI: 10.1007/s10710-007-9028-8. ISSN 1389-2576. Dostupné z: http://link.springer.com/10.1007/s10710-007-9028-8
+\bibitem{hyperneat}
+STANLEY, Kenneth O., David B. D'AMBROSIO a Jason GAUCI. A Hypercube-Based Encoding for Evolving Large-Scale Neural Networks. \textit{Artificial Life} [online]. 2009, \textbf{15}(2), 185-212 [cit. 2017-03-21]. DOI: 10.1162/artl.2009.15.2.15202. ISSN 1064-5462. Dostupné z: http://www.mitpressjournals.org/doi/10.1162/artl.2009.15.2.15202
 \end{thebibliography}
 \end{document}
