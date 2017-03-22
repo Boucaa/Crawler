@@ -63,7 +63,7 @@ public class Evolution {
             defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_INPUT, -1));
         }
         for (int i = 0; i < OUTPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_OUTPUT, 0));
+            defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_OUTPUT, NodeGene.FUNCTION_LINEAR));
         }
         Genotype prototype = new Genotype(defaultNodes, new ArrayList<>(), bodySettings);
         for (int i = 0; i < GENERATION_SIZE; i++) {

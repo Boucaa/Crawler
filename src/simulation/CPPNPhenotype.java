@@ -62,7 +62,7 @@ public class CPPNPhenotype {
 
         switch (node.activationFunction) {
             case NodeGene.FUNCTION_SIGMOID:
-                node.currentValue = ActivationFunctions.shiftedSigmoid(sum);
+                node.currentValue = ActivationFunctions.sigmoid(sum);
                 break;
             case NodeGene.FUNCTION_SIN:
                 node.currentValue = ActivationFunctions.sin(sum);

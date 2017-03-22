@@ -139,7 +139,7 @@ public class WorldBuilder {
         fixDef.shape = segmentShape;
         fixDef.filter.categoryBits = 2;
         fixDef.filter.maskBits = 4;
-        fixDef.friction = 0.30f;
+        fixDef.friction = 0.25f;
         segmentBody.createFixture(fixDef);
         segmentList.add(segmentBody);
         return segmentBody;
