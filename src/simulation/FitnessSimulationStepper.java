@@ -43,7 +43,7 @@ public class FitnessSimulationStepper {
         robot = worldBuilder.build();
         this.world = world;
         CPPNPhenotype cppnPhenotype = new CPPNPhenotype(g);
-        this.annPhenotype = new ANNPhenotype(cppnPhenotype, bodySettings);
+        this.annPhenotype = new ANNPhenotype(cppnPhenotype);
 
         this.world.setContactListener(new ContactListener() {
             @Override
@@ -132,6 +132,6 @@ public class FitnessSimulationStepper {
     }
 
     private double valueToAngle(double value) {
-        return (value - 0.5) * 2 * (Math.PI / 2);
+        return (value - 0.5) * 2  /* *(Math.PI / 2)*/;
     }
 }
