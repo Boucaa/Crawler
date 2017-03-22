@@ -17,14 +17,12 @@ import worldbuilding.WorldSettings;
  * Class used to commit the actual steps (frames) of the simulation.
  */
 public class FitnessSimulationStepper {
-    private static final int RESISTANCE = 3;
     private static final double FUNC_DIVIDER = 40.0;
     private final float TIME_STEP = 1 / 60f;
     private final int VEL_ITERATIONS = 8;
     private final int POS_ITERATIONS = 3;
     private final float SPEED_MULTIPLIER = 4.5f;
     private final int STARTUP_FRAMES = 30; //frames at the start when the robot is falling and is not allowed to move
-    private final float SPEED_LIMIT = 2f;
     private final double TOUCH_CHANGE_SPEED = 0.08;
 
     private int framesElapsed = 0;

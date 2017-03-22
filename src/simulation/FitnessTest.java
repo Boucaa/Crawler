@@ -25,9 +25,8 @@ import java.util.stream.Stream;
 public class FitnessTest implements Comparable<FitnessTest> {
     private static final double HEIGHT_LIMIT = -13.0;
     private final int ITERATIONS = 3000;
-    private final int CONFIRM_ITERATIONS = 1500;
+    private final int CONFIRM_ITERATIONS = 500;
     final private boolean LIMIT_HEIGHT = true;
-    final private float GROUND_Y = -14.28f;
 
     private World world;
     public Genotype genotype;
@@ -35,9 +34,7 @@ public class FitnessTest implements Comparable<FitnessTest> {
     int id;
 
     double result;
-
-    ArrayList<Contact> contacts = new ArrayList<>();
-
+    
     FitnessTest(Genotype g, BodySettings bodySettings, int id) {
         this.id = id;
         this.genotype = g;

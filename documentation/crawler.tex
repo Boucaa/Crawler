@@ -138,16 +138,26 @@ Narozdíl od klasických neuronových sítí jsou si sítě generované HyperNEA
   \end{center}
   \caption{rozložení sítě v \cite{clunegait}, převzato \cite{clunegait}}
 \end{wrapfigure}
+
 \cite{clunegait} umisťuje do každého řádku v \emph{substrátu} jednu nohu a do posledního sloupce přidává neuspořádaně zbylé informace (viz obr. 2).\par
+\begin{wrapfigure}[10]{r}{0.59\textwidth}
+  \begin{center}
+    \includegraphics[width=0.58\textwidth]{sandwich}
+  \end{center}
+  \caption{symetrické rozložení sítě, barvy označují jednotlivé nohy, vlevo vstupní vrstva, vpravo výstupní vrstva, prostřední skrytá vrstva nevyobrazena}
+\end{wrapfigure}
 Tento postup sice dává geometricky najevo související buňky -- podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomocí symetrie dává najevo souvislosti typu \emph{přední/zadní pár nohou} a \emph{levá/pravá noha}. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbylé informace jsou v prostřední řadě mezi nohama. Každá noha je popsána pomocí dvou úhlů kloubů a dotykového \emph{senzoru} na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez doteku a $1$ s dotekem, pro hladkost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.\par
-
-
+Jako přídavné proměnné jsou v tomto rozložení $sin(t/T)$, $cos(t/T)$, kde T je experimentálně určená konstanta -- 40, dále úhel těla robota $\Phi$ a $1$ jakožto lineární konstanta.\par
+Z výstupní vrstvy se využívají pouze neurony v pozicích úhlů nohou, které jsou převedeny na úhlovou rychlost podobně jako v \cite{clunegait}:\\
+$\omega = 4,5\cdot(\phi_{new} - \phi_{cur})$
+\subsection{simulace}
+K simulaci je použita knihovna JBox2D\cite{jbox2D}, robot se skládá z hlavního těla, na které jsou napojeny nohy. Každá z nich je napojena pomocí rotujícího \emph{RevoluteJointu} a stejným způsobem je napojen i spodní segment v koleni.\par
+Měření času probíhá 3000 snímků a dalších 500 snímků se čeká, jestli robot po konci měření upadne na zem. Tím se zabraňuje strategiím, kde místo snahy o chůzi robot pouze skočí směrem kupředu.
 \section{Výsledky} 
-\section{Implementace?}%sem? 
+\section{Uživatelská příručka}
 \section{Závěr} 
-\section{Uživatelská dokumentace} 
 \section{Diskuze?}
-\begin{thebibliography}{7}
+\begin{thebibliography}{8}
 \bibitem{bostondynamics}
 Introducing Spot. In: \textit{Youtube} [online]. 9.2.2015 [cit. 2017-03-20]. Dostupné z: https://www.youtube.com/watch?v=M8YjvHYbZ9w. Kanál uživatele Boston Dynamics
 \bibitem{bdpaper}RAIBERT, Marc, Kevin BLANKESPOOR, Gabriel NELSON a Rob PLAYTER. \textit{BigDog, the Rough-Terrain Quadruped Robot} [online]. [cit. 2017-03-20]. DOI: 10.3182/20080706-5-KR-1001.01833. ISBN 10.3182/20080706-5-KR-1001.01833. Dostupné z: http://linkinghub.elsevier.com/retrieve/pii/S1474667016407020
@@ -161,5 +171,7 @@ STANLEY, Kenneth O. a Risto MIIKKULAINEN. Evolving Neural Networks through Augme
 STANLEY, Kenneth O. Compositional pattern producing networks: A novel abstraction of development. \emph{Genetic Programming and Evolvable Machines} [online]. 2007-6-6, \textbf{8}(2), 131-162 [cit. 2017-03-21]. DOI: 10.1007/s10710-007-9028-8. ISSN 1389-2576. Dostupné z: http://link.springer.com/10.1007/s10710-007-9028-8
 \bibitem{hyperneat}
 STANLEY, Kenneth O., David B. D'AMBROSIO a Jason GAUCI. A Hypercube-Based Encoding for Evolving Large-Scale Neural Networks. \textit{Artificial Life} [online]. 2009, \textbf{15}(2), 185-212 [cit. 2017-03-21]. DOI: 10.1162/artl.2009.15.2.15202. ISSN 1064-5462. Dostupné z: http://www.mitpressjournals.org/doi/10.1162/artl.2009.15.2.15202
+\bibitem{jbox2D}
+\textit{JBox2D} [online]. Daniel Murphy, 2014 [cit. 2017-03-22]. Dostupné z: http://www.jbox2d.org/
 \end{thebibliography}
 \end{document}
