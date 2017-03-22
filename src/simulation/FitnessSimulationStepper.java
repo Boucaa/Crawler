@@ -4,7 +4,6 @@ import neat.Genotype;
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
-import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
@@ -12,9 +11,6 @@ import testsettings.TestSettings;
 import worldbuilding.BodySettings;
 import worldbuilding.WorldBuilder;
 import worldbuilding.WorldSettings;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * Created by colander on 1/18/17.
@@ -125,7 +121,7 @@ public class FitnessSimulationStepper {
     }
 
     private void setAngle(RevoluteJoint joint, double value) {
-        if (TestSettings.convertAngles) {
+        if (TestSettings.CONVERT_ANGLES) {
             joint.setMotorSpeed((float) (valueToAngle(value) - joint.getJointAngle()) * SPEED_MULTIPLIER);
         } else {
             joint.setMotorSpeed((float) (value * (Math.PI / 2) - joint.getJointAngle()) * SPEED_MULTIPLIER);
@@ -133,7 +129,7 @@ public class FitnessSimulationStepper {
     }
 
     private double angleToValue(double angle) {
-        if (TestSettings.convertAngles) {
+        if (TestSettings.CONVERT_ANGLES) {
             return (angle / (Math.PI / 2)) / 2 + 0.5;
         } else {
             return angle;

@@ -8,7 +8,7 @@ import testsettings.TestSettings;
  */
 public class ANNPhenotype {
 
-    public static final double WEIGHT_MULTIPLIER = TestSettings.weightMultiplier;
+    public static final double WEIGHT_MULTIPLIER = TestSettings.WEIGHT_MULTIPLIER;
     //the substrate weight matrices
     private double[][][][] inputToHiddenWeights;
     private double[][][][] hiddenToOutputWeights;
@@ -46,7 +46,7 @@ public class ANNPhenotype {
             }
         }
 
-        if (TestSettings.normalize) {
+        if (TestSettings.NORMALIZE) {
             for (int i = 0; i < substrateWidth; i++) {
                 for (int j = 0; j < substrateHeight; j++) {
                     for (int k = 0; k < substrateWidth; k++) {
@@ -75,7 +75,7 @@ public class ANNPhenotype {
                         sum += inputToHiddenWeights[k][l][i][j] * inputs[k][l];
                     }
                 }
-                hiddenLayer[i][j] = ActivationFunctions.activate(sum, TestSettings.annFunction);
+                hiddenLayer[i][j] = ActivationFunctions.activate(sum, TestSettings.ANN_FUNCTION);
             }
         }
 
@@ -90,7 +90,7 @@ public class ANNPhenotype {
                         sum += hiddenToOutputWeights[k][l][i][j] * hiddenLayer[k][l];
                     }
                 }
-                output[i][j] = ActivationFunctions.activate(sum, TestSettings.annFunction);
+                output[i][j] = ActivationFunctions.activate(sum, TestSettings.ANN_FUNCTION);
             }
         }
         lastOutput = output;
