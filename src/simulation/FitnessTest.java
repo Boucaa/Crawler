@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 public class FitnessTest {
     private static final double HEIGHT_LIMIT = -13.0;
     private final int ITERATIONS = 3000;
-    private final int CONFIRM_ITERATIONS = 1500;
+    private final int CONFIRM_ITERATIONS = 500;
     final private boolean LIMIT_HEIGHT = true;
 
     private World world;
@@ -33,8 +33,9 @@ public class FitnessTest {
     private FitnessSimulationStepper stepper;
 
     double result;
-
-    FitnessTest(Genotype g, BodySettings bodySettings) {
+    
+    FitnessTest(Genotype g, BodySettings bodySettings, int id) {
+        this.id = id;
         this.genotype = g;
         this.world = new World(new Vec2(0f, 0f)); //setting the gravity is a responsibility of the WorldBuilder
         stepper = new FitnessSimulationStepper(world, bodySettings, g);
