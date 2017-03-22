@@ -6,7 +6,7 @@ package simulation;
  */
 public class ANNPhenotype {
 
-    public static final double WEIGHT_MULTIPLIER = 1.3;
+    public static final double WEIGHT_MULTIPLIER = 3;
     //the substrate weight matrices
     private double[][][][] inputToHiddenWeights;
     private double[][][][] hiddenToOutputWeights;
@@ -16,11 +16,14 @@ public class ANNPhenotype {
     private final int[] yValues = {-3, -2, -1, 1, 2, 3};
     double[][] lastInput = new double[1][1];
     double[][] lastOutput = new double[1][1];
+    double[][] lastHidden = new double[1][1];
 
     public ANNPhenotype(CPPNPhenotype cppnPhenotype) {
         inputToHiddenWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
         hiddenToOutputWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
 
+        double ithMax = 0;
+        double htoMax = 0;
 //ಠ_ಠ that indent though
         for (int i = 0; i < substrateWidth; i++) {
             for (int j = 0; j < substrateHeight; j++) {
@@ -31,9 +34,23 @@ public class ANNPhenotype {
                         int x2 = startX + k;
                         int y2 = yValues[l];
                         double[] output = cppnPhenotype.step(new double[]{x1, y1, x2, y2, 1});
-                        inputToHiddenWeights[i][j][k][l] = output[0] * WEIGHT_MULTIPLIER;
-                        hiddenToOutputWeights[i][j][k][l] = output[1] * WEIGHT_MULTIPLIER;
+                        inputToHiddenWeights[i][j][k][l] = output[0]; //* WEIGHT_MULTIPLIER;
+                        hiddenToOutputWeights[i][j][k][l] = output[1]; //* WEIGHT_MULTIPLIER;
+                        if (output[0] > ithMax) ithMax = output[0];
+                        if (output[1] > htoMax) htoMax = output[1];
+                    }
+                }
+            }
+        }
 
+        for (int i = 0; i < substrateWidth; i++) {
+            for (int j = 0; j < substrateHeight; j++) {
+                for (int k = 0; k < substrateWidth; k++) {
+                    for (int l = 0; l < substrateHeight; l++) {
+                        if (ithMax != 0)
+                            inputToHiddenWeights[i][j][k][l] = (inputToHiddenWeights[i][j][k][l] / ithMax) * WEIGHT_MULTIPLIER;
+                        if (htoMax != 0)
+                            hiddenToOutputWeights[i][j][k][l] = (hiddenToOutputWeights[i][j][k][l] / htoMax) * WEIGHT_MULTIPLIER;
                     }
                 }
             }
@@ -72,6 +89,7 @@ public class ANNPhenotype {
             }
         }
         lastOutput = output;
+        lastHidden = hiddenLayer;
         return output;
     }
 }

@@ -1,15 +1,10 @@
 package simulation;
 
-import javafx.util.Pair;
 import neat.Genotype;
-import neat.Util;
-import org.jbox2d.common.Vec2;
 import org.jbox2d.testbed.framework.TestbedSettings;
 import org.jbox2d.testbed.framework.TestbedTest;
 import results_viewer.GraphDrawer;
 import worldbuilding.BodySettings;
-
-import java.util.ArrayList;
 
 /**
  * Created by colander on 1/13/17.
@@ -69,10 +64,17 @@ public class TestbedFitnessTest extends TestbedTest {
             this.addTextLine(line);
         }
         this.addTextLine("OUTPUT:");
-        for (int i = 0; i < stepper.annPhenotype.lastOutput.length; i++) {
+        for (int i = 0; i < stepper.annPhenotype.lastHidden.length; i++) {
             String line = "";
-            for (int j = 0; j < stepper.annPhenotype.lastOutput[0].length; j++) {
+            for (int j = 0; j < stepper.annPhenotype.lastHidden[0].length; j++) {
                 line += String.format("%.3f", stepper.annPhenotype.lastOutput[i][j]) + " ";
+            }
+            this.addTextLine(line);
+        }
+        for (int i = 0; i < stepper.annPhenotype.lastHidden.length; i++) {
+            String line = "";
+            for (int j = 0; j < stepper.annPhenotype.lastHidden[0].length; j++) {
+                line += String.format("%.3f", stepper.annPhenotype.lastHidden[i][j]) + " ";
             }
             this.addTextLine(line);
         }
