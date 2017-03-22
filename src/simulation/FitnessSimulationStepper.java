@@ -125,6 +125,6 @@ public class FitnessSimulationStepper {
     }
 
     private double valueToAngle(double value) {
-        return (value - 0.5) * 2 * (Math.PI / 2);
+        return (value - 0.5) * 2  /* *(Math.PI / 2)*/;
     }
 }

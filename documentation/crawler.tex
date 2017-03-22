@@ -8,6 +8,7 @@
 \usepackage{graphicx}
 \graphicspath{ {images/} }
 \usepackage{float}
+\usepackage{wrapfig}
 \floatstyle{boxed} 
 \restylefloat{figure}
 
@@ -84,7 +85,8 @@ V tomto projektu je použito ještě několik dalších mutačních operátorů:
 Díky této mírné úpravě dokáže algoritmus ladit neuronovou síť na trochu detailnějším měřítku.\par
 Po zmutování jsou všichni potomci prohlášeni za současnou generaci a algoritmus pokračuje znovu hodnocením jedinců.
 \subsection{CPPN-NEAT}
-Tím, že v NEAT algoritmu umožníme každému neuronu využívat jinou aktivační funkci, můžeme dosáhnout sítí, které jsou dobře uzpůsobené ke generování fyzické geometrie živočichů. Metoda CPPN-NEAT\cite{cppn-neat} využívá různých vlastností funkcí -- symetrie, repetice apod. tak, že průchodem celou sítí jsou výsledná data nakombinována pomocí komplexní složené funkce, která si uchováva všechny tyto vlastnosti. Tvoří tak útvary, které mají velmi blízko k fyzickému rozložení v reálných živočiších, např. dokáže nakombinovat repetici s variací a generovat útvary podobné prstům u ruky.\par
+Tím, že v NEAT algoritmu umožníme každému neuronu využívat jinou aktivační funkci, můžeme dosáhnout sítí, které jsou dobře uzpůsobené ke generování fyzické geometrie živočichů. Metoda CPPN-NEAT\cite{cppn-neat} využívá různých vlastností funkcí -- symetrie, repetice apod. tak, že průchodem celou sítí jsou výsledná data nakombinována pomocí komplexní složené funkce, která si uchováva všechny tyto vlastnosti.\par
+Pokud například vytvoříme CPPN síť s dvoumi vstupy -- souřadnice $x$ a $y$ s jedním výstupem, získáme dvojrozměrné útvary (viz obr. 1), které mají velmi blízko k fyzickému rozložení v reálných živočiších, např. dokáže nakombinovat repetici s variací a generovat útvary podobné prstům u ruky nebo pomocí symetrie a variace útvar podobný lidskému oku (viz obr. 1b)\par
 V samotném algoritmu stačí jen při tvoření nových neuronů určit náhodnou aktivační funkci a přidat mutační operátor, který změní funkci u náhodného neuronu.\par
 
 %https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Subfloats
@@ -110,6 +112,20 @@ V samotném algoritmu stačí jen při tvoření nových neuronů určit náhodn
     \caption{tvary vygenerované pomocí CPPN-NEAT, převzato\cite{hyperneat}}\label{fig:cppn}
 \end{figure}
 \subsection{HyperNEAT}
+Technika HyperNEAT\cite{hyperneat} využívá CPPN sítě ke generování čtyřrozměrného prostoru, který ve výsledku slouží jako definice vah v další neuronové síti.\par
+To znamená, že generujeme CPPN síť, která má čtyři vstupy -- $x_1$, $y_1$, $x_2$, $y_2$. Výstup nám pak určuje váhu spoje z neuronu na \emph{fyzických} souřadnicích $[x_1;y_1]$ do neuronu na souřadnicích $[x_2;y_2]$. Stačí nám pak vymyslet \emph{fyzickou} strukturu sítě, kterou využijeme této techniky.\par
+V tomto projektu je použito rozložení zvané \emph{\uv{state-space sandwich}}\cite{hyperneat} o třech vrstvách podobně jako \cite{clunegait}, kde výsledná síť je rozvrstvená do trojrozměrného prostoru a z každého neuronu vede spoj do každého neuronu v další vrstvě. CPPN síť má pak dva výstupy, kde první určuje váhu mezi dannými souřadnicemi z první vrstvy do druhé a druhý výstup určuje váhy mezi druhou a třetí vrstvou.\par
+\subsection{Rozložení sítě}
+Narozdíl od klasických neuronových sítí jsou si sítě generované HyperNEATem \emph{vědomé} geometrických souvislostí\cite{hyperneat}, proto je naprosto zásadní rozmístění vstupů a výstupů ve výsledné síti.\par
+
+\begin{wrapfigure}{r}{0.45\textwidth}
+  \begin{center}
+    \includegraphics[width=0.4\textwidth]{clunenet}
+  \end{center}
+  \caption{rozložení sítě v \cite{clunegait}, převzato \cite{clunegait}}
+\end{wrapfigure}
+\cite{clunegait} umisťuje do každého řádku v \emph{substrátu} jednu nohu a do posledního sloupce přidává neuspořádaně zbylé informace (viz obr. 2).\par
+Tento postup sice dává geometricky najevo související buňky -- podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomocí symetrie dává najevo souvislosti typu \emph{přední/zadní pár nohou} a \emph{levá/pravá noha}. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbylé informace jsou v prostřední řadě mezi nohama. Každá noha je popsána pomocí dvou úhlů kloubů a dotykového \emph{senzoru} na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez doteku a $1$ s dotekem, pro hladkost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.
 
 \section{Výsledky} 
 \section{Implementace?}%sem? 
