@@ -3,6 +3,7 @@ package neat;
 import iohandling.Logger;
 import javafx.util.Pair;
 import simulation.*;
+import testsettings.TestSettings;
 import worldbuilding.BodySettings;
 
 import java.util.*;
@@ -35,7 +36,7 @@ public class Evolution {
     private final double CROSSOVER = 0.75;
     private final double KILL_OFF = 0.5;
 
-    private final double SPECIES_RESET_COUNTER = 10;
+    private final double SPECIES_RESET_COUNTER = TestSettings.SPECIES_RESET_COUNTER;
 
     private final Random random = new Random(1337 * 420);
     private final int INPUT_NODES = 5; //x1, y1, x2, y2, bias
@@ -63,7 +64,7 @@ public class Evolution {
             defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_INPUT, -1));
         }
         for (int i = 0; i < OUTPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_OUTPUT, NodeGene.FUNCTION_LINEAR));
+            defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_OUTPUT, TestSettings.OUTPUT_FUNCTION));
         }
         Genotype prototype = new Genotype(defaultNodes, new ArrayList<>(), bodySettings);
         for (int i = 0; i < GENERATION_SIZE; i++) {
@@ -143,7 +144,6 @@ public class Evolution {
         species.forEach(s -> s.genotypes.sort(Comparator.comparingDouble(Pair::getValue)));
 
         for (Species curSpec : species) {
-            //Species cursp = species.get(i);
             if (curSpec.avgFitness == -1) {
                 noMutateChildren.add(Util.copyGenotype(curSpec.genotypes.get(curSpec.genotypes.size() - 1).getKey()));
                 continue;

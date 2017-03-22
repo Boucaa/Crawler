@@ -8,6 +8,7 @@ import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
+import testsettings.TestSettings;
 import worldbuilding.BodySettings;
 import worldbuilding.WorldBuilder;
 import worldbuilding.WorldSettings;
@@ -124,11 +125,19 @@ public class FitnessSimulationStepper {
     }
 
     private void setAngle(RevoluteJoint joint, double value) {
-        joint.setMotorSpeed((float) (valueToAngle(value) - joint.getJointAngle()) * SPEED_MULTIPLIER);
+        if (TestSettings.convertAngles) {
+            joint.setMotorSpeed((float) (valueToAngle(value) - joint.getJointAngle()) * SPEED_MULTIPLIER);
+        } else {
+            joint.setMotorSpeed((float) (value * (Math.PI / 2) - joint.getJointAngle()) * SPEED_MULTIPLIER);
+        }
     }
 
     private double angleToValue(double angle) {
-        return (angle / (Math.PI / 2)) / 2 + 0.5;
+        if (TestSettings.convertAngles) {
+            return (angle / (Math.PI / 2)) / 2 + 0.5;
+        } else {
+            return angle;
+        }
     }
 
     private double valueToAngle(double value) {

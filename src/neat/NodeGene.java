@@ -21,6 +21,8 @@ public class NodeGene {
 
     public final static int NO_FUNCTIONS = 6;
 
+    public final static int FUNCTION_SHIFTED_SIGMOID = 7;
+
     NodeGene(int innov, int type, int activateFunction) {
         this.innov = innov;
         this.type = type;
