@@ -1,6 +1,7 @@
 package iohandling;
 
 import simulation.FitnessResult;
+import testsettings.TestSettings;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,6 +29,7 @@ public class Logger {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        IOHandler.writeFile("config.cfg", TestSettings.serialize());
     }
 
     public void logGeneration(ArrayList<FitnessResult> results, int generationNo) {

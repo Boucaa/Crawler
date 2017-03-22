@@ -11,6 +11,16 @@
 \usepackage{wrapfig}
 \floatstyle{boxed} 
 \restylefloat{figure}
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ left=40mm,
+ top=25mm,
+ bottom=25mm,
+ right=25mm
+ }
+
+
 
 %TODO pridat geometry a udelat spravne okraje 
 \begin{document} 
@@ -18,9 +28,11 @@
 %titulni strana 
 \begin{titlepage} 
 \begin{center} 
-{\huge\textsc{Gymnázium Jana Keplera}\\} 
-{\large{obor vzdělání Gymnázium 79-41-K/81}\\[0.7cm]} 
-{\Huge{Maturitní práce z informatiky}\\[0.5cm]} 
+{\huge\textsc{Gymnázium Jana Keplera}\\}
+{\large{Praha 6, Parléřova 2}}\\
+{\large{obor vzdělání Gymnázium 79-41-K/81}\\[5cm]} 
+{\Large{Maturitní práce z informatiky}\\[0.2cm]}
+{\Huge{Vývoj chůze pomocí\\neuroevolučních algoritmů}}\\\vfill
 {\Large{Jan Bouček}\\} 
 {\large{vedoucí práce: Tomáš Obdržálek}\\} 
 {\large{Praha 2017}} 
@@ -39,8 +51,10 @@ Prohlašuji, že jsem jediným autorem této maturitní práce a všechny citace
 %TODO zrušit mezeru na začátku 
 {\Large\textbf{Anotace}\par}
 Jeden z problémů moderní robotiky je chůze, čehož se tato práce narozdíl od konvenčních metod snaží dosáhnout pomocí strojového učení, konkrétně neuroevolučního algoritmu s nepřímým kódováním. Ten za pomoci techniky HyperNEAT generuje simulaci primitivního mozku, který chůzi robota ovládá.\par 
- 
-{\Huge{POŘEŠIT, PŘELOŽIT}} 
+
+{\Large\textbf{Annotation}\par}
+One of the problems in modern robotics is robotic walking, which in this paper, unlike conventional methods, is achieved by machine learning, specifically using a neuroevolutionary algorithm with indirect encoding. The algorithm uses the HyperNEAT technique to generate a simulation of a primitive brain, which controls the gait of the robot.\par  
+
 %samotna prace 
 \title{Vývoj chůze pomocí neuroevolučních algoritmů} 
 \author{Jan Bouček} 
@@ -125,7 +139,8 @@ Narozdíl od klasických neuronových sítí jsou si sítě generované HyperNEA
   \caption{rozložení sítě v \cite{clunegait}, převzato \cite{clunegait}}
 \end{wrapfigure}
 \cite{clunegait} umisťuje do každého řádku v \emph{substrátu} jednu nohu a do posledního sloupce přidává neuspořádaně zbylé informace (viz obr. 2).\par
-Tento postup sice dává geometricky najevo související buňky -- podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomocí symetrie dává najevo souvislosti typu \emph{přední/zadní pár nohou} a \emph{levá/pravá noha}. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbylé informace jsou v prostřední řadě mezi nohama. Každá noha je popsána pomocí dvou úhlů kloubů a dotykového \emph{senzoru} na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez doteku a $1$ s dotekem, pro hladkost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.
+Tento postup sice dává geometricky najevo související buňky -- podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomocí symetrie dává najevo souvislosti typu \emph{přední/zadní pár nohou} a \emph{levá/pravá noha}. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbylé informace jsou v prostřední řadě mezi nohama. Každá noha je popsána pomocí dvou úhlů kloubů a dotykového \emph{senzoru} na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez doteku a $1$ s dotekem, pro hladkost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.\par
+
 
 \section{Výsledky} 
 \section{Implementace?}%sem? 

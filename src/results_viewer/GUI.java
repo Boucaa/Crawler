@@ -8,6 +8,7 @@ import org.jbox2d.testbed.framework.TestbedModel;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 import simulation.FitnessResult;
 import simulation.TestbedFitnessTest;
+import testsettings.TestSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -142,7 +143,7 @@ public class GUI extends JFrame {
         File selectedRunFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(runSelectList.getSelectedIndex()));
         File[] genFiles = selectedRunFolder.listFiles();
         Arrays.sort(genFiles);
-        for (int i = generationSelectModel.size(); generationSelectModel.size() < genFiles.length - 1; i++) { //-1 to compensate for the evolution.log file
+        for (int i = generationSelectModel.size(); generationSelectModel.size() < genFiles.length - 2; i++) { //-1 to compensate for the evolution.log file
             generationSelectModel.addElement(genFiles[i].getName());
         }
     }
@@ -151,13 +152,22 @@ public class GUI extends JFrame {
         generationSelectModel.clear();
         if (runSelectModel.isEmpty() || index < 0) return;
         File runFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(index));
+
+        File cfgFile = new File(runFolder.getAbsolutePath() + "/config.cfg");
+        if (!cfgFile.exists()) {
+            System.out.println("NO CFG FILE, leaving default");
+        } else {
+            TestSettings.set(IOHandler.readFile(cfgFile.getAbsolutePath()));
+        }
+
         DefaultListModel model = new DefaultListModel();
         File[] genFolders = runFolder.listFiles();
         if (genFolders == null) return;
 
         Arrays.sort(genFolders);
-        for (int i = 0; i < genFolders.length; i++) {
-            if (!genFolders[i].getName().equals("evolution.log")) model.addElement(genFolders[i].getName());
+        for (File genFolder : genFolders) {
+            if (!genFolder.getName().equals("evolution.log") && !genFolder.getName().equals("config.cfg"))
+                model.addElement(genFolder.getName());
         }
         generationSelectList.setModel(model);
         generationSelectModel = model;
