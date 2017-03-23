@@ -8,7 +8,7 @@ import testsettings.TestSettings;
  */
 class ActivationFunctions {
     static double shiftedSigmoid(double sum) {
-        return 2 * (1 / (1 + Math.exp(-4.9 * sum)) - 0.5); //see Stanley et al., 2002, section 4.1
+        return 2 * (1 / (1 + Math.exp(-4.9 * sum)) - 0.5);
     }
 
     static double linear(double sum) {
@@ -53,6 +53,8 @@ class ActivationFunctions {
                 return ActivationFunctions.abs(sum);
             case NodeGene.FUNCTION_GAUSS:
                 return ActivationFunctions.gauss(sum);
+            case NodeGene.FUNCTION_SHIFTED_SIGMOID:
+                return ActivationFunctions.shiftedSigmoid(sum);
             default:
                 System.err.println("WRONG ACTIVATION FUNCTION VALUE: " + activationFunction);
                 System.exit(1);

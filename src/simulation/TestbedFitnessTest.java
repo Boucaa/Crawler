@@ -63,14 +63,6 @@ public class TestbedFitnessTest extends TestbedTest {
             }
             this.addTextLine(line);
         }
-        this.addTextLine("OUTPUT:");
-        for (int i = 0; i < stepper.annPhenotype.lastHidden.length; i++) {
-            String line = "";
-            for (int j = 0; j < stepper.annPhenotype.lastHidden[0].length; j++) {
-                line += String.format("%.3f", stepper.annPhenotype.lastOutput[i][j]) + " ";
-            }
-            this.addTextLine(line);
-        }
         this.addTextLine("HIDDEN:");
         for (int i = 0; i < stepper.annPhenotype.lastHidden.length; i++) {
             String line = "";
@@ -79,6 +71,15 @@ public class TestbedFitnessTest extends TestbedTest {
             }
             this.addTextLine(line);
         }
+        this.addTextLine("OUTPUT:");
+        for (int i = 0; i < stepper.annPhenotype.lastHidden.length; i++) {
+            String line = "";
+            for (int j = 0; j < stepper.annPhenotype.lastHidden[0].length; j++) {
+                line += String.format("%.3f", stepper.annPhenotype.lastOutput[i][j]) + " ";
+            }
+            this.addTextLine(line);
+        }
+
         this.graphDrawer.draw(this.getDebugDraw());
         super.step(settings);
     }

@@ -51,10 +51,23 @@ public class ANNPhenotype {
                     for (int k = 0; k < substrateWidth; k++) {
                         for (int l = 0; l < substrateHeight; l++) {
                             if (ithMax != 0)
-                                inputToHiddenWeights[i][j][k][l] = (inputToHiddenWeights[i][j][k][l] / ithMax) * WEIGHT_MULTIPLIER;
+                                inputToHiddenWeights[i][j][k][l] = (inputToHiddenWeights[i][j][k][l] / ithMax);
                             if (htoMax != 0)
-                                hiddenToOutputWeights[i][j][k][l] = (hiddenToOutputWeights[i][j][k][l] / htoMax) * WEIGHT_MULTIPLIER;
+                                hiddenToOutputWeights[i][j][k][l] = (hiddenToOutputWeights[i][j][k][l] / htoMax);
                         }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < substrateWidth; i++) {
+            for (int j = 0; j < substrateHeight; j++) {
+                for (int k = 0; k < substrateWidth; k++) {
+                    for (int l = 0; l < substrateHeight; l++) {
+                        if (ithMax != 0)
+                            inputToHiddenWeights[i][j][k][l] = inputToHiddenWeights[i][j][k][l] * WEIGHT_MULTIPLIER;
+                        if (htoMax != 0)
+                            hiddenToOutputWeights[i][j][k][l] = hiddenToOutputWeights[i][j][k][l] * WEIGHT_MULTIPLIER;
                     }
                 }
             }
