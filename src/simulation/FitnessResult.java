@@ -7,7 +7,7 @@ import neat.Genotype;
  * Class used as a sortable container for the results of fitness measurements.
  */
 public class FitnessResult implements Comparable<FitnessResult> {
-    int id;
+    private int id;
     public double result;
     public Genotype genotype;
 
@@ -16,7 +16,7 @@ public class FitnessResult implements Comparable<FitnessResult> {
         this.genotype = genotype;
     }
 
-    public FitnessResult(double result, Genotype genotype, int id) {
+    FitnessResult(double result, Genotype genotype, int id) {
         this.result = result;
         this.genotype = genotype;
         this.id = id;

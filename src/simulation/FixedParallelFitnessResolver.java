@@ -15,7 +15,8 @@ public class FixedParallelFitnessResolver extends ParallelFitnessResolver {
     private ArrayList<Pair<Genotype, Integer>> markedGenotypes;
     private int curTest = 0;
 
-    final private int THREADS = 5; //enter desired number of threads here, entering the number of CPU cores should work fine, a higher number could be suitable for processors with hyperthreading
+    final private int THREADS = 4;
+    final private int THREADS = 4; //enter desired number of threads here, entering the number of CPU cores should work fine, a higher number could be suitable for processors with hyperthreading
 
     public FixedParallelFitnessResolver(ArrayList<Genotype> genotypes, BodySettings settings) {
         super(genotypes, settings);

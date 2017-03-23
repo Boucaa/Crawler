@@ -11,15 +11,15 @@ import java.util.HashMap;
  * Created by colander on 1/3/17.
  * Class used as the single phenotype constructed from a genotype.
  */
-public class CPPNPhenotype {
+class CPPNPhenotype {
 
-    public HashMap<Integer, NetworkNode> nodesByInnov = new HashMap<>();
-    ArrayList<NetworkNode> network = new ArrayList<>();
-    ArrayList<NetworkNode> inputs = new ArrayList<>();
-    ArrayList<NetworkNode> outputs = new ArrayList<>();
-    ArrayList<NetworkNode> hidden = new ArrayList<>();
+    private HashMap<Integer, NetworkNode> nodesByInnov = new HashMap<>();
+    private ArrayList<NetworkNode> network = new ArrayList<>();
+    private ArrayList<NetworkNode> inputs = new ArrayList<>();
+    private ArrayList<NetworkNode> outputs = new ArrayList<>();
+    private ArrayList<NetworkNode> hidden = new ArrayList<>();
 
-    public CPPNPhenotype(Genotype g) {
+    CPPNPhenotype(Genotype g) {
         for (int i = 0; i < g.nodeGenes.size(); i++) {
             int nodeInnov = g.nodeGenes.get(i).innov;
             NetworkNode node = new NetworkNode(nodeInnov, g.nodeGenes.get(i).activateFunction);
