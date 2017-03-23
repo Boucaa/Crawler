@@ -21,8 +21,8 @@ public class GraphDrawer {
     public static final Color3f YELLOW_COLOR = new Color3f(0.855f, 0.647f, 0.125f);
     ArrayList<Pair<Integer[], Boolean>> lines = new ArrayList<>();
     HashMap<Integer, Pair<Vec2, Integer>> nodesById = new HashMap<>();
-    final int X_OFFSET = 300;
-    final int Y_OFFSET = 200;
+    final int X_OFFSET = 330;
+    final int Y_OFFSET = 50;
 
     public GraphDrawer(Genotype g) {
         Random rand = new Random(69 * 420);
