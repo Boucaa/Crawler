@@ -29,19 +29,19 @@
 \begin{titlepage} 
 \begin{center} 
 {\huge\textsc{Gymnázium Jana Keplera}\\}
-{\large{Praha 6, Parléřova 2}}\\
+{\large{Parléřova 2, Praha 6}}\\
 {\large{obor vzdělání Gymnázium 79-41-K/81}\\[5cm]} 
 {\Large{Maturitní práce z informatiky}\\[0.2cm]}
 {\Huge{Vývoj chůze pomocí\\neuroevolučních algoritmů}}\\\vfill
 {\Large{Jan Bouček}\\} 
-{\large{vedoucí práce: Tomáš Obdržálek}\\} 
+{\large{vedoucí práce: Ing. Tomáš Obdržálek}\\} 
 {\large{Praha 2017}} 
 \end{center} 
 \end{titlepage} 
  
 %prohlaseni 
 \newpage 
-Prohlašuji, že jsem jediným autorem této maturitní práce a všechny citace, použitá literatura a další zdroje jsou v práci uvedené. Tímto dle zákona 121/2000 Sb. (tzv. Autorský zákon) ve znění pozdějších předpisů uděluji bezúplatně škole Gymnázium Jana Keplera, Praha 6, Parléřova 2 oprávnění k výkonu práva na rozmnožování díla (§~13) a práva na sdělování díla veřejnosti (§~18) na dobu časově neomezenou a bez omezení územního rozsahu.\\[0.7cm] 
+Prohlašuji, že jsem jediným autorem této maturitní práce a všechny citace, použitá literatura a další zdroje jsou v práci uvedené. Tímto dle zákona 121/2000 Sb. (tzv. Autorský zákon) ve znění pozdějších předpisů uděluji bezúplatně škole Gymnázium Jana Keplera, Praha 6, Parléřova 2, oprávnění k výkonu práva na rozmnožování díla (§~13) a práva na sdělování díla veřejnosti (§~18) na dobu časově neomezenou a bez omezení územního rozsahu.\\[0.7cm] 
 \vspace{10cm} 
 {\large{V Praze dne 24. 3. 2017} \hfill Jan Bouček} 
 %anotace 
@@ -50,7 +50,7 @@ Prohlašuji, že jsem jediným autorem této maturitní práce a všechny citace
 \newpage
 %TODO zrušit mezeru na začátku 
 {\Large\textbf{Anotace}\par}
-Jeden z problémů moderní robotiky je chůze, čehož se tato práce narozdíl od konvenčních metod snaží dosáhnout pomocí strojového učení, konkrétně neuroevolučního algoritmu s nepřímým kódováním. Ten za pomoci techniky HyperNEAT generuje simulaci primitivního mozku, který chůzi robota ovládá.\par 
+Jeden z problémů moderní robotiky je chůze, čehož se tato práce na rozdíl od konvenčních metod snaží dosáhnout pomocí strojového učení, konkrétně neuroevolučního algoritmu s nepřímým kódováním. Ten za pomoci techniky HyperNEAT generuje simulaci primitivního mozku, který chůzi robota ovládá.\par 
 
 {\Large\textbf{Annotation}\par}
 One of the problems in modern robotics is robotic walking, which in this paper, unlike conventional methods, is achieved by machine learning, specifically using a neuroevolutionary algorithm with indirect encoding. The algorithm uses the HyperNEAT technique to generate a simulation of a primitive brain, which controls the gait of the robot.\par  
@@ -62,29 +62,29 @@ One of the problems in modern robotics is robotic walking, which in this paper, 
 \maketitle 
  
 \section{Úvod} 
-Jeden z cílů dnesšní robotiky je konstruovat roboty, kteří jsou všestranně využitelní díky své mobilitě. Toho lze dosáhnout různými způsoby, pro svou jednoduchost se často používá jízda, která ale neumožňuje spolehlivé zdolávání členitého terénu, nebo pohyb přímo ve strukturách stavěných člověkem, zejména pak zdolávání schodů.\par
-Tato práce se inspiruje čtyřnohými kráčivými roboty firmy Boston Dynamics\cite{bostondynamics}, kteří dosahují stabilní chůze exaktními metodami.\cite{bdpaper} Podobné chůze by mělo být možné dosáhnout i pomocí organičtějších metod. Neuroevoluční algoritmy dokáží nabídnout přirozené řešení i na velmi komplexní problémy, či dokonce znovuobjevit řešení, které v přírodě už existuje, proto je možné generovat čtyřnohý pohyb i tímto způsobem.\cite{clunegait}\par
-Cílem projektu pak je dosáhnout podobnou metodou stabilní, vzpřímené a repetitivní kupředné chůze na simulaci čtyřnohého robota.
+Jeden z cílů dnešní robotiky je konstruovat roboty, kteří jsou všestranně využitelní díky své mobilitě. Toho lze dosáhnout různými způsoby, pro svou jednoduchost se často používá jízda, která však neumožňuje spolehlivé zdolávání členitého terénu, nebo pohyb přímo ve strukturách stavěných člověkem, zejména pak zdolávání schodů.\par
+Tato práce se inspiruje čtyřnohými kráčivými roboty firmy Boston Dynamics\cite{bostondynamics}, kteří dosahují stabilní chůze exaktními metodami.\cite{bdpaper} Podobné chůze by mělo být možné dosáhnout i pomocí organičtějších metod. Neuroevoluční algoritmy dokážou nabídnout přirozené řešení i velmi komplexních problémů, či dokonce znovuobjevit řešení, které v přírodě už existuje, proto je možné generovat čtyřnohý pohyb i tímto způsobem.\cite{clunegait}\par
+Cílem projektu pak je dosáhnout podobnou metodou stabilní, vzpřímené a repetitivní chůze vpřed na simulaci čtyřnohého robota.
  
 \section{Teorie}
-Chůzi lze definovat jakožto sérii stavů kráčivého tělesa, kde každý stav lze zjednodušit jako soubor informací popisující jednotlivé pohyblivé prvky robota. V rámci tohoto projektu budeme pracovat s dvojrozměrnou simulací čtyřnohého robota, jehož každá noha je ovládána dvěmi klouby. Stav robota tak lze vystihnout jako osmirozměrný vektor $\vec{s}$. Hledáme pak ovladač robota, který pro každý stav malezne osmirozměrný vektor $\vec{\omega}$, který každému kloubu určuje úhlovou rychlost.
+Chůzi lze definovat jakožto sérii stavů kráčivého tělesa, kde každý stav lze zjednodušit jako soubor informací popisujících jednotlivé pohyblivé prvky robota. V rámci tohoto projektu budeme pracovat s dvojrozměrnou simulací čtyřnohého robota, jehož každá noha je ovládána dvěma klouby. Stav robota tak lze vystihnout jako osmirozměrný vektor $\vec{s}$. Hledáme pak ovladač robota, který pro každý stav malezne osmirozměrný vektor $\vec{\omega}$, tem každému kloubu určuje úhlovou rychlost.
 \subsection{Evoluční algoritmy}
-Evoluční algoritmy jsou metodou, která dokáže mnohnásobnou selekcí, mutací a kombinací různých řešení postupně vyvíjet optimálnější. K tomu potřebuje funkci, která dokáže každé řešení ohodnotit, tzv. \emph{fitness funkci}. V našem případě hodnotíme maximální vzdálenost robota od počátku směrem do kladných hodnot $x$, a vzhledem k tomu, že cílem je chůze vzpřímená, tak u každého řešení, ve kterém některý článek robota klesne svou výškou těžiště pod experimentálně zjištěnou hodnotu $Y_{min}$, nastavíme výslednou \emph{fitness} ovladače na \emph{0}.\par
-Podobně jako v přírodě, evoluční algoritmus si udržuje \emph{populaci} řešení. V každém kroku ohodnotí výše zmíněnou funkcí každého \emph{živočicha}, podle své úspěšnosti jsou pak rozmnoženi (pohlavně, či nepohlavně) a zmutováni. Tento proces je podrobněji popsán v následující sekci.
+Evoluční algoritmy jsou metodou, která dokáže mnohnásobnou selekcí, mutací a kombinací různých řešení postupně vyvíjet postupně lepší řešení. K tomu potřebuje funkci, která dokáže každé řešení ohodnotit, tzv. \emph{fitness funkci}. V našem případě hodnotíme maximální vzdálenost robota od počátku směrem do kladných hodnot $x$, a vzhledem k tomu, že cílem je chůze vzpřímená, tak u každého řešení, ve kterém některý článek robota klesne svou výškou těžiště pod experimentálně zjištěnou hodnotu $Y_{min}$, nastavíme výslednou \emph{fitness} ovladače na \emph{0}.\par
+Podobně jako v přírodě, evoluční algoritmus si udržuje \emph{populaci} řešení. V každém kroku ohodnotí výše zmíněnou funkcí všechny \emph{živočichy}, kteří jsou pak podle své úspěšnosti rozmnoženi (pohlavně, či nepohlavně) a zmutováni. Tento proces je podrobněji popsán v následující sekci.
 \subsection{Neuroevoluce}
-Neuroevoluční algoritmy jsou specifickou kategorií, která se zabývá trénováním umělých neuronových sítí, anglicky \emph{Artificial Neural Network} (ANN), které jsou abstraktním příblížením dějů v mozku, měly by být tedy schopné sloužit i jako ovladač našeho robota. Jejich struktura je popsána níže.
+Neuroevoluční algoritmy jsou specifickou kategorií, která se zabývá trénováním umělých neuronových sítí, anglicky \emph{Artificial Neural Network} (ANN), které jsou abstraktním příblížením dějů v mozku, měly by být tedy schopné sloužit i jako ovladač projektovaného robota. Jejich struktura je popsána níže.
 \subsubsection{Neuronové sítě}
 Základní stavební jednotkou neuronové sítě je \emph{neuron}, ten je výpočetní jednotkou, která přijímá data ve formě spojů (z biologického hlediska \emph{dendrity}) s dalšími neurony. Pro každý z nich má nastavenou \emph{váhu} (anglicky \emph{weight}), která slouží jednoduše jako koeficient, který ovlivňuje \uv{důležitost} konkrétního spoje.\par
-Výstupem, který pak mohou použít další neurony, je výsledek \emph{aktivační funkce} lineární kombinace hodnot napojených neuronů a příslušných vah\cite{neuron}:
+Výstupem, který pak mohou použít další neurony, je výsledek \emph{aktivační funkce} skalárního součinu hodnot napojených neuronů a příslušných vah\cite{neuron}:
 \begin{center}$y_k=\phi(\sum_{j=0}^m w_{kj}\cdot x_j)$,\end{center}
 kde $w$ je váha hodnoty neuronu $x$ a $\phi$ aktivační funkce.\par
-Neurony pak lze tímto způsobem zapojovat do komplexnich sítí, kde hodnotu některých určujeme manuálně -- považujeme je za \emph{vstupy} sítě a u některých odečítáme hodnoty, čímž fungují jako \emph{výstupy} sítě.
+Neurony pak lze tímto způsobem zapojovat do komplexnich sítí, kde hodnotu některých neuronů určujeme manuálně -- považujeme je za \emph{vstupy} sítě a u některých neuronů zjišťujeme hodnoty, které fungují jako \emph{výstupy} sítě.
 \subsubsection{NEAT}
 \emph{Neuroevolution of augmenting topologies}\cite{neat} (NEAT) je metodou, která definuje jeden ze způsobů, kterými lze vyvíjet neuronové sítě pomocí evolučního algoritmu. Revoluční ideou tohoto systému je způsob, kterým zapisuje neuronové sítě, jakožto \emph{živočicha}.\par
-Každou neuronovou síť popisuje jako ohodnocený graf pomocí dvou seznamů \emph{genů} -- seznam vrcholů a seznam hran. Každému vrcholu a hraně přisuzuje číselné identifikároy, pomocí kterých je dokáže přehledně propojovat a udržovat přehled o tom, kteří jedinci jsou \uv{geneticky} podobní.\par
-Stanley a Miikkulainen díky tomu zavádí i proces \emph{speciace}, který ještě před rozmnožováním roztřídí jedince do různých \emph{druhů} podle příbuznosti tak, aby se spolu křížily jen sítě s menšími rozdíly. Každý druh je pak ohodnocen svojí průměrnou hodnotou fitness, pomocí které se určí počet potomků v další generaci danného druhu.\par
-Při procesu rozmnožování se z každého druhu vybere \emph{silnější} část, ze které se vytvoří požadovaný počet potomků, z nichž každý může vzniknout křížením -- většinu genů zdědí po silnějším rodiči, ale část od slabšího, nebo bez křížení, kdy se pouze jedinec zkopíruje do další generace.\par
-Pak na všech potomcích proběhne mutace, přičemž je náhodně rozhodnuto, které z druhů mutací na něm proběhnou, Stanley a Miikkulainen popisují hned několik:
+Tento systém každou neuronovou síť popisuje jako ohodnocený graf pomocí dvou seznamů \emph{genů} -- seznamu vrcholů a seznamu hran. Každému vrcholu a hraně přisuzuje číselné identifikátory, pomocí kterých je dokáže přehledně propojovat a udržovat přehled o tom, kteří jedinci jsou si \uv{geneticky} podobní.\par
+Stanley a Miikkulainen díky tomu zavádí i proces \emph{speciace}, který ještě před rozmnožováním roztřídí jedince na různé \emph{druhy} podle příbuznosti tak, aby se spolu křížily jen sítě s menšími rozdíly. Každý druh je pak ohodnocen svojí průměrnou hodnotou fitness, pomocí které se určí počet potomků v další generaci daného druhu.\par
+Při procesu rozmnožování je z každého druhu vybrána \emph{silnější} část, ze které se vytvoří požadovaný počet potomků, z nichž každý může vzniknout křížením -- většinu genů zdědí po silnějším rodiči, ale část od slabšího, nebo bez křížení, kdy se jedinec pouze zkopíruje do další generace.\par
+Pak na všech potomcích proběhnou mutace, přičemž je náhodně rozhodnuto, které z druhů mutací na nich proběhnou, Stanley a Miikkulainen jich popisují hned několik:
 \begin{itemize}
 \item{přidání nové hrany do sítě}
 \item{rozdělení hrany na dvě hrany s novým neuronem uprostřed}
@@ -94,13 +94,13 @@ V tomto projektu je použito ještě několik dalších mutačních operátorů:
 \begin{itemize}
 \item{aktivace/deaktivace jedné hrany}
 \item{změna jedné váhy na náhodnou hodnotu}
-\item{změna jedné váhy o až $\pm 5\%$}
+\item{změna jedné váhy o maximálně $\pm 5\%$}
 \end{itemize}
-Díky této mírné úpravě dokáže algoritmus ladit neuronovou síť na trochu detailnějším měřítku.\par
+Díky této malé úpravě dokáže algoritmus ladit neuronovou síť v mírně detailnějším měřítku.\par
 Po zmutování jsou všichni potomci prohlášeni za současnou generaci a algoritmus pokračuje znovu hodnocením jedinců.
 \subsection{CPPN-NEAT}
-Tím, že v NEAT algoritmu umožníme každému neuronu využívat jinou aktivační funkci, můžeme dosáhnout sítí, které jsou dobře uzpůsobené ke generování fyzické geometrie živočichů. Metoda CPPN-NEAT\cite{cppn-neat} využívá různých vlastností funkcí -- symetrie, repetice apod. tak, že průchodem celou sítí jsou výsledná data nakombinována pomocí komplexní složené funkce, která si uchováva všechny tyto vlastnosti.\par
-Pokud například vytvoříme CPPN síť s dvoumi vstupy -- souřadnice $x$ a $y$ s jedním výstupem, získáme dvojrozměrné útvary (viz obr. 1), které mají velmi blízko k fyzickému rozložení v reálných živočiších, např. dokáže nakombinovat repetici s variací a generovat útvary podobné prstům u ruky nebo pomocí symetrie a variace útvar podobný lidskému oku (viz obr. 1b)\par
+Tím, že v NEAT algoritmu umožníme každému neuronu využívat jinou aktivační funkci, můžeme dosáhnout tvorby sítí, které jsou dobře uzpůsobené ke generování fyzické geometrie živočichů. Metoda CPPN-NEAT\cite{cppn-neat} využívá různých vlastností funkcí -- symetrie, repetice apod. tak, že průchodem celou sítí jsou výsledná data nakombinována pomocí komplexní složené funkce, která si uchováva všechny tyto vlastnosti.\par
+Pokud například vytvoříme CPPN síť s dvěma vstupy -- souřadnicemi $x$ a $y$ s jedním výstupem, získáme dvojrozměrné útvary (viz obr. 1), které mají velmi blízko k fyzickému rozložení v reálných živočiších, např. dokáže nakombinovat repetici s variací a generovat útvary podobné prstům ruky nebo pomocí symetrie a variace útvar podobný lidskému oku (viz obr. 1b)\par
 V samotném algoritmu stačí jen při tvoření nových neuronů určit náhodnou aktivační funkci a přidat mutační operátor, který změní funkci u náhodného neuronu.\par
 
 %https://en.wikibooks.org/wiki/LaTeX/Floats,_Figures_and_Captions#Subfloats
@@ -127,10 +127,10 @@ V samotném algoritmu stačí jen při tvoření nových neuronů určit náhodn
 \end{figure}
 \subsection{HyperNEAT}
 Technika HyperNEAT\cite{hyperneat} využívá CPPN sítě ke generování čtyřrozměrného prostoru, který ve výsledku slouží jako definice vah v další neuronové síti.\par
-To znamená, že generujeme CPPN síť, která má čtyři vstupy -- $x_1$, $y_1$, $x_2$, $y_2$. Výstup nám pak určuje váhu spoje z neuronu na \emph{fyzických} souřadnicích $[x_1;y_1]$ do neuronu na souřadnicích $[x_2;y_2]$. Stačí nám pak vymyslet \emph{fyzickou} strukturu sítě, kterou využijeme této techniky.\par
-V tomto projektu je použito rozložení zvané \emph{\uv{state-space sandwich}}\cite{hyperneat} o třech vrstvách podobně jako \cite{clunegait}, kde výsledná síť je rozvrstvená do trojrozměrného prostoru a z každého neuronu vede spoj do každého neuronu v další vrstvě. CPPN síť má pak dva výstupy, kde první určuje váhu mezi dannými souřadnicemi z první vrstvy do druhé a druhý výstup určuje váhy mezi druhou a třetí vrstvou.\par
+To znamená, že generujeme CPPN síť, která má čtyři vstupy -- $x_1$, $y_1$, $x_2$, $y_2$. Výstup nám pak určuje váhu spoje z neuronu na \emph{fyzických} souřadnicích $[x_1;y_1]$ do neuronu na souřadnicích $[x_2;y_2]$. Stačí nám pak navrhnout \emph{fyzickou} strukturu sítě k využití této techniky.\par
+V tomto projektu je použito rozložení zvané \emph{\uv{state-space sandwich}}\cite{hyperneat} o třech vrstvách podobně jako \cite{clunegait}, kde výsledná síť je rozvrstvená do trojrozměrného prostoru a z každého neuronu vede spoj do každého neuronu v další vrstvě. CPPN síť má pak dva výstupy, kde první určuje váhu mezi souřadnicemi $[x_1;y_1]$ z první vrstvy do $x_2;y_2$ v druhé a druhý výstup určuje stejným způsobem váhy mezi druhou a třetí vrstvou.\par
 \subsection{Rozložení sítě}
-Narozdíl od klasických neuronových sítí jsou si sítě generované HyperNEATem \emph{vědomé} geometrických souvislostí\cite{hyperneat}, proto je naprosto zásadní rozmístění vstupů a výstupů ve výsledné síti.\par
+Na rozdíl od klasických neuronových sítí jsou si sítě generované HyperNEATem \emph{vědomé} geometrických souvislostí\cite{hyperneat}, proto je naprosto zásadní rozmístění vstupů a výstupů ve výsledné síti.\par
 
 \begin{wrapfigure}{r}{0.45\textwidth}
   \begin{center}
@@ -139,24 +139,24 @@ Narozdíl od klasických neuronových sítí jsou si sítě generované HyperNEA
   \caption{rozložení sítě v \cite{clunegait}, převzato \cite{clunegait}}
 \end{wrapfigure}
 
-\cite{clunegait} umisťuje do každého řádku v \emph{substrátu} jednu nohu a do posledního sloupce přidává neuspořádaně zbylé informace (viz obr. 2).\par
+\cite{clunegait} umisťuje do každého řádku v \emph{substrátu} jednu nohu a do posledního sloupce přidává neuspořádaně zbývající informace (viz obr. 2).\par
 \begin{wrapfigure}[10]{r}{0.59\textwidth}
   \begin{center}
     \includegraphics[width=0.58\textwidth]{sandwich}
   \end{center}
   \caption{symetrické rozložení sítě, barvy označují jednotlivé nohy, vlevo vstupní vrstva, vpravo výstupní vrstva, prostřední skrytá vrstva nevyobrazena}
 \end{wrapfigure}
-Tento postup sice dává geometricky najevo související buňky -- podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomocí symetrie dává najevo souvislosti typu \emph{přední/zadní pár nohou} a \emph{levá/pravá noha}. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbylé informace jsou v prostřední řadě mezi nohama. Každá noha je popsána pomocí dvou úhlů kloubů a dotykového \emph{senzoru} na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez doteku a $1$ s dotekem, pro hladkost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.\par
-Jako přídavné proměnné jsou v tomto rozložení $sin(t/T)$, $cos(t/T)$, kde T je experimentálně určená konstanta -- 40, dále úhel těla robota $\Phi$ a $1$ jakožto lineární konstanta.\par
-Z výstupní vrstvy se využívají pouze neurony v pozicích úhlů nohou, které jsou převedeny na úhlovou rychlost podobně jako v \cite{clunegait}:\\
+Tento postup sice dává geometricky najevo související buňky -- podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomoci symetrie dává najevo souvislosti typu \emph{přední/zadní pár nohou} a \emph{levá/pravá noha}. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbývající informace jsou v prostřední řadě mezi nohama. Každá noha je popsána pomocí dvou úhlů kloubů a dotykového \emph{senzoru} na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez doteku a $1$ s dotekem, pro plynulost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.\par
+Jako přídavné proměnné jsou v tomto rozložení $sin(t/T)$, $cos(t/T)$, kde T je experimentálně určená konstanta 40, dále úhel těla robota se zemí $\Phi$ a $1$ jakožto lineární konstanta.\par
+Z výstupní vrstvy jsou využívány pouze neurony v pozicích úhlů nohou, které jsou převedeny na úhlovou rychlost podobně jako v \cite{clunegait}:\\
 $\omega = 4,5\cdot(\phi_{new} - \phi_{cur})$
 \subsection{simulace}
-K simulaci je použita knihovna JBox2D\cite{jbox2D}, robot se skládá z hlavního těla, na které jsou napojeny nohy. Každá z nich je napojena pomocí rotujícího \emph{RevoluteJointu} a stejným způsobem je napojen i spodní segment v koleni.\par
-Měření času probíhá 3000 snímků a dalších 500 snímků se čeká, jestli robot po konci měření upadne na zem. Tím se zabraňuje strategiím, kde místo snahy o chůzi robot pouze skočí směrem kupředu.
+K simulaci je použita knihovna JBox2D\cite{jbox2D}. Robot se skládá z hlavního těla, na které jsou napojeny nohy. Každá z nich je napojena pomocí rotujícího \emph{RevoluteJointu} a stejným způsobem je napojen i spodní segment v koleni.\par
+Měření vzdálenosti probíhá 3000 snímků při 60 snímcích za sekundu a dalších 1500 snímků se čeká, jestli robot po konci měření upadne na zem. Tím se zabraňuje strategiím, kdy místo snahy o chůzi robot pouze skočí směrem kupředu.\par
 \section{Výsledky} 
 \section{Uživatelská příručka}
+Výsledkem projektu jsou dva spustitelné programy -- jeden na samotnou evoluci a druhý na zobrazovnání výsledků. Oba programy jsou napsány v jazyce Java a lze je manuálně zkompilovat pomocí přiložených \emph{manifestů} následným způsobem
 \section{Závěr} 
-\section{Diskuze?}
 \begin{thebibliography}{8}
 \bibitem{bostondynamics}
 Introducing Spot. In: \textit{Youtube} [online]. 9.2.2015 [cit. 2017-03-20]. Dostupné z: https://www.youtube.com/watch?v=M8YjvHYbZ9w. Kanál uživatele Boston Dynamics
