@@ -158,7 +158,7 @@ public class GUI extends JFrame {
         File runFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(index));
         File cfgFile = new File(runFolder.getAbsolutePath() + "/config.cfg");
         if (!cfgFile.exists()) {
-            System.out.println("NO CFG FILE, leaving default");
+            System.err.println("NO CFG FILE, leaving default");
         } else {
             TestSettings.set(IOHandler.readFile(cfgFile.getAbsolutePath()));
         }

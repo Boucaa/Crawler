@@ -1,5 +1,6 @@
 package testsettings;
 
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 /**
@@ -19,15 +20,19 @@ public class TestSettings {
 
     public static void set(String serialized) {
         Scanner sc = new Scanner(serialized);
-        SPECIES_RESET_COUNTER = sc.nextInt();
-        OUTPUT_FUNCTION = sc.nextInt();
-        ANN_FUNCTION = sc.nextInt();
-        SIGMOID_SHIFTED = sc.nextBoolean();
-        CONVERT_ANGLES = sc.nextBoolean();
-        NORMALIZE = sc.nextBoolean();
-        WEIGHT_MULTIPLIER = sc.nextDouble();
-        PI_RANGE = sc.nextBoolean();
-        FRICTION = sc.nextFloat();
+        try {
+            SPECIES_RESET_COUNTER = sc.nextInt();
+            OUTPUT_FUNCTION = sc.nextInt();
+            ANN_FUNCTION = sc.nextInt();
+            SIGMOID_SHIFTED = sc.nextBoolean();
+            CONVERT_ANGLES = sc.nextBoolean();
+            NORMALIZE = sc.nextBoolean();
+            WEIGHT_MULTIPLIER = sc.nextDouble();
+            PI_RANGE = sc.nextBoolean();
+            FRICTION = sc.nextFloat();
+        } catch (NoSuchElementException e) {
+            System.err.println("BROKEN CONFIG FILE");
+        }
     }
 
     public static String serialize() {
