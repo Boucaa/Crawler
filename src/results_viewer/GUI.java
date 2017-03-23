@@ -119,6 +119,10 @@ public class GUI extends JFrame {
 
     private void initLists() {
         File resultsFolder = new File(Logger.RESULTS_DIRECTORY);
+        if (!resultsFolder.exists()) {
+            System.out.println("NO RESULTS FOLDER, EXITING");
+            System.exit(0);
+        }
         File[] runFolders = resultsFolder.listFiles();
         if (runFolders == null) return;
         Arrays.sort(runFolders);

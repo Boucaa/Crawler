@@ -21,6 +21,8 @@ public class Logger {
     private BufferedWriter logWriter;
 
     public Logger() {
+        File resultsDir = new File(RESULTS_DIRECTORY);
+        if (!resultsDir.exists()) IOHandler.createDirectory(resultsDir.getAbsolutePath());
         runDir = RESULTS_DIRECTORY + System.currentTimeMillis();
         IOHandler.createDirectory(runDir);
         File logFile = new File(runDir + "/evolution.log");
