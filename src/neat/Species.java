@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 /**
  * Created by colander on 1/14/17.
+ * NEAT species class.
  */
 class Species {
     ArrayList<Pair<Genotype, Double>> genotypes = new ArrayList<>();

@@ -7,12 +7,12 @@ import java.util.ArrayList;
 
 /**
  * Created by colander on 15.3.17.
+ * An abstraction of the legs of the robot
  */
 public class RobotLeg {
 
     ArrayList<Body> segments;
     ArrayList<RevoluteJoint> joints;
-    Body soleBody;
     boolean touch = false;
     double touchValue = 0;
 

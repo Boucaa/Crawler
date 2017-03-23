@@ -2,6 +2,7 @@ package neat;
 
 /**
  * Created by colander on 1/3/17.
+ * NEAT node gene class.
  */
 public class NodeGene {
     public final int innov;

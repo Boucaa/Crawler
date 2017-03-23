@@ -1,22 +1,9 @@
 package simulation;
 
 import neat.Genotype;
-import neat.Util;
-import org.jbox2d.callbacks.ContactImpulse;
-import org.jbox2d.callbacks.ContactListener;
-import org.jbox2d.collision.Manifold;
 import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.BodyType;
 import org.jbox2d.dynamics.World;
-import org.jbox2d.dynamics.contacts.Contact;
-import org.jbox2d.dynamics.contacts.Position;
 import worldbuilding.BodySettings;
-
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.OptionalDouble;
-import java.util.stream.Stream;
 
 /**
  * Created by colander on 1/13/17.

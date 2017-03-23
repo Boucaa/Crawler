@@ -1,23 +1,21 @@
 package testsettings;
 
-import neat.NodeGene;
-
 import java.util.Scanner;
 
 /**
  * Created by colander on 22.3.17.
+ * A general settings container.
  */
 public class TestSettings {
-    public static int SPECIES_RESET_COUNTER = 10;
-    //public static float friction = 0.25f;
-    public static int OUTPUT_FUNCTION = NodeGene.FUNCTION_LINEAR;
-    public static int ANN_FUNCTION = NodeGene.FUNCTION_SIGMOID; //0/lin
-    public static boolean SIGMOID_SHIFTED = false;
-    public static boolean CONVERT_ANGLES = true; //false/true
-    public static boolean NORMALIZE = true; //
-    public static double WEIGHT_MULTIPLIER = 0;
-    public static boolean PI_RANGE = true;
-    public static float FRICTION = 0.30f;
+    public static int SPECIES_RESET_COUNTER;
+    public static int OUTPUT_FUNCTION;
+    public static int ANN_FUNCTION;
+    public static boolean SIGMOID_SHIFTED;
+    public static boolean CONVERT_ANGLES;
+    public static boolean NORMALIZE;
+    public static double WEIGHT_MULTIPLIER;
+    public static boolean PI_RANGE;
+    public static float FRICTION;
 
     public static void set(String serialized) {
         Scanner sc = new Scanner(serialized);

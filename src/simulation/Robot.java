@@ -1,7 +1,6 @@
 package simulation;
 
 import org.jbox2d.dynamics.Body;
-import org.jbox2d.dynamics.joints.RevoluteJoint;
 
 import java.util.ArrayList;
 
