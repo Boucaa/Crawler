@@ -71,6 +71,7 @@ public class TestbedFitnessTest extends TestbedTest {
             }
             this.addTextLine(line);
         }
+        this.addTextLine("HIDDEN:");
         for (int i = 0; i < stepper.annPhenotype.lastHidden.length; i++) {
             String line = "";
             for (int j = 0; j < stepper.annPhenotype.lastHidden[0].length; j++) {

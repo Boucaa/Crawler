@@ -29,7 +29,7 @@ public class Logger {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        IOHandler.writeFile("config.cfg", TestSettings.serialize());
+        IOHandler.writeFile(runDir + "/config.cfg", TestSettings.serialize());
     }
 
     public void logGeneration(ArrayList<FitnessResult> results, int generationNo) {
