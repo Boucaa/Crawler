@@ -12,6 +12,7 @@
 \floatstyle{boxed} 
 \restylefloat{figure}
 \usepackage{geometry}
+\usepackage{tikz,pgfplots} 
  \geometry{
  a4paper,
  left=40mm,
@@ -153,9 +154,60 @@ $\omega = 4,5\cdot(\phi_{new} - \phi_{cur})$
 \subsection{simulace}
 K simulaci je použita knihovna JBox2D\cite{jbox2D}. Robot se skládá z hlavního těla, na které jsou napojeny nohy. Každá z nich je napojena pomocí rotujícího \emph{RevoluteJointu} a stejným způsobem je napojen i spodní segment v koleni.\par
 Měření vzdálenosti probíhá 3000 snímků při 60 snímcích za sekundu a dalších 1500 snímků se čeká, jestli robot po konci měření upadne na zem. Tím se zabraňuje strategiím, kdy místo snahy o chůzi robot pouze skočí směrem kupředu.\par
-\section{Výsledky} 
+\section{Výsledky}
+Nejlepším výsledkem je robot, který je schopen během 3000 snímků ujít 177 délkových jednotek. Je schopen dosáhnout pravidelné chůze, která vypadá stabilně a přirozeně.\par 
+K lidské, či zvířecí chůzi mu ale chybí jedna zásadní vlastnost -- při chůzi nezvedá nohy. K tomu dochází zejména z toho důvodu, že při chůzi na absolutně hladkém povrchu k tomu ani není důvod a stálý kontakt se zemí mu dodává další stabilitu.\par
+Jako aktivační funkce se ve výsledné neuronové síti používá sigmoida s posunutým nulovým bodem z 0,5 na 0, čímž dosahuje hodnot od -1 do 1 a je podobná často používané hyperbolické tangentě.
+Algoritmus zkonvergoval po přibližně 2000 generacích,
+\begin{figure}[h]
+
+
+\begin{tikzpicture}
+\begin{axis}[
+    axis lines = left,
+    xlabel = generace,
+    ylabel = {fitness},
+]
+
+
+\addplot[
+    color=blue,
+    mark=square,
+    ]
+    coordinates {
+    (0,23.1)(10,27.5)(20,32)(30,37.8)(40,44.6)(60,61.8)(80,83.8)(100,114)
+    };
+    %\legend{CuSO$_4\cdot$5H$_2$O}
+ 
+ 
+\end{axis}
+\end{tikzpicture}
+
+
+\end{figure}
 \section{Uživatelská příručka}
-Výsledkem projektu jsou dva spustitelné programy -- jeden na samotnou evoluci a druhý na zobrazovnání výsledků. Oba programy jsou napsány v jazyce Java a lze je manuálně zkompilovat pomocí přiložených \emph{manifestů} následným způsobem
+Výsledkem projektu jsou dva spustitelné programy -- jeden na samotnou evoluci a druhý na zobrazovnání výsledků. Oba programy jsou napsány v jazyce Java a lze je zkompilovat pomocí prostředí IntelliJ IDEA, ve kterém byl projekt vyvíjen. Ke kompilaci je potřeba JDK s balíkem JavaFX (distribuce typu OpenJDK apod. nefungují). Projekt byl vždy kompilován a spouštěn na systému Linux (Manjaro Linux s prostředím i3wm), případná kompatibilita s jinými systémy je pravděpodobná, avšak nezaručená.\par
+\subsection{Zobrazovač výsledků}
+Jedním z programů je program na zobrazování simulací výsledných sítí. Jeho grafické prostředí je ovládané poměrně intuitivně, v levé části je na výběr popořadě:
+\begin{itemize}
+\item{běh programu (podle názvu složky)}
+\item{generace programu}
+\item{jedinec z generace}
+\end{itemize}
+Na pravé straně je zobrazená simulace společně s užitečnými daty na levé straně:
+\begin{itemize}
+\item{souřadnice $x$ těla robota}
+\item{maximální dosažená souřadnice $x$ robota v současné simulaci}
+\item{maximální dosažená souřadnice $x$ robota po 3000 snímcích}
+\item{počet uběhlých snímků}
+\item{souřadnice $y$ těla robota}
+\item{současné hodnoty vstupní vrstvy neuronové sítě}
+\item{současné hodnoty skryté vrstvy neuronové sítě}
+\item{současné hodnoty výstupní vrstvy neuronové sítě}
+\end{itemize}
+Napravo od užitečných dat je vyobrazena CPPN síť. Vstupní neurony jsou na levém okraji, výstupní neurony na pravém okraji, mezi nimi jsou náhodně rozloženy skryté neurony, jejichž barva značí použitou aktivační funkci. Spoje v síti mají svůj cílový neuron označený kratším obarveným koncem. Neaktivní spoje jsou vyznačeny šedou barvou.
+\subsection{Evoluční program}
+Evoluční program je nutno spustit z konzole a vyžaduje soubor \emph{config.cfg}, který obsahuje nastavení několika konstant, které lze měnit. Program ukládá výsledky do složky \emph{results}, kam také ukládá záznam průběhu programu, který také vypisuje do konzole. Vypisuje několik důležitých informací, jako nejdelší dosaženou vzdálenost, počet potomků, popis jednotlivých druhů apod.
 \section{Závěr} 
 \begin{thebibliography}{8}
 \bibitem{bostondynamics}
