@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 /**
  * Created by colander on 1/30/17.
+ * Class for handling basic file IO
  */
 public class IOHandler {
 

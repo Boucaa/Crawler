@@ -156,7 +156,6 @@ public class GUI extends JFrame {
         generationSelectModel.clear();
         if (runSelectModel.isEmpty() || index < 0) return;
         File runFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(index));
-        //TODO FIX
         File cfgFile = new File(runFolder.getAbsolutePath() + "/config.cfg");
         if (!cfgFile.exists()) {
             System.out.println("NO CFG FILE, leaving default");
@@ -175,6 +174,7 @@ public class GUI extends JFrame {
         }
         generationSelectList.setModel(model);
         generationSelectModel = model;
+        if (!generationSelectModel.isEmpty()) generationSelectList.setSelectedIndex(generationSelectModel.size() - 1);
     }
 
     int id = 0;

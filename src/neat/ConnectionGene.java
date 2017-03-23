@@ -2,6 +2,7 @@ package neat;
 
 /**
  * Created by colander on 1/3/17.
+ * NEAT connection class.
  */
 public class ConnectionGene implements Comparable<ConnectionGene> {
     public int in;
