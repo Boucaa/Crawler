@@ -7,6 +7,7 @@ import org.jbox2d.dynamics.*;
 import org.jbox2d.dynamics.joints.*;
 import simulation.Robot;
 import simulation.RobotLeg;
+import testsettings.TestSettings;
 
 import java.util.ArrayList;
 
@@ -139,7 +140,7 @@ public class WorldBuilder {
         fixDef.shape = segmentShape;
         fixDef.filter.categoryBits = 2;
         fixDef.filter.maskBits = 4;
-        fixDef.friction = 0.25f;
+        fixDef.friction = TestSettings.FRICTION;
         segmentBody.createFixture(fixDef);
         segmentList.add(segmentBody);
         return segmentBody;
