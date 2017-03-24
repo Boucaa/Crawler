@@ -153,6 +153,14 @@ Z~výstupní vrstvy jsou využívány pouze neurony v~pozicích úhlů nohou, kt
 $\omega = 4,5\cdot(\phi_{new} - \phi_{cur})$
 \subsection{simulace}
 K~simulaci je použita knihovna JBox2D\cite{jbox2D}. Robot se skládá z~hlavního těla, na které jsou napojeny nohy. Každá z~nich je napojena pomocí rotujícího \emph{RevoluteJointu} a stejným způsobem je napojen i spodní segment v~koleni.\par
+
+\begin{wrapfigure}[12]{r}{0.45\textwidth}
+  \begin{center}
+    \includegraphics[width=0.43\textwidth]{robot}
+  \end{center}
+  \caption{rozložení sítě v~\cite{clunegait}, převzato \cite{clunegait}}
+\end{wrapfigure}
+
 Měření vzdálenosti probíhá 3000 snímků při 60 snímcích za sekundu a dalších 1500 snímků se čeká, jestli robot po konci měření upadne na zem. Tím se zabraňuje strategiím, kdy místo snahy o~chůzi robot pouze skočí směrem kupředu.\par
 \section{Výsledky}
 Nejlepším výsledkem programu je ovladač robota, který je schopen během 3000 snímků ujít 177 délkových jednotek. Je schopen dosáhnout pravidelné chůze, která vypadá stabilně a přirozeně.\par 
@@ -207,6 +215,9 @@ Na pravé straně se zobrazuje simulace společně s~užitečnými daty umístě
 \item{současné hodnoty výstupní vrstvy neuronové sítě}
 \end{itemize}
 Napravo od užitečných dat je vyobrazena CPPN síť. Vstupní neurony jsou na jejím levém okraji, výstupní neurony na pravém okraji, mezi nimi jsou náhodně rozloženy skryté neurony, jejichž barva značí použitou aktivační funkci. Spoje v~síti mají svůj cílový neuron označený kratším obarveným koncem. Neaktivní spoje jsou vyznačeny šedou barvou.
+\begin{figure}
+\includegraphics[width=1\linewidth]{program}
+\end{figure}
 \subsection{Evoluční program}
 Evoluční program je nutno spustit z~konzole a vyžaduje soubor \emph{config.cfg}, který obsahuje nastavení několika konstant, které lze měnit. Program ukládá výsledky do složky \emph{results}, kam také ukládá záznam průběhu programu, který rovněž vypisuje do konzole. Vypisuje několik důležitých informací, jako nejdelší dosaženou vzdálenost, počet potomků, popis jednotlivých druhů apod.
 \section{Technologie}
