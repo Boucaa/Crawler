@@ -36,7 +36,7 @@ public class Evolution {
     private final double CROSSOVER = 0.75;
     private final double KILL_OFF = 0.5;
 
-    private final double SPECIES_RESET_COUNTER = TestSettings.SPECIES_RESET_COUNTER;
+    private double SPECIES_RESET_COUNTER = TestSettings.SPECIES_RESET_COUNTER;
 
     private final Random random = new Random(1337 * 420);
     private final int INPUT_NODES = 5; //x1, y1, x2, y2, bias

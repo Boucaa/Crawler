@@ -8,7 +8,6 @@ import testsettings.TestSettings;
  */
 public class ANNPhenotype {
 
-    public static final double WEIGHT_MULTIPLIER = TestSettings.WEIGHT_MULTIPLIER;
     //the substrate weight matrices
     private double[][][][] inputToHiddenWeights;
     private double[][][][] hiddenToOutputWeights;
@@ -65,9 +64,9 @@ public class ANNPhenotype {
                 for (int k = 0; k < substrateWidth; k++) {
                     for (int l = 0; l < substrateHeight; l++) {
                         if (ithMax != 0)
-                            inputToHiddenWeights[i][j][k][l] = inputToHiddenWeights[i][j][k][l] * WEIGHT_MULTIPLIER;
+                            inputToHiddenWeights[i][j][k][l] = inputToHiddenWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER;
                         if (htoMax != 0)
-                            hiddenToOutputWeights[i][j][k][l] = hiddenToOutputWeights[i][j][k][l] * WEIGHT_MULTIPLIER;
+                            hiddenToOutputWeights[i][j][k][l] = hiddenToOutputWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER;
                     }
                 }
             }
