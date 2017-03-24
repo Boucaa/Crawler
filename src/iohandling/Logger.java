@@ -40,8 +40,6 @@ public class Logger {
         modifiableResults.addAll(results);
 
         Collections.reverse(modifiableResults); //reverse, so that the first genotype has the highest fitness
-        //String genFolder = runDir + "/" + String.format("%04d", generationNo);
-        //IOHandler.createDirectory(genFolder);
         StringBuilder sb = new StringBuilder();
         for (FitnessResult result : modifiableResults) {
             sb.append(result.result).append("\n").append(result.genotype.serialize()).append("\n");
@@ -52,7 +50,7 @@ public class Logger {
     public void log(String message) {
         String[] split = message.split("\n");
         for (String s : split) {
-            System.out.println(System.currentTimeMillis() + "|" + s); //TODO REMOVE when the project is done
+            System.out.println(System.currentTimeMillis() + "|" + s);
             try {
                 logWriter.write(System.currentTimeMillis() + "|" + s);
                 logWriter.newLine();

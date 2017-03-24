@@ -18,6 +18,7 @@ public class FitnessTest {
     private World world;
     public Genotype genotype;
     private FitnessSimulationStepper stepper;
+    private int id;
 
     double result;
 
