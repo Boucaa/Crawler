@@ -8,6 +8,7 @@ import org.jbox2d.testbed.framework.TestbedModel;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 import simulation.FitnessResult;
 import simulation.TestbedFitnessTest;
+import testsettings.TestSettings;
 
 import javax.swing.*;
 import java.awt.*;
@@ -32,7 +33,6 @@ public class GUI extends JFrame {
 
     private JPanel displayPanel;
     private FixedController controller;
-    private TestPanelJ2D testbedPanel;
 
     final private int FRAME_WIDTH = 1000;
     final private int FRAME_HEIGHT = 700;
@@ -118,6 +118,10 @@ public class GUI extends JFrame {
 
     private void initLists() {
         File resultsFolder = new File(Logger.RESULTS_DIRECTORY);
+        if (!resultsFolder.exists()) {
+            System.out.println("NO RESULTS FOLDER, EXITING");
+            System.exit(0);
+        }
         File[] runFolders = resultsFolder.listFiles();
         if (runFolders == null) return;
         Arrays.sort(runFolders);
@@ -142,7 +146,7 @@ public class GUI extends JFrame {
         File selectedRunFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(runSelectList.getSelectedIndex()));
         File[] genFiles = selectedRunFolder.listFiles();
         Arrays.sort(genFiles);
-        for (int i = generationSelectModel.size(); generationSelectModel.size() < genFiles.length - 1; i++) { //-1 to compensate for the evolution.log file
+        for (int i = generationSelectModel.size(); generationSelectModel.size() < genFiles.length - 2; i++) { //-1 to compensate for the evolution.log file
             generationSelectModel.addElement(genFiles[i].getName());
         }
     }
@@ -151,19 +155,28 @@ public class GUI extends JFrame {
         generationSelectModel.clear();
         if (runSelectModel.isEmpty() || index < 0) return;
         File runFolder = new File(Logger.RESULTS_DIRECTORY + runSelectModel.get(index));
+        File cfgFile = new File(runFolder.getAbsolutePath() + "/config.cfg");
+        if (!cfgFile.exists()) {
+            System.err.println("NO CFG FILE, leaving default");
+        } else {
+            TestSettings.set(IOHandler.readFile(cfgFile.getAbsolutePath()));
+        }
+
         DefaultListModel model = new DefaultListModel();
         File[] genFolders = runFolder.listFiles();
         if (genFolders == null) return;
 
         Arrays.sort(genFolders);
-        for (int i = 0; i < genFolders.length; i++) {
-            if (!genFolders[i].getName().equals("evolution.log")) model.addElement(genFolders[i].getName());
+        for (File genFolder : genFolders) {
+            if (!genFolder.getName().equals("evolution.log") && !genFolder.getName().equals("config.cfg"))
+                model.addElement(genFolder.getName());
         }
         generationSelectList.setModel(model);
         generationSelectModel = model;
+        if (!generationSelectModel.isEmpty()) generationSelectList.setSelectedIndex(generationSelectModel.size() - 1);
     }
 
-    int id = 0;
+    private int id = 0;
 
     private void selectGeneration(int index) {
         genotypeSelectModel.clear();
@@ -178,9 +191,9 @@ public class GUI extends JFrame {
         TestbedModel testbedModel = new TestbedModel();
         testbedModel.getSettings().getSetting("Help").enabled = false;
         this.displayPanel.removeAll();
-        this.testbedPanel = new TestPanelJ2D(testbedModel);
-        this.testbedPanel.setPreferredSize(new Dimension(TESTBED_WIDTH, TESTBED_HEIGHT));
-        this.testbedPanel.setSize(TESTBED_WIDTH, TESTBED_HEIGHT);
+        TestPanelJ2D testbedPanel = new TestPanelJ2D(testbedModel);
+        testbedPanel.setPreferredSize(new Dimension(TESTBED_WIDTH, TESTBED_HEIGHT));
+        testbedPanel.setSize(TESTBED_WIDTH, TESTBED_HEIGHT);
         this.displayPanel.add(testbedPanel, BorderLayout.NORTH);
         displayPanel.revalidate();
         testbedModel.setDebugDraw(testbedPanel.getDebugDraw());

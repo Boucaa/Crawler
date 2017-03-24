@@ -2,6 +2,7 @@ package neat;
 
 /**
  * Created by colander on 1/3/17.
+ * NEAT node gene class.
  */
 public class NodeGene {
     public final int innov;
@@ -20,6 +21,8 @@ public class NodeGene {
     public final static int FUNCTION_GAUSS = 5;
 
     public final static int NO_FUNCTIONS = 6;
+
+    public final static int FUNCTION_SHIFTED_SIGMOID = 7;
 
     NodeGene(int innov, int type, int activateFunction) {
         this.innov = innov;

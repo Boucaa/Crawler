@@ -1,12 +1,14 @@
 package simulation;
 
+import testsettings.TestSettings;
+
 /**
  * Created by colander on 14.3.17.
  * The ANN class, which uses the CPPN to describe itself.
+ * Gets activated in every simulation frame.
  */
-public class ANNPhenotype {
+class ANNPhenotype {
 
-    private static final double WEIGHT_LIMIT = 1;
     //the substrate weight matrices
     private double[][][][] inputToHiddenWeights;
     private double[][][][] hiddenToOutputWeights;
@@ -16,11 +18,14 @@ public class ANNPhenotype {
     private final int[] yValues = {-3, -2, -1, 1, 2, 3};
     double[][] lastInput = new double[1][1];
     double[][] lastOutput = new double[1][1];
+    double[][] lastHidden = new double[1][1];
 
-    public ANNPhenotype(CPPNPhenotype cppnPhenotype) {
+    ANNPhenotype(CPPNPhenotype cppnPhenotype) {
         inputToHiddenWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
         hiddenToOutputWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
 
+        double ithMax = 0;
+        double htoMax = 0;
 //ಠ_ಠ that indent though
         for (int i = 0; i < substrateWidth; i++) {
             for (int j = 0; j < substrateHeight; j++) {
@@ -33,7 +38,36 @@ public class ANNPhenotype {
                         double[] output = cppnPhenotype.step(new double[]{x1, y1, x2, y2, 1});
                         inputToHiddenWeights[i][j][k][l] = output[0];
                         hiddenToOutputWeights[i][j][k][l] = output[1];
+                        if (output[0] > ithMax) ithMax = output[0];
+                        if (output[1] > htoMax) htoMax = output[1];
+                    }
+                }
+            }
+        }
 
+        if (TestSettings.NORMALIZE) {
+            for (int i = 0; i < substrateWidth; i++) {
+                for (int j = 0; j < substrateHeight; j++) {
+                    for (int k = 0; k < substrateWidth; k++) {
+                        for (int l = 0; l < substrateHeight; l++) {
+                            if (ithMax != 0)
+                                inputToHiddenWeights[i][j][k][l] = (inputToHiddenWeights[i][j][k][l] / ithMax);
+                            if (htoMax != 0)
+                                hiddenToOutputWeights[i][j][k][l] = (hiddenToOutputWeights[i][j][k][l] / htoMax);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < substrateWidth; i++) {
+            for (int j = 0; j < substrateHeight; j++) {
+                for (int k = 0; k < substrateWidth; k++) {
+                    for (int l = 0; l < substrateHeight; l++) {
+                        if (ithMax != 0)
+                            inputToHiddenWeights[i][j][k][l] = inputToHiddenWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER;
+                        if (htoMax != 0)
+                            hiddenToOutputWeights[i][j][k][l] = hiddenToOutputWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER;
                     }
                 }
             }
@@ -53,7 +87,7 @@ public class ANNPhenotype {
                         sum += inputToHiddenWeights[k][l][i][j] * inputs[k][l];
                     }
                 }
-                hiddenLayer[i][j] = ActivationFunctions.sigmoid(sum);
+                hiddenLayer[i][j] = ActivationFunctions.activate(sum, TestSettings.ANN_FUNCTION);
             }
         }
 
@@ -68,10 +102,11 @@ public class ANNPhenotype {
                         sum += hiddenToOutputWeights[k][l][i][j] * hiddenLayer[k][l];
                     }
                 }
-                output[i][j] = ActivationFunctions.sigmoid(sum);
+                output[i][j] = ActivationFunctions.activate(sum, TestSettings.ANN_FUNCTION);
             }
         }
         lastOutput = output;
+        lastHidden = hiddenLayer;
         return output;
     }
 }

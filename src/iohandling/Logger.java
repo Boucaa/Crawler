@@ -1,6 +1,7 @@
 package iohandling;
 
 import simulation.FitnessResult;
+import testsettings.TestSettings;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -20,6 +21,8 @@ public class Logger {
     private BufferedWriter logWriter;
 
     public Logger() {
+        File resultsDir = new File(RESULTS_DIRECTORY);
+        if (!resultsDir.exists()) IOHandler.createDirectory(resultsDir.getAbsolutePath());
         runDir = RESULTS_DIRECTORY + System.currentTimeMillis();
         IOHandler.createDirectory(runDir);
         File logFile = new File(runDir + "/evolution.log");
@@ -28,6 +31,7 @@ public class Logger {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        IOHandler.writeFile(runDir + "/config.cfg", TestSettings.serialize());
     }
 
     public void logGeneration(ArrayList<FitnessResult> results, int generationNo) {
@@ -36,8 +40,6 @@ public class Logger {
         modifiableResults.addAll(results);
 
         Collections.reverse(modifiableResults); //reverse, so that the first genotype has the highest fitness
-        //String genFolder = runDir + "/" + String.format("%04d", generationNo);
-        //IOHandler.createDirectory(genFolder);
         StringBuilder sb = new StringBuilder();
         for (FitnessResult result : modifiableResults) {
             sb.append(result.result).append("\n").append(result.genotype.serialize()).append("\n");
@@ -48,7 +50,7 @@ public class Logger {
     public void log(String message) {
         String[] split = message.split("\n");
         for (String s : split) {
-            System.out.println(System.currentTimeMillis() + "|" + s); //TODO REMOVE when the project is done
+            System.out.println(System.currentTimeMillis() + "|" + s);
             try {
                 logWriter.write(System.currentTimeMillis() + "|" + s);
                 logWriter.newLine();

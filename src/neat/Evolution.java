@@ -3,6 +3,7 @@ package neat;
 import iohandling.Logger;
 import javafx.util.Pair;
 import simulation.*;
+import testsettings.TestSettings;
 import worldbuilding.BodySettings;
 
 import java.util.*;
@@ -35,7 +36,7 @@ public class Evolution {
     private final double CROSSOVER = 0.75;
     private final double KILL_OFF = 0.5;
 
-    private final double SPECIES_RESET_COUNTER = 8;
+    private double SPECIES_RESET_COUNTER = TestSettings.SPECIES_RESET_COUNTER;
 
     private final Random random = new Random(1337 * 420);
     private final int INPUT_NODES = 5; //x1, y1, x2, y2, bias
@@ -54,7 +55,6 @@ public class Evolution {
 
     private Logger logger = new Logger();
 
-    //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {
         this.bodySettings = bodySettings;
 
@@ -64,7 +64,7 @@ public class Evolution {
             defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_INPUT, -1));
         }
         for (int i = 0; i < OUTPUT_NODES; i++) {
-            defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_OUTPUT, 0));
+            defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_OUTPUT, TestSettings.OUTPUT_FUNCTION));
         }
         Genotype prototype = new Genotype(defaultNodes, new ArrayList<>(), bodySettings);
         for (int i = 0; i < GENERATION_SIZE; i++) {
@@ -122,7 +122,6 @@ public class Evolution {
                 spec.bestFitness = spec.genotypes.get(spec.genotypes.size() - 1).getValue();
                 spec.lastInnovate = 0;
             } else {
-
                 if (spec.lastInnovate > SPECIES_RESET_COUNTER) {
                     spec.lastInnovate = 0;
                     spec.avgFitness = -1;
@@ -225,8 +224,6 @@ public class Evolution {
         logger.log("finished in " + time + "ms");
         logger.log("max fitness: " + fitnesses.get(fitnesses.size() - 1).result + "\navg: " + sum / species.size() + "\nspecies: " + species.size() + "\nsize: " + generation.size());
         logger.logGeneration(fitnesses, generationNo);
-        //fitnesses.forEach(f -> mutateSplitConnection(f.genotype));
-        //logger.logGeneration(fitnesses, generationNo * 1000);
         logger.flush();
     }
 
@@ -261,7 +258,6 @@ public class Evolution {
 
     private void mutateWightSmall(ConnectionGene connectionGene) {
         connectionGene.weight *= 1 + random.nextDouble() * (random.nextBoolean() ? MUTATE_SMALL_LIMIT : -MUTATE_SMALL_LIMIT);
-
     }
 
     private void mutateWeightRandom(ConnectionGene connectionGene) {
@@ -324,7 +320,7 @@ public class Evolution {
         if (common == 0) W = 0;
         int D = a.connectionGenes.size() + b.connectionGenes.size() - 2 * common;
         int N = Math.max(1, Math.max(a.connectionGenes.size(), b.connectionGenes.size()));
-        return (COMPAT_1 / N * D) + (COMPAT_2 * W);
+        return ((COMPAT_1 / N) * D) + (COMPAT_2 * W);
     }
 
     //returns the next innovation id
