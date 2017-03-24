@@ -60,30 +60,7 @@ class CPPNPhenotype {
             sum += node.inputs.get(i).currentValue * node.inputWeights.get(i);
         }
 
-        switch (node.activationFunction) {
-            case NodeGene.FUNCTION_SIGMOID:
-                node.currentValue = ActivationFunctions.sigmoid(sum);
-                break;
-            case NodeGene.FUNCTION_SIN:
-                node.currentValue = ActivationFunctions.sin(sum);
-                break;
-            case NodeGene.FUNCTION_COS:
-                node.currentValue = ActivationFunctions.cos(sum);
-                break;
-            case NodeGene.FUNCTION_LINEAR:
-                node.currentValue = ActivationFunctions.linear(sum);
-                break;
-            case NodeGene.FUNCTION_ABS:
-                node.currentValue = ActivationFunctions.abs(sum);
-                break;
-            case NodeGene.FUNCTION_GAUSS:
-                node.currentValue = ActivationFunctions.gauss(sum);
-                break;
-            default:
-                System.err.println("WRONG ACTIVATION FUNCTION VALUE: " + node.activationFunction + ", node innov: " + node.innov);
-                System.exit(1);
-                break;
-        }
+        node.currentValue = ActivationFunctions.activate(sum, node.activationFunction);
         node.triggered = true;
     }
 }

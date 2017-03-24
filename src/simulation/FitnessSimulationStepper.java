@@ -33,7 +33,7 @@ public class FitnessSimulationStepper {
     public ANNPhenotype annPhenotype;
 
     FitnessSimulationStepper(World world, BodySettings bodySettings, Genotype g) {
-        WorldSettings worldSettings = new WorldSettings(10.0f, WorldSettings.BASE_FLAT);
+        WorldSettings worldSettings = new WorldSettings(10.0f);
         WorldBuilder worldBuilder = new WorldBuilder(world, bodySettings, worldSettings);
         robot = worldBuilder.build();
         this.world = world;
@@ -135,6 +135,6 @@ public class FitnessSimulationStepper {
     }
 
     private double valueToAngle(double value) {
-        return (value - 0.5) * 2;// * (TestSettings.PI_RANGE ? (Math.PI / 2) : 1);
+        return (value - 0.5) * 2;
     }
 }
