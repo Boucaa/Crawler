@@ -55,7 +55,6 @@ public class Evolution {
 
     private Logger logger = new Logger();
 
-    //TODO maybe add variable bodySettings
     public Evolution(BodySettings bodySettings) {
         this.bodySettings = bodySettings;
 
@@ -150,7 +149,7 @@ public class Evolution {
             }
 
             //breed the next generation
-            int toBreed = (int) ((curSpec.avgFitness / sum) * GENERATION_SIZE * (1 /*- ELITISM*/)) - 1;
+            int toBreed = (int) ((curSpec.avgFitness / sum) * GENERATION_SIZE) - 1;
             if (sum == 0) toBreed = GENERATION_SIZE / species.size();
             logger.log("species #" + curSpec.uid + ": avg " + String.format("%.4f", curSpec.avgFitness) + ", breeding " + toBreed + "/" + curSpec.genotypes.size());
             if (toBreed >= 0) {
@@ -237,8 +236,6 @@ public class Evolution {
             return;
         }
         Pair<Integer, Integer> coord = possibleConnections.get(random.nextInt(possibleConnections.size()));
-        if (Objects.equals(coord.getKey(), coord.getValue())) {
-        }
         double weightRange = random.nextBoolean() ? DEFAULT_WEIGHT_RANGE : 0.05;
         double weight = random.nextDouble() * 2 * weightRange - weightRange;
         g.connectionGenes.add(new ConnectionGene(coord.getKey(), coord.getValue(), weight, true, getNextInnov()));

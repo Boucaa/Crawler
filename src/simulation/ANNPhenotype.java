@@ -5,8 +5,9 @@ import testsettings.TestSettings;
 /**
  * Created by colander on 14.3.17.
  * The ANN class, which uses the CPPN to describe itself.
+ * Gets activated in every simulation frame.
  */
-public class ANNPhenotype {
+class ANNPhenotype {
 
     //the substrate weight matrices
     private double[][][][] inputToHiddenWeights;
@@ -20,7 +21,7 @@ public class ANNPhenotype {
     double[][] lastOutput = new double[1][1];
     double[][] lastHidden = new double[1][1];
 
-    public ANNPhenotype(CPPNPhenotype cppnPhenotype) {
+    ANNPhenotype(CPPNPhenotype cppnPhenotype) {
         inputToHiddenWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
         hiddenToOutputWeights = new double[substrateWidth][substrateHeight][substrateWidth][substrateHeight];
 

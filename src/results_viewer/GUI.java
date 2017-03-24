@@ -33,7 +33,6 @@ public class GUI extends JFrame {
 
     private JPanel displayPanel;
     private FixedController controller;
-    private TestPanelJ2D testbedPanel;
 
     final private int FRAME_WIDTH = 1000;
     final private int FRAME_HEIGHT = 700;
@@ -177,7 +176,7 @@ public class GUI extends JFrame {
         if (!generationSelectModel.isEmpty()) generationSelectList.setSelectedIndex(generationSelectModel.size() - 1);
     }
 
-    int id = 0;
+    private int id = 0;
 
     private void selectGeneration(int index) {
         genotypeSelectModel.clear();
@@ -192,9 +191,9 @@ public class GUI extends JFrame {
         TestbedModel testbedModel = new TestbedModel();
         testbedModel.getSettings().getSetting("Help").enabled = false;
         this.displayPanel.removeAll();
-        this.testbedPanel = new TestPanelJ2D(testbedModel);
-        this.testbedPanel.setPreferredSize(new Dimension(TESTBED_WIDTH, TESTBED_HEIGHT));
-        this.testbedPanel.setSize(TESTBED_WIDTH, TESTBED_HEIGHT);
+        TestPanelJ2D testbedPanel = new TestPanelJ2D(testbedModel);
+        testbedPanel.setPreferredSize(new Dimension(TESTBED_WIDTH, TESTBED_HEIGHT));
+        testbedPanel.setSize(TESTBED_WIDTH, TESTBED_HEIGHT);
         this.displayPanel.add(testbedPanel, BorderLayout.NORTH);
         displayPanel.revalidate();
         testbedModel.setDebugDraw(testbedPanel.getDebugDraw());

@@ -13,16 +13,17 @@ import java.util.Random;
 
 /**
  * Created by colander on 15.3.17.
+ * Class used to draw the visualization of the CPPN onto the testbed panel.
  */
 public class GraphDrawer {
-    public static final Color3f GRAY_COLOR = new Color3f(0.2f, 0.2f, 0.2f);
-    public static final Color3f PINK_COLOR = new Color3f(1f, 0.412f, 0.706f);
-    public static final Color3f BROWN_COLOR = new Color3f(0.545f, 0.271f, 0.075f);
-    public static final Color3f YELLOW_COLOR = new Color3f(0.855f, 0.647f, 0.125f);
-    ArrayList<Pair<Integer[], Boolean>> lines = new ArrayList<>();
-    HashMap<Integer, Pair<Vec2, Integer>> nodesById = new HashMap<>();
-    final int X_OFFSET = 330;
-    final int Y_OFFSET = 50;
+    private static final Color3f GRAY_COLOR = new Color3f(0.2f, 0.2f, 0.2f);
+    private static final Color3f PINK_COLOR = new Color3f(1f, 0.412f, 0.706f);
+    private static final Color3f BROWN_COLOR = new Color3f(0.545f, 0.271f, 0.075f);
+    private static final Color3f YELLOW_COLOR = new Color3f(0.855f, 0.647f, 0.125f);
+    private ArrayList<Pair<Integer[], Boolean>> lines = new ArrayList<>();
+    private HashMap<Integer, Pair<Vec2, Integer>> nodesById = new HashMap<>();
+    private final int X_OFFSET = 330;
+    private final int Y_OFFSET = 50;
 
     public GraphDrawer(Genotype g) {
         Random rand = new Random(69 * 420);
@@ -85,12 +86,10 @@ public class GraphDrawer {
                     line.getValue() ? Color3f.GREEN : GRAY_COLOR);
             int pointerX = (int) ((coords[2] - coords[0]) * (5.0 / 6) + coords[0]);
             int pointerY = (int) ((coords[3] - coords[1]) * (5.0 / 6) + coords[1]);
-            //debugDraw.drawCircle(debugDraw.getScreenToWorld(new Vec2(pointerX, pointerY)), debugDraw.get, Color3f.RED);
             debugDraw.drawSegment(
                     new Vec2(debugDraw.getScreenToWorld(pointerX, pointerY)),
                     new Vec2(debugDraw.getScreenToWorld(coords[2], coords[3])),
                     line.getValue() ? Color3f.RED : Color3f.WHITE);
-            //debugDraw.drawSegment(new Vec2(line[0], line[1]), new Vec2(line[2], line[3]), Color3f.RED);
         }
     }
 }

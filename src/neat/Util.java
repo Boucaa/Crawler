@@ -46,6 +46,7 @@ public class Util {
         System.out.println("\n_______________________________________________________________________________");
     }
 
+    @Deprecated
     public static boolean[][] getEdgeMatrix(Genotype g) {
 
         boolean[][] mat = new boolean[g.nodeGenes.size()][g.nodeGenes.size()];
@@ -85,7 +86,6 @@ public class Util {
         return list;
     }
 
-    //TODO: TEST
     private static boolean allowedToConnect(Genotype g, int a, int b) {
         if (a == b) {
             return false;
@@ -101,7 +101,7 @@ public class Util {
         return true;
     }
 
-    public static ArrayList<Pair<Integer, Integer>> getAllowedConnectionList(Genotype g) {
+    static ArrayList<Pair<Integer, Integer>> getAllowedConnectionList(Genotype g) {
         return getNonEdgeList(g).stream().filter(edge -> allowedToConnect(g, edge.getKey(), edge.getValue())).collect(Collectors.toCollection(ArrayList::new));
     }
 
@@ -122,6 +122,6 @@ public class Util {
         for (int i = 0; i < g.connectionGenes.size(); i++) {
             connectionGenes.add(copyConnection(g.connectionGenes.get(i)));
         }
-        return new Genotype(nodeGenes, connectionGenes, g.bodySettings); //TODO fix for variable BodySettings
+        return new Genotype(nodeGenes, connectionGenes, g.bodySettings);
     }
 }

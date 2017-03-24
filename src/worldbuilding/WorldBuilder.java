@@ -17,7 +17,7 @@ import java.util.ArrayList;
  */
 public class WorldBuilder {
 
-    public static final int TORQUE = 12000;
+    private final int TORQUE = 12000;
     private final int BODY_POS_X = 0;
     private final float BODY_POS_Y = -8.2f;
     private final int FLAT_BASE_WIDTH = 250;
@@ -28,8 +28,6 @@ public class WorldBuilder {
     private WorldSettings worldSettings;
 
     private Body mainBody;
-    private ArrayList<Body> segmentList = new ArrayList<>();
-    private ArrayList<RevoluteJoint> jointList = new ArrayList<>();
 
     public WorldBuilder(World world, BodySettings bodySettings, WorldSettings worldSettings) {
         this.world = world;
@@ -40,12 +38,7 @@ public class WorldBuilder {
     public Robot build() {
         world.setGravity(new Vec2(0, -worldSettings.getGravity()));
 
-        switch (worldSettings.BASE_TYPE) {
-            case WorldSettings.BASE_FLAT:
-                buildBaseFlat(world);
-                break;
-            //TODO: implement other base types
-        }
+        buildBaseFlat(world);
 
         PolygonShape mainBodyShape = new PolygonShape();
         mainBodyShape.setAsBox(bodySettings.bodyWidth, bodySettings.bodyHeight);
@@ -100,8 +93,8 @@ public class WorldBuilder {
             joints.add(joint);
             segments.add(segmentBody);
         }
-        if (1 == 1) return new RobotLeg(segments, joints);
-
+        return new RobotLeg(segments, joints);
+        /* was used in previous versions, can be used for extra stability
         //attach ball at the end of the leg
         Body seg = segments.get(segments.size() - 1);
         CircleShape ballShape = new CircleShape();
@@ -125,7 +118,7 @@ public class WorldBuilder {
         jdef.localAnchorA.set(0, -bodySettings.segmentHeight);
         jdef.localAnchorB.set(0, 0);
         world.createJoint(jdef);
-        return new RobotLeg(segments, joints);
+        return new RobotLeg(segments, joints);*/
     }
 
     private Body buildSegment(float x, float y) {
@@ -142,7 +135,6 @@ public class WorldBuilder {
         fixDef.filter.maskBits = 4;
         fixDef.friction = TestSettings.FRICTION;
         segmentBody.createFixture(fixDef);
-        segmentList.add(segmentBody);
         return segmentBody;
     }
 

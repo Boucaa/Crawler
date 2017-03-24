@@ -18,7 +18,7 @@ public class FitnessTest implements Comparable<FitnessTest> {
     private World world;
     public Genotype genotype;
     private FitnessSimulationStepper stepper;
-    int id;
+    private int id;
 
     double result;
 
