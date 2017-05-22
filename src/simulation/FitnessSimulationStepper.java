@@ -119,18 +119,25 @@ public class FitnessSimulationStepper {
     }
 
     private void setAngle(RevoluteJoint joint, double value) {
+        boolean negativeAngle = joint.getJointAngle() < 0;
+        double modAngle = Math.abs(joint.getJointAngle()) % (Math.PI * 2);
+        if (negativeAngle) modAngle *= -1;
+
         if (TestSettings.CONVERT_ANGLES) {
-            joint.setMotorSpeed((float) (valueToAngle(value) - joint.getJointAngle()) * SPEED_MULTIPLIER);
+            joint.setMotorSpeed((float) (valueToAngle(value) - modAngle) * SPEED_MULTIPLIER);
         } else {
-            joint.setMotorSpeed((float) (value * (Math.PI / 2) - joint.getJointAngle()) * SPEED_MULTIPLIER);
+            joint.setMotorSpeed((float) (value * (Math.PI / 2) - modAngle) * SPEED_MULTIPLIER);
         }
     }
 
     private double angleToValue(double angle) {
+        boolean negativeAngle = angle < 0;
+        double modAngle = Math.abs(angle) % (Math.PI * 2);
+        if (negativeAngle) modAngle *= -1;
         if (TestSettings.CONVERT_ANGLES) {
-            return (angle / (Math.PI / 2)) / 2 + 0.5;
+            return (modAngle / (Math.PI / 2)) / 2 + 0.5;
         } else {
-            return angle;
+            return modAngle;
         }
     }
 
