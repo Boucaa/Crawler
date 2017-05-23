@@ -17,7 +17,7 @@ public class Main {
 
         for (int i = 0; i < 20; i++) {
             System.out.println("EVOLVING WITH SEED #" + i);
-            Evolution.seed = i * 1337 * 420 + (i - 1);
+            Evolution.seed = i * 1337 * 420 + (i - 1)*69;
             Evolution evo = new Evolution(set);
             evo.run();
         }

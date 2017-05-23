@@ -21,7 +21,7 @@ public class FitnessSimulationStepper {
     private final float TIME_STEP = 1 / 60f;
     private final int VEL_ITERATIONS = 8;
     private final int POS_ITERATIONS = 3;
-    private final float SPEED_MULTIPLIER = 6.5f;
+    private final float SPEED_MULTIPLIER = 50.5f;
     private final int STARTUP_FRAMES = 30; //frames at the start when the robot is falling and is not allowed to move
     private final double TOUCH_CHANGE_SPEED = 0.08;
 
@@ -69,6 +69,9 @@ public class FitnessSimulationStepper {
 
             }
         });
+        //double angle = valueToAngle0(-1, true);
+        //System.out.println(angle);
+        //System.out.println(angleToValue0(angle, true));
     }
 
 
@@ -122,6 +125,7 @@ public class FitnessSimulationStepper {
         //if (1 == 1) return;
         //System.out.println((float) (valueToAngle0(value, left) - joint.getJointAngle()) * SPEED_MULTIPLIER);
         joint.setMotorSpeed((float) (valueToAngle0(value, left) - joint.getJointAngle()) * SPEED_MULTIPLIER);
+        //System.out.println("setting " + (valueToAngle0(value, left) + " "  + joint.getJointAngle() + " " + left));
     }
 
     private void setAngle1(RevoluteJoint joint, double value, boolean left) {
@@ -130,20 +134,20 @@ public class FitnessSimulationStepper {
     }
 
     private double angleToValue0(double angle, boolean left) {
-        return 1 - angle / (Math.PI * 3 / 4.0 * (left ? -1 : 1));
+        return 1 - ((angle + 0.25 * Math.PI * (left ? 1 : -1)) / (Math.PI * 0.5 * (left ? -1 : 1)));
     }
 
     private double angleToValue1(double angle, boolean left) {
-        return (angle + (Math.PI * 5 / 2.0 * (!left ? 1 : -1))) / (Math.PI / 2);
+        return (angle + (Math.PI * 5 / 2.0 * (!left ? 1 : -1))) / (Math.PI / 4);
     }
 
     private double valueToAngle0(double value, boolean left) {
-        if (value < 0) return 0;
-        return Math.abs((1 - value) * (Math.PI * 3 / 4.0 * (left ? -1 : 1)));
+        if (value < 0) value = Math.abs(value);
+        return (1 - value) * (Math.PI * 0.5 * (left ? -1 : 1)) + Math.PI * 0.25 * (left ? -1 : 1);
     }
 
     private double valueToAngle1(double value, boolean left) {
-        if (value < 0) return 0;
-        return Math.abs(value * (Math.PI / 2) - (Math.PI * 5 / 2.0 * (!left ? 1 : -1)));
+        if (value < 0) value = Math.abs(value);
+        return value * (Math.PI / 4) + (Math.PI * 2.5 * (!left ? 1 : -1));
     }
 }
