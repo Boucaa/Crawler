@@ -86,9 +86,9 @@ public class WorldBuilder {
                 jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
                 if (left) {
                     jointDef.lowerAngle = (float) (-Math.PI * 3 / 4.0);
-                    jointDef.upperAngle = 0;
+                    jointDef.upperAngle = (float) (-Math.PI*1/4.0);
                 } else {
-                    jointDef.lowerAngle = 0;
+                    jointDef.lowerAngle = (float) (Math.PI*1/4.0);
                     jointDef.upperAngle = (float) (Math.PI * 3 / 4.0);
                 }
 
@@ -101,18 +101,16 @@ public class WorldBuilder {
                 jointDef.enableLimit = true;
                 if (left) {
                     jointDef.lowerAngle = (float) (Math.PI * 5 / 2.0);
-                    jointDef.upperAngle = (float) (Math.PI * 3);
+                    jointDef.upperAngle = (float) (Math.PI * 2.75);
                 } else {
-                    jointDef.lowerAngle = (float) (-Math.PI * 3);
+                    jointDef.lowerAngle = (float) (-Math.PI * 2.75);
                     jointDef.upperAngle = (float) (-Math.PI * 5 / 2.0);
                 }
             }
-            if (0 == 0) {
-                RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
-                joint.enableMotor(true);
-                joint.setMaxMotorTorque(TORQUE);
-                joints.add(joint);
-            }
+            RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
+            joint.enableMotor(true);
+            joint.setMaxMotorTorque(TORQUE);
+            joints.add(joint);
             segments.add(segmentBody);
         }
         return new RobotLeg(segments, joints);

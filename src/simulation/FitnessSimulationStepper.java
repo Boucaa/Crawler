@@ -21,7 +21,7 @@ public class FitnessSimulationStepper {
     private final float TIME_STEP = 1 / 60f;
     private final int VEL_ITERATIONS = 8;
     private final int POS_ITERATIONS = 3;
-    private final float SPEED_MULTIPLIER = 4.5f;
+    private final float SPEED_MULTIPLIER = 6.5f;
     private final int STARTUP_FRAMES = 30; //frames at the start when the robot is falling and is not allowed to move
     private final double TOUCH_CHANGE_SPEED = 0.08;
 
@@ -79,10 +79,10 @@ public class FitnessSimulationStepper {
                     //first row - leg 0 and 1
                     {
                             robot.legs.get(0).touchValue,
-                            angleToValue(robot.legs.get(0).joints.get(0).getJointAngle()),
-                            angleToValue(robot.legs.get(0).joints.get(1).getJointAngle()),
-                            angleToValue(robot.legs.get(1).joints.get(1).getJointAngle()),
-                            angleToValue(robot.legs.get(1).joints.get(0).getJointAngle()),
+                            angleToValue0(robot.legs.get(0).joints.get(0).getJointAngle(), true),
+                            angleToValue1(robot.legs.get(0).joints.get(1).getJointAngle(), true),
+                            angleToValue1(robot.legs.get(1).joints.get(1).getJointAngle(), true),
+                            angleToValue0(robot.legs.get(1).joints.get(0).getJointAngle(), true),
                             robot.legs.get(1).touchValue
                     },
                     //second row - extras
@@ -97,44 +97,53 @@ public class FitnessSimulationStepper {
                     //third row - leg 2 and 3
                     {
                             robot.legs.get(2).touchValue,
-                            angleToValue(robot.legs.get(2).joints.get(0).getJointAngle()),
-                            angleToValue(robot.legs.get(2).joints.get(1).getJointAngle()),
-                            angleToValue(robot.legs.get(3).joints.get(1).getJointAngle()),
-                            angleToValue(robot.legs.get(3).joints.get(0).getJointAngle()),
+                            angleToValue0(robot.legs.get(2).joints.get(0).getJointAngle(), false),
+                            angleToValue1(robot.legs.get(2).joints.get(1).getJointAngle(), false),
+                            angleToValue1(robot.legs.get(3).joints.get(1).getJointAngle(), false),
+                            angleToValue0(robot.legs.get(3).joints.get(0).getJointAngle(), false),
                             robot.legs.get(3).touchValue
                     }
             };
             double[][] outputs = this.annPhenotype.step(inputs);
 
-            setAngle(robot.legs.get(0).joints.get(0), outputs[0][1]);
-            setAngle(robot.legs.get(0).joints.get(1), outputs[0][2]);
-            setAngle(robot.legs.get(1).joints.get(1), outputs[0][3]);
-            setAngle(robot.legs.get(1).joints.get(0), outputs[0][4]);
-            setAngle(robot.legs.get(2).joints.get(0), outputs[2][1]);
-            setAngle(robot.legs.get(2).joints.get(1), outputs[2][2]);
-            setAngle(robot.legs.get(3).joints.get(1), outputs[2][3]);
-            setAngle(robot.legs.get(3).joints.get(0), outputs[2][4]);
+            setAngle0(robot.legs.get(0).joints.get(0), outputs[0][1], true);
+            setAngle1(robot.legs.get(0).joints.get(1), outputs[0][2], true);
+            setAngle1(robot.legs.get(1).joints.get(1), outputs[0][3], true);
+            setAngle0(robot.legs.get(1).joints.get(0), outputs[0][4], true);
+            setAngle0(robot.legs.get(2).joints.get(0), outputs[2][1], false);
+            setAngle1(robot.legs.get(2).joints.get(1), outputs[2][2], false);
+            setAngle1(robot.legs.get(3).joints.get(1), outputs[2][3], false);
+            setAngle0(robot.legs.get(3).joints.get(0), outputs[2][4], false);
         }
         if (stepWorld) world.step(TIME_STEP, VEL_ITERATIONS, POS_ITERATIONS);
     }
 
-    private void setAngle(RevoluteJoint joint, double value) {
-        if (TestSettings.CONVERT_ANGLES) {
-            joint.setMotorSpeed((float) (valueToAngle(value) - joint.getJointAngle()) * SPEED_MULTIPLIER);
-        } else {
-            joint.setMotorSpeed((float) (value * (Math.PI / 2) - joint.getJointAngle()) * SPEED_MULTIPLIER);
-        }
+    private void setAngle0(RevoluteJoint joint, double value, boolean left) {
+        //if (1 == 1) return;
+        //System.out.println((float) (valueToAngle0(value, left) - joint.getJointAngle()) * SPEED_MULTIPLIER);
+        joint.setMotorSpeed((float) (valueToAngle0(value, left) - joint.getJointAngle()) * SPEED_MULTIPLIER);
     }
 
-    private double angleToValue(double angle) {
-        if (TestSettings.CONVERT_ANGLES) {
-            return (angle / (Math.PI / 2)) / 2 + 0.5;
-        } else {
-            return angle;
-        }
+    private void setAngle1(RevoluteJoint joint, double value, boolean left) {
+        //if (1 == 1) return;
+        joint.setMotorSpeed((float) (valueToAngle1(value, left) - joint.getJointAngle()) * SPEED_MULTIPLIER);
     }
 
-    private double valueToAngle(double value) {
-        return (value - 0.5) * 2;
+    private double angleToValue0(double angle, boolean left) {
+        return 1 - angle / (Math.PI * 3 / 4.0 * (left ? -1 : 1));
+    }
+
+    private double angleToValue1(double angle, boolean left) {
+        return (angle + (Math.PI * 5 / 2.0 * (!left ? 1 : -1))) / (Math.PI / 2);
+    }
+
+    private double valueToAngle0(double value, boolean left) {
+        if (value < 0) return 0;
+        return Math.abs((1 - value) * (Math.PI * 3 / 4.0 * (left ? -1 : 1)));
+    }
+
+    private double valueToAngle1(double value, boolean left) {
+        if (value < 0) return 0;
+        return Math.abs(value * (Math.PI / 2) - (Math.PI * 5 / 2.0 * (!left ? 1 : -1)));
     }
 }

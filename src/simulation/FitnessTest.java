@@ -13,7 +13,7 @@ public class FitnessTest implements Comparable<FitnessTest> {
     private static final double HEIGHT_LIMIT = -13.0;
     private final int ITERATIONS = 3000;
     private final int CONFIRM_ITERATIONS = 1500;
-    final private boolean LIMIT_HEIGHT = true;
+    final private boolean LIMIT_HEIGHT = false;
 
     private World world;
     public Genotype genotype;
