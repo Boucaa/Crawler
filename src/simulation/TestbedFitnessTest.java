@@ -89,7 +89,7 @@ public class TestbedFitnessTest extends TestbedTest {
         }
 
         this.graphDrawer.draw(this.getDebugDraw());
-        //this.setCamera(new Vec2(stepper.robot.body.getPosition().x, 0));
+        this.setCamera(new Vec2(stepper.robot.body.getPosition().x, 0));
         super.step(settings);
     }
 
