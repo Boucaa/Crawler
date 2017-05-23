@@ -21,6 +21,7 @@ public class WorldBuilder {
     private final float BODY_POS_Y = -8.2f;
     private final int FLAT_BASE_WIDTH = 250;
     private final int FLAT_BASE_HEIGHT = 5;
+    private final float SECOND_SEGMENT_HEIGHT = 3f;
 
     private World world;
     private BodySettings bodySettings;
@@ -56,40 +57,62 @@ public class WorldBuilder {
         ArrayList<RobotLeg> legs = new ArrayList<>();
         for (int i = 0; i < bodySettings.legs / 2; i++) {
             double x = BODY_POS_X - bodySettings.bodyWidth + (i / ((bodySettings.legs / 2.0) - 1)) * 2 * bodySettings.bodyWidth;
-            legs.add(buildLeg((float) x));
-            legs.add(buildLeg((float) x));
+            legs.add(buildLeg((float) x, i == 0));
+            legs.add(buildLeg((float) x, i == 0));
         }
 
         return new Robot(mainBody, legs);
     }
 
-    private RobotLeg buildLeg(float x) {
+    private RobotLeg buildLeg(float x, boolean left) {
         ArrayList<Body> segments = new ArrayList<>();
         ArrayList<RevoluteJoint> joints = new ArrayList<>();
         for (int i = 0; i < bodySettings.segments; i++) {
-            Body segmentBody = buildSegment(x, BODY_POS_Y - bodySettings.bodyHeight - i * bodySettings.segmentHeight);
+            float angle;
+            if (i == 0) {
+                angle = (float) (Math.PI * (left ? -3.0 / 4 : 3.0 / 4));
+            } else {
+                angle = (float) (Math.PI * (left ? 7.0 / 4 : -7.0 / 4));
+            }
+            Body segmentBody;
             RevoluteJointDef jointDef = new RevoluteJointDef();
             jointDef.type = JointType.REVOLUTE;
             jointDef.enableLimit = true;
             if (i == 0) {
+                segmentBody = buildSegment(x + (left ? -bodySettings.segmentHeight : bodySettings.segmentHeight), BODY_POS_Y - bodySettings.bodyHeight - i * bodySettings.segmentHeight + bodySettings.segmentHeight / 2, angle, false);
                 jointDef.bodyA = mainBody;
                 jointDef.bodyB = segmentBody;
                 jointDef.localAnchorA.set(x, 0);
                 jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
-                jointDef.lowerAngle = (float) -Math.PI / 2;
-                jointDef.upperAngle = (float) Math.PI / 2;
+                if (left) {
+                    jointDef.lowerAngle = (float) (-Math.PI * 3 / 4.0);
+                    jointDef.upperAngle = 0;
+                } else {
+                    jointDef.lowerAngle = 0;
+                    jointDef.upperAngle = (float) (Math.PI * 3 / 4.0);
+                }
+
             } else {
+                segmentBody = buildSegment(x + (left ? -1 : 1) * (bodySettings.segmentHeight * 2 + SECOND_SEGMENT_HEIGHT / 2), BODY_POS_Y - bodySettings.bodyHeight - i * bodySettings.segmentHeight + bodySettings.segmentHeight, angle, true);
                 jointDef.bodyA = segments.get(segments.size() - 1);
                 jointDef.bodyB = segmentBody;
                 jointDef.localAnchorA.set(0, -bodySettings.segmentHeight);
-                jointDef.localAnchorB.set(0, bodySettings.segmentHeight);
-                jointDef.lowerAngle = (float) -Math.PI / 2;
-                jointDef.upperAngle = (float) Math.PI / 2;
+                jointDef.localAnchorB.set(0, SECOND_SEGMENT_HEIGHT);
+                jointDef.enableLimit = true;
+                if (left) {
+                    jointDef.lowerAngle = (float) (Math.PI * 5 / 2.0);
+                    jointDef.upperAngle = (float) (Math.PI * 3);
+                } else {
+                    jointDef.lowerAngle = (float) (-Math.PI * 3);
+                    jointDef.upperAngle = (float) (-Math.PI * 5 / 2.0);
+                }
             }
-            RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
-            joint.enableMotor(true);
-            joint.setMaxMotorTorque(TORQUE);
-            joints.add(joint);
+            if (0 == 0) {
+                RevoluteJoint joint = (RevoluteJoint) world.createJoint(jointDef);
+                joint.enableMotor(true);
+                joint.setMaxMotorTorque(TORQUE);
+                joints.add(joint);
+            }
             segments.add(segmentBody);
         }
         return new RobotLeg(segments, joints);
@@ -120,12 +143,13 @@ public class WorldBuilder {
         return new RobotLeg(segments, joints);*/
     }
 
-    private Body buildSegment(float x, float y) {
+    private Body buildSegment(float x, float y, float angle, boolean second) {
         PolygonShape segmentShape = new PolygonShape();
-        segmentShape.setAsBox(bodySettings.segmentWidth, bodySettings.segmentHeight);
+        segmentShape.setAsBox(bodySettings.segmentWidth, second ? SECOND_SEGMENT_HEIGHT : bodySettings.segmentHeight);
         BodyDef segmentBodyDef = new BodyDef();
         segmentBodyDef.position.set(x, y);
         segmentBodyDef.type = BodyType.DYNAMIC;
+        segmentBodyDef.angle = angle;
         Body segmentBody = world.createBody(segmentBodyDef);
         FixtureDef fixDef = new FixtureDef();
         fixDef.density = bodySettings.density;
@@ -157,7 +181,7 @@ public class WorldBuilder {
             PolygonShape shape = new PolygonShape();
             shape.setAsBox(0.1f, 2f);
             BodyDef bodyDef = new BodyDef();
-            bodyDef.position.set(i*5, -17f);
+            bodyDef.position.set(i * 5, -17f);
             bodyDef.type = BodyType.STATIC;
             Body body = world.createBody(bodyDef);
             FixtureDef fixtureDef = new FixtureDef();
