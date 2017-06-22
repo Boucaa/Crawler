@@ -71,7 +71,6 @@ public class FitnessSimulationStepper {
         });
     }
 
-
     void step(boolean stepWorld) {
         if (++framesElapsed > STARTUP_FRAMES) {
             robot.legs.forEach(l -> l.touchValue = l.touch ? Math.min(1, l.touchValue + TOUCH_CHANGE_SPEED) : Math.max(-1, l.touchValue - TOUCH_CHANGE_SPEED));

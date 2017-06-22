@@ -59,6 +59,7 @@ public class Evolution {
         this.bodySettings = bodySettings;
         this.random = new Random(seed);
 
+        //generate the initial population
         ArrayList<NodeGene> defaultNodes = new ArrayList<>();
         for (int i = 0; i < INPUT_NODES; i++) {
             defaultNodes.add(new NodeGene(getNextInnov(), NodeGene.TYPE_INPUT, -1));
@@ -89,7 +90,6 @@ public class Evolution {
         //sometimes a null object appears, not sure why, happens once every ~1000 generations, non-deterministically
         fitnesses = fitnesses.stream().filter(Objects::nonNull).collect(Collectors.toCollection(ArrayList::new));
         Collections.sort(fitnesses);
-        logger.log("GEN " + generation.size() + " FIT " + fitnesses.size());
 
         if (fitnesses.get(fitnesses.size() - 1).result > best) {
             best = fitnesses.get(fitnesses.size() - 1).result;
@@ -108,9 +108,9 @@ public class Evolution {
             }
             //if no compatible species found, create a new one
             if (!found) {
-                Species nspecies = new Species(fitness.genotype, speciesID++);
-                nspecies.genotypes.add(new Pair<>(fitness.genotype, fitness.result));
-                species.add(nspecies);
+                Species createdSpecies = new Species(fitness.genotype, speciesID++);
+                createdSpecies.genotypes.add(new Pair<>(fitness.genotype, fitness.result));
+                species.add(createdSpecies);
             }
         }
 
@@ -131,8 +131,8 @@ public class Evolution {
                 }
             }
             spec.lastInnovate++;
-            double curSum = spec.genotypes.stream().map(Pair::getValue).reduce(Double::sum).get();
-            spec.avgFitness = Math.max(0, curSum / spec.genotypes.size());
+            double fitnessSum = spec.genotypes.stream().map(Pair::getValue).reduce(Double::sum).get();
+            spec.avgFitness = Math.max(0, fitnessSum / spec.genotypes.size());
             sum += spec.avgFitness;
         }
 
@@ -194,11 +194,11 @@ public class Evolution {
                 if (random.nextDouble() < MUTATE_SINGLE_INSTEAD) {
                     mutateWightSmall(child.connectionGenes.get(random.nextInt(child.connectionGenes.size())));
                 } else {
-                    for (int j = 0; j < child.connectionGenes.size(); j++) {
+                    for (ConnectionGene connectionGene : child.connectionGenes) {
                         if (random.nextDouble() < MUTATE_WEIGHT_SMALL) {
-                            mutateWightSmall(child.connectionGenes.get(j));
+                            mutateWightSmall(connectionGene);
                         } else {
-                            mutateWeightRandom(child.connectionGenes.get(j));
+                            mutateWeightRandom(connectionGene);
                         }
                     }
                 }
@@ -324,6 +324,7 @@ public class Evolution {
         return ((COMPAT_1 / N) * D) + (COMPAT_2 * W);
     }
 
+    //returns the next innovation id
     private int getNextInnov() {
         return innovation++;
     }

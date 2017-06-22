@@ -16,6 +16,7 @@ public class FixedParallelFitnessResolver extends ParallelFitnessResolver {
     private int curTest = 0;
 
     final private int THREADS = 4;
+    final private int THREADS = 4; //enter desired number of threads here, entering the number of CPU cores should work fine, a higher number could be suitable for processors with hyperthreading
 
     public FixedParallelFitnessResolver(ArrayList<Genotype> genotypes, BodySettings settings) {
         super(genotypes, settings);
@@ -40,7 +41,7 @@ public class FixedParallelFitnessResolver extends ParallelFitnessResolver {
                         int index = getNextIndex();
                         if (index >= markedGenotypes.size()) break;
                         else {
-                            FitnessTest test = new FitnessTest(markedGenotypes.get(index).getKey(), settings, markedGenotypes.get(index).getValue());
+                            FitnessTest test = new FitnessTest(markedGenotypes.get(index).getKey(), settings);
                             results.add(new FitnessResult(test.compute().result, markedGenotypes.get(index).getKey()));
                         }
                     }
@@ -48,9 +49,9 @@ public class FixedParallelFitnessResolver extends ParallelFitnessResolver {
             });
             threads.get(i).start();
         }
-        for (int i = 0; i < threads.size(); i++) {
+        for (Thread thread : threads) {
             try {
-                threads.get(i).join();
+                thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

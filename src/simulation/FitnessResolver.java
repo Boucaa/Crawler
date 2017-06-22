@@ -23,7 +23,7 @@ public class FitnessResolver {
     public ArrayList<FitnessResult> resolve() {
         ArrayList<FitnessResult> results = new ArrayList<>();
         for (int i = 0; i < genotypes.size(); i++) {
-            FitnessTest test = new FitnessTest(genotypes.get(i), settings, i);
+            FitnessTest test = new FitnessTest(genotypes.get(i), settings);
             results.add(new FitnessResult(test.compute().result, genotypes.get(i)));
         }
         return results;

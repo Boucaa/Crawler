@@ -9,7 +9,7 @@ import worldbuilding.BodySettings;
  * Created by colander on 1/13/17.
  * Class used to measure the fitness of a single genotype.
  */
-public class FitnessTest implements Comparable<FitnessTest> {
+public class FitnessTest {
     private static final double HEIGHT_LIMIT = -13.0;
     private final int ITERATIONS = 3000;
     private final int CONFIRM_ITERATIONS = 1500;
@@ -49,10 +49,5 @@ public class FitnessTest implements Comparable<FitnessTest> {
         System.gc();
 
         return this;
-    }
-
-    @Override
-    public int compareTo(FitnessTest o) {
-        return Double.compare(this.result, o.result) == 0 ? Integer.compare(id, o.id) : Double.compare(this.result, o.result);
     }
 }
