@@ -7,7 +7,7 @@ A pre-built package with trained controllers can be found in the releases [here]
 
 ### Results ###
 The best and some of the more interesting results can be seen on my Youtube channel:
-[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/TC0XdPDnJrQ/0.jpg)](https://www.youtube.com/watch?v=TC0XdPDnJrQ)
+[![click here to see video](https://img.youtube.com/vi/TC0XdPDnJrQ/0.jpg)](https://www.youtube.com/watch?v=TC0XdPDnJrQ)
 
 ### Building ###
 The project can be built using the IntelliJ IDEA IDE, a Maven build coming soon (probably). The only requirement is a JDK with JavaFX support (OpenJDK will not work).
