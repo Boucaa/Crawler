@@ -1,10 +1,12 @@
 package simulation;
 
 import neat.Genotype;
+import org.jbox2d.common.Vec2;
 import org.jbox2d.testbed.framework.TestbedSettings;
 import org.jbox2d.testbed.framework.TestbedTest;
 import results_viewer.GraphDrawer;
 import worldbuilding.BodySettings;
+import worldbuilding.WorldBuilder;
 
 /**
  * Created by colander on 1/13/17.
@@ -35,6 +37,7 @@ public class TestbedFitnessTest extends TestbedTest {
     @Override
     public void initTest(boolean b) {
         stepper = new FitnessSimulationStepper(getWorld(), bodySettings, g);
+        WorldBuilder.addDistanceMarks(getWorld());
         this.graphDrawer = new GraphDrawer(g);
     }
 
@@ -45,6 +48,11 @@ public class TestbedFitnessTest extends TestbedTest {
 
     @Override
     public synchronized void step(TestbedSettings settings) {
+        if (stepper.robot.body.getPosition().x > 370) {
+            frames = 0;
+            this.reset();
+            return;
+        }
         frames++;
         stepper.step(false);
         float curx = stepper.robot.body.getPosition().x;
@@ -81,6 +89,7 @@ public class TestbedFitnessTest extends TestbedTest {
         }
 
         this.graphDrawer.draw(this.getDebugDraw());
+        this.setCamera(new Vec2(stepper.robot.body.getPosition().x, 0));
         super.step(settings);
     }
 

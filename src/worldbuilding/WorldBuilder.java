@@ -1,6 +1,5 @@
 package worldbuilding;
 
-import org.jbox2d.collision.shapes.CircleShape;
 import org.jbox2d.collision.shapes.PolygonShape;
 import org.jbox2d.common.Vec2;
 import org.jbox2d.dynamics.*;
@@ -151,5 +150,20 @@ public class WorldBuilder {
         fixtureDef.friction = 0.9f;
         fixtureDef.filter.categoryBits = 4;
         baseBody.createFixture(fixtureDef);
+    }
+
+    public static void addDistanceMarks(World world) {
+        for (int i = 0; i < 100; i++) {
+            PolygonShape shape = new PolygonShape();
+            shape.setAsBox(0.1f, 2f);
+            BodyDef bodyDef = new BodyDef();
+            bodyDef.position.set(i*5, -17f);
+            bodyDef.type = BodyType.STATIC;
+            Body body = world.createBody(bodyDef);
+            FixtureDef fixtureDef = new FixtureDef();
+            fixtureDef.shape = shape;
+            fixtureDef.density = 5.0f;
+            body.createFixture(fixtureDef);
+        }
     }
 }
