@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  * The main CPPN-NEAT class.
  */
 public class Evolution {
-    private final int GENERATIONS = 10000;
+    private final int GENERATIONS = 2000;
     private final int GENERATION_SIZE = 100;
     private final double DEFAULT_WEIGHT_RANGE = 4.5;
 
@@ -38,7 +38,7 @@ public class Evolution {
 
     private double SPECIES_RESET_COUNTER = TestSettings.SPECIES_RESET_COUNTER;
 
-    private final Random random = new Random(1337 * 420);
+    private final Random random;
     private final int INPUT_NODES = 5; //x1, y1, x2, y2, bias
     private final int OUTPUT_NODES = 2; //weights input->hidden and hidden->output
 
@@ -55,8 +55,9 @@ public class Evolution {
 
     private Logger logger = new Logger();
 
-    public Evolution(BodySettings bodySettings) {
+    public Evolution(BodySettings bodySettings, long seed) {
         this.bodySettings = bodySettings;
+        this.random = new Random(seed);
 
         ArrayList<NodeGene> defaultNodes = new ArrayList<>();
         for (int i = 0; i < INPUT_NODES; i++) {
