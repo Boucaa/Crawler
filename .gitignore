@@ -54,6 +54,7 @@ fabric.properties
 # *.ipr
 
 /results/
+/target/
 JBox2d.log
 
 *.jar
