@@ -1,12 +1,19 @@
 package com.janboucek.crawler.worldbuilding;
 
-import org.jbox2d.collision.shapes.PolygonShape;
-import org.jbox2d.common.Vec2;
-import org.jbox2d.dynamics.*;
-import org.jbox2d.dynamics.joints.*;
 import com.janboucek.crawler.simulation.Robot;
 import com.janboucek.crawler.simulation.RobotLeg;
 import com.janboucek.crawler.testsettings.TestSettings;
+
+import org.jbox2d.collision.shapes.PolygonShape;
+import org.jbox2d.common.Vec2;
+import org.jbox2d.dynamics.Body;
+import org.jbox2d.dynamics.BodyDef;
+import org.jbox2d.dynamics.BodyType;
+import org.jbox2d.dynamics.FixtureDef;
+import org.jbox2d.dynamics.World;
+import org.jbox2d.dynamics.joints.JointType;
+import org.jbox2d.dynamics.joints.RevoluteJoint;
+import org.jbox2d.dynamics.joints.RevoluteJointDef;
 
 import java.util.ArrayList;
 
@@ -157,7 +164,7 @@ public class WorldBuilder {
             PolygonShape shape = new PolygonShape();
             shape.setAsBox(0.1f, 2f);
             BodyDef bodyDef = new BodyDef();
-            bodyDef.position.set(i*5, -17f);
+            bodyDef.position.set(i * 5, -17f);
             bodyDef.type = BodyType.STATIC;
             Body body = world.createBody(bodyDef);
             FixtureDef fixtureDef = new FixtureDef();

@@ -1,5 +1,9 @@
 package com.janboucek.crawler.results_viewer;
 
+import com.janboucek.crawler.neat.Genotype;
+import com.janboucek.crawler.neat.NodeGene;
+import com.janboucek.crawler.util.Pair;
+
 import org.jbox2d.callbacks.DebugDraw;
 import org.jbox2d.common.Color3f;
 import org.jbox2d.common.Vec2;
@@ -7,10 +11,6 @@ import org.jbox2d.common.Vec2;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
-
-import com.janboucek.crawler.neat.Genotype;
-import com.janboucek.crawler.neat.NodeGene;
-import com.janboucek.crawler.util.Pair;
 
 /**
  * Created by colander on 15.3.17.

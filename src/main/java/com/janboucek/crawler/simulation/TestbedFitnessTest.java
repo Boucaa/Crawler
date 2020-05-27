@@ -1,13 +1,13 @@
 package com.janboucek.crawler.simulation;
 
-import org.jbox2d.common.Vec2;
-import org.jbox2d.testbed.framework.TestbedSettings;
-import org.jbox2d.testbed.framework.TestbedTest;
-
 import com.janboucek.crawler.neat.Genotype;
 import com.janboucek.crawler.results_viewer.GraphDrawer;
 import com.janboucek.crawler.worldbuilding.BodySettings;
 import com.janboucek.crawler.worldbuilding.WorldBuilder;
+
+import org.jbox2d.common.Vec2;
+import org.jbox2d.testbed.framework.TestbedSettings;
+import org.jbox2d.testbed.framework.TestbedTest;
 
 /**
  * Created by colander on 1/13/17.

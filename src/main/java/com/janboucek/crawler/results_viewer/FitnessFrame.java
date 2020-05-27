@@ -1,14 +1,17 @@
 package com.janboucek.crawler.results_viewer;
 
+import com.janboucek.crawler.simulation.FitnessResult;
+import com.janboucek.crawler.simulation.TestbedFitnessTest;
+
 import org.jbox2d.testbed.framework.TestbedController;
 import org.jbox2d.testbed.framework.TestbedModel;
 import org.jbox2d.testbed.framework.TestbedPanel;
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
-import com.janboucek.crawler.simulation.FitnessResult;
-import com.janboucek.crawler.simulation.TestbedFitnessTest;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+
+import javax.swing.JFrame;
 
 /**
  * Created by colander on 2/8/17.

@@ -1,10 +1,10 @@
 package com.janboucek.crawler.simulation;
 
-import java.util.ArrayList;
-
 import com.janboucek.crawler.neat.Genotype;
 import com.janboucek.crawler.util.Pair;
 import com.janboucek.crawler.worldbuilding.BodySettings;
+
+import java.util.ArrayList;
 
 /**
  * Created by colander on 2/5/17.

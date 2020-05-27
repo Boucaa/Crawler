@@ -1,17 +1,17 @@
 package com.janboucek.crawler.simulation;
 
+import com.janboucek.crawler.neat.Genotype;
+import com.janboucek.crawler.testsettings.TestSettings;
+import com.janboucek.crawler.worldbuilding.BodySettings;
+import com.janboucek.crawler.worldbuilding.WorldBuilder;
+import com.janboucek.crawler.worldbuilding.WorldSettings;
+
 import org.jbox2d.callbacks.ContactImpulse;
 import org.jbox2d.callbacks.ContactListener;
 import org.jbox2d.collision.Manifold;
 import org.jbox2d.dynamics.World;
 import org.jbox2d.dynamics.contacts.Contact;
 import org.jbox2d.dynamics.joints.RevoluteJoint;
-
-import com.janboucek.crawler.neat.Genotype;
-import com.janboucek.crawler.testsettings.TestSettings;
-import com.janboucek.crawler.worldbuilding.BodySettings;
-import com.janboucek.crawler.worldbuilding.WorldBuilder;
-import com.janboucek.crawler.worldbuilding.WorldSettings;
 
 /**
  * Created by colander on 1/18/17.

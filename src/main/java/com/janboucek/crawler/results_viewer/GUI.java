@@ -3,20 +3,28 @@ package com.janboucek.crawler.results_viewer;
 import com.janboucek.crawler.iohandling.IOHandler;
 import com.janboucek.crawler.iohandling.Logger;
 import com.janboucek.crawler.neat.Genotype;
-import org.jbox2d.testbed.framework.TestbedController;
-import org.jbox2d.testbed.framework.TestbedModel;
-import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
 import com.janboucek.crawler.simulation.FitnessResult;
 import com.janboucek.crawler.simulation.TestbedFitnessTest;
 import com.janboucek.crawler.testsettings.TestSettings;
 
-import javax.swing.*;
-import java.awt.*;
+import org.jbox2d.testbed.framework.TestbedController;
+import org.jbox2d.testbed.framework.TestbedModel;
+import org.jbox2d.testbed.framework.j2d.TestPanelJ2D;
+
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.Scanner;
 import java.util.TimerTask;
+
+import javax.swing.DefaultListModel;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.UIManager;
 
 /**
  * Class used to display the results in a GUI.
@@ -172,7 +180,8 @@ public class GUI extends JFrame {
         }
         generationSelectList.setModel(model);
         generationSelectModel = model;
-        if (!generationSelectModel.isEmpty()) generationSelectList.setSelectedIndex(generationSelectModel.size() - 1);
+        if (!generationSelectModel.isEmpty())
+            generationSelectList.setSelectedIndex(generationSelectModel.size() - 1);
     }
 
     private int id = 0;
@@ -222,7 +231,8 @@ public class GUI extends JFrame {
 
     //when changing the tests rapidly, this does sometimes yield a NullPointerExcepiton, because of a race condition bug in the JBox2D TestbedTest
     private void selectGenotype(int index) {
-        if (index < 0 || this.genotypeSelectList.getModel().getSize() == 0 || this.controller == null) return;
+        if (index < 0 || this.genotypeSelectList.getModel().getSize() == 0 || this.controller == null)
+            return;
         this.controller.playTest(index);
     }
 }
