@@ -183,7 +183,7 @@ class GUI private constructor() : JFrame() {
         genotypeSelectList.fixedCellHeight = CELL_HEIGHT
 
         //setup JList selection listeners
-        runSelectList.addListSelectionListener { e: ListSelectionEvent? -> selectRun(runSelectList.selectedIndex) } //lambda ftw :3
+        runSelectList.addListSelectionListener { e: ListSelectionEvent? -> selectRun(runSelectList.selectedIndex) }
         generationSelectList.addListSelectionListener { e: ListSelectionEvent? -> selectGeneration(generationSelectList.selectedIndex) }
         genotypeSelectList.addListSelectionListener { e: ListSelectionEvent? -> selectGenotype(genotypeSelectList.selectedIndex) }
 

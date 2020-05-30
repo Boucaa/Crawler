@@ -15,6 +15,24 @@ class CPPNPhenotype(g: Genotype) {
     private val inputs = ArrayList<NetworkNode>()
     private val outputs = ArrayList<NetworkNode>()
     private val hidden = ArrayList<NetworkNode>()
+
+    init {
+        for (i in g.nodeGenes.indices) {
+            val nodeInnov = g.nodeGenes[i].innov
+            val node = NetworkNode(nodeInnov, g.nodeGenes[i].activateFunction)
+            nodesByInnov[nodeInnov] = node
+            network.add(node)
+            if (g.nodeGenes[i].type == NodeGene.TYPE_INPUT) inputs.add(node) else if (g.nodeGenes[i].type == NodeGene.TYPE_OUTPUT) outputs.add(node) else hidden.add(node)
+        }
+        for (i in g.connectionGenes.indices) {
+            val connectionGene = g.connectionGenes[i]
+            if (!connectionGene.active) continue
+            nodesByInnov[connectionGene.output]!!.inputs.add(nodesByInnov[connectionGene.input]!!)
+            nodesByInnov[connectionGene.output]!!.inputWeights.add(connectionGene.weight)
+        }
+        network.forEach(Consumer { node: NetworkNode -> node.triggered = true })
+    }
+
     fun step(inputs: DoubleArray): DoubleArray {
         hidden.forEach(Consumer { node: NetworkNode -> node.triggered = false })
         for (i in this.inputs.indices) {
@@ -36,22 +54,5 @@ class CPPNPhenotype(g: Genotype) {
         }
         node.currentValue = ActivationFunctions.activate(sum, node.activationFunction)
         node.triggered = true
-    }
-
-    init {
-        for (i in g.nodeGenes.indices) {
-            val nodeInnov = g.nodeGenes[i].innov
-            val node = NetworkNode(nodeInnov, g.nodeGenes[i].activateFunction)
-            nodesByInnov[nodeInnov] = node
-            network.add(node)
-            if (g.nodeGenes[i].type == NodeGene.TYPE_INPUT) inputs.add(node) else if (g.nodeGenes[i].type == NodeGene.TYPE_OUTPUT) outputs.add(node) else hidden.add(node)
-        }
-        for (i in g.connectionGenes.indices) {
-            val connectionGene = g.connectionGenes[i]
-            if (!connectionGene.active) continue
-            nodesByInnov[connectionGene.out]!!.inputs.add(nodesByInnov[connectionGene.`in`])
-            nodesByInnov[connectionGene.out]!!.inputWeights.add(connectionGene.weight)
-        }
-        network.forEach(Consumer { node: NetworkNode -> node.triggered = true })
     }
 }

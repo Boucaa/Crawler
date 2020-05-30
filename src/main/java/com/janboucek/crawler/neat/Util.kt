@@ -1,8 +1,6 @@
 package com.janboucek.crawler.neat
 
 import java.util.*
-import java.util.stream.Collectors
-import kotlin.collections.ArrayList
 import kotlin.math.roundToInt
 
 /**
@@ -25,11 +23,11 @@ object Util {
         }
         print("\nIN\t\t")
         for (i in genotype.connectionGenes.indices) {
-            print(genotype.connectionGenes[i].`in`.toString() + "\t\t")
+            print(genotype.connectionGenes[i].input.toString() + "\t\t")
         }
         print("\nOUT\t\t")
         for (i in genotype.connectionGenes.indices) {
-            print(genotype.connectionGenes[i].out.toString() + "\t\t")
+            print(genotype.connectionGenes[i].output.toString() + "\t\t")
         }
         print("\nWEIGHT\t")
         for (i in genotype.connectionGenes.indices) {
@@ -46,7 +44,7 @@ object Util {
     fun getEdgeMatrix(g: Genotype): Array<BooleanArray> {
         val mat = Array(g.nodeGenes.size) { BooleanArray(g.nodeGenes.size) }
         for (i in g.connectionGenes.indices) {
-            mat[g.connectionGenes[i].`in`][g.connectionGenes[i].out] = true
+            mat[g.connectionGenes[i].input][g.connectionGenes[i].output] = true
         }
         return mat
     }
@@ -59,7 +57,7 @@ object Util {
             }
         }
         for (gene in g.connectionGenes) {
-            map.replace(Pair(gene.`in`, gene.out), true)
+            map.replace(Pair(gene.input, gene.output), true)
         }
         return map
     }
@@ -69,7 +67,7 @@ object Util {
         val map = generateEdgeMatrix(g)
 
         //convert the "matrix" to a list
-        val list = java.util.ArrayList<Pair<Int, Int>>()
+        val list = ArrayList<Pair<Int, Int>>()
         for (gene1 in g.nodeGenes) {
             for (gene2 in g.nodeGenes) {
                 if (!map[Pair(gene1.innov, gene2.innov)]!!) {
@@ -90,30 +88,26 @@ object Util {
         while (!q.isEmpty()) {
             val cur = q.poll()
             if (cur == b) return false
-            g.connectionGenes.stream().filter { connection: ConnectionGene -> connection.out == cur }.forEach { connection: ConnectionGene -> q.add(connection.`in`) }
+            g.connectionGenes.stream().filter { connection: ConnectionGene -> connection.output == cur }.forEach { connection: ConnectionGene -> q.add(connection.input) }
         }
         return true
     }
 
-    @JvmStatic
     fun getAllowedConnectionList(g: Genotype): List<Pair<Int, Int>> {
         return getNonEdgeList(g).filter { edge: Pair<Int, Int> -> allowedToConnect(g, edge.first, edge.second) }
     }
 
-    @JvmStatic
-    fun copyConnection(connectionGene: ConnectionGene): ConnectionGene {
-        return ConnectionGene(connectionGene.`in`, connectionGene.out, connectionGene.weight, connectionGene.active, connectionGene.innovation)
+    private fun copyConnection(connectionGene: ConnectionGene): ConnectionGene {
+        return ConnectionGene(connectionGene.input, connectionGene.output, connectionGene.weight, connectionGene.active, connectionGene.innovation)
     }
 
-    @JvmStatic
-    fun copyNode(nodeGene: NodeGene): NodeGene {
+    private fun copyNode(nodeGene: NodeGene): NodeGene {
         return NodeGene(nodeGene.innov, nodeGene.type, nodeGene.activateFunction)
     }
 
-    @JvmStatic
     fun copyGenotype(g: Genotype): Genotype {
-        val nodeGenes = java.util.ArrayList<NodeGene>()
-        val connectionGenes = java.util.ArrayList<ConnectionGene>()
+        val nodeGenes = ArrayList<NodeGene>()
+        val connectionGenes = ArrayList<ConnectionGene>()
         for (i in g.nodeGenes.indices) {
             nodeGenes.add(copyNode(g.nodeGenes[i]))
         }

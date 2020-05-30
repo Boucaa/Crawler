@@ -42,10 +42,10 @@ class GraphDrawer(g: Genotype) {
         })
         g.connectionGenes.forEach(Consumer { connectionGene: ConnectionGene ->
             lines.add(Pair(arrayOf(
-                    nodesById[connectionGene.`in`]!!.first.x.toInt(),
-                    nodesById[connectionGene.`in`]!!.first.y.toInt(),
-                    nodesById[connectionGene.out]!!.first.x.toInt(),
-                    nodesById[connectionGene.out]!!.first.y.toInt()), connectionGene.active))
+                    nodesById[connectionGene.input]!!.first.x.toInt(),
+                    nodesById[connectionGene.input]!!.first.y.toInt(),
+                    nodesById[connectionGene.output]!!.first.x.toInt(),
+                    nodesById[connectionGene.output]!!.first.y.toInt()), connectionGene.active))
         })
     }
 

@@ -7,21 +7,7 @@ import java.util.*
  * Created by colander on 1/3/17.
  * Class used in evolution as a single genotype.
  */
-class Genotype(val nodeGenes: MutableList<NodeGene>, val connectionGenes: MutableList<ConnectionGene>, val bodySettings: BodySettings) {
-
-    //crappy DIY serialization, not changed to support old results
-    fun serialize(): String {
-        val sb = StringBuilder()
-        sb.append(nodeGenes.size).append(" ").append(connectionGenes.size).append("\n")
-        for (nodeGene in nodeGenes) {
-            sb.append(nodeGene.innov).append(" ").append(nodeGene.type).append(" ").append(nodeGene.activateFunction).append("\n")
-        }
-        for (gene in connectionGenes) {
-            sb.append(gene.`in`).append(" ").append(gene.out).append(" ").append(gene.weight).append(" ").append(gene.active).append(" ").append(gene.innovation).append("\n")
-        }
-        sb.append(bodySettings.serialize())
-        return sb.toString()
-    }
+data class Genotype(val nodeGenes: MutableList<NodeGene>, val connectionGenes: MutableList<ConnectionGene>, val bodySettings: BodySettings) {
 
     companion object {
         fun fromSerializedString(serialized: String): Genotype {
@@ -58,5 +44,19 @@ class Genotype(val nodeGenes: MutableList<NodeGene>, val connectionGenes: Mutabl
             val bodySettings = BodySettings.fromSerialized(scanner.nextLine())
             return Genotype(nodeGenes, connectionGenes, bodySettings)
         }
+    }
+
+    //crappy DIY serialization, not changed to support old results
+    fun serialize(): String {
+        val sb = StringBuilder()
+        sb.append(nodeGenes.size).append(" ").append(connectionGenes.size).append("\n")
+        for (nodeGene in nodeGenes) {
+            sb.append(nodeGene.innov).append(" ").append(nodeGene.type).append(" ").append(nodeGene.activateFunction).append("\n")
+        }
+        for (gene in connectionGenes) {
+            sb.append(gene.input).append(" ").append(gene.output).append(" ").append(gene.weight).append(" ").append(gene.active).append(" ").append(gene.innovation).append("\n")
+        }
+        sb.append(bodySettings.serialize())
+        return sb.toString()
     }
 }

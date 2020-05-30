@@ -10,7 +10,7 @@ import java.util.*
  * Class used to compute all fitnesses of genotypes in and ArrayList.
  */
 open class FitnessResolver internal constructor(var genotypes: ArrayList<Genotype>, var settings: BodySettings) {
-    open fun resolve(): List<FitnessResult>? {
+    open fun resolve(): List<FitnessResult> {
         val results = ArrayList<FitnessResult>()
         for (i in genotypes.indices) {
             val test = FitnessTest(genotypes[i], settings, i)

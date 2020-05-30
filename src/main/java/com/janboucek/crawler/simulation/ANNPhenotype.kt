@@ -5,35 +5,34 @@ import com.janboucek.crawler.testsettings.TestSettings
 /**
  * Created by colander on 14.3.17.
  * The ANN class, which uses the CPPN to describe itself.
- * Gets activated in every com.janboucek.crawler.simulation frame.
+ * Gets activated in every simulation frame.
  */
 class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
+    companion object {
+        private const val SUBSTRATE_WIDTH = 3 //2 for 2 pairs of legs + 1 in the middle for extras
+        private const val SUBSTRATE_HEIGHT = 6 // 2 * 2 for segments + 2 for touch
+        private const val START_X = -1
+        private const val START_Y = -3
+    }
+
     //the substrate weight matrices
     private val inputToHiddenWeights: Array<Array<Array<DoubleArray>>>
     private val hiddenToOutputWeights: Array<Array<Array<DoubleArray>>>
-    val substrateWidth = 3 //2 for 2 pairs of legs + 1 in the middle for extras
-    val substrateHeight = 6 // 2 * 2 for segments + 2 for touch
-    private val startX = -1
-    private val startY = -3
     private val yValues = intArrayOf(-3, -2, -1, 1, 2, 3)
 
-    @JvmField
     var lastInput = Array(1) { DoubleArray(1) }
-
-    @JvmField
     var lastOutput = Array(1) { DoubleArray(1) }
-
-    @JvmField
     var lastHidden = Array(1) { DoubleArray(1) }
+
     fun step(inputs: Array<DoubleArray>): Array<DoubleArray> {
         lastInput = inputs
-        val hiddenLayer = Array(substrateWidth) { DoubleArray(substrateHeight) }
+        val hiddenLayer = Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) }
         for (i in hiddenLayer.indices) {
-            for (j in 0 until hiddenLayer[0].size) {
+            for (j in hiddenLayer[0].indices) {
                 //compute value for each hidden node with coordinates [i,j]
                 var sum = 0.0
                 for (k in hiddenLayer.indices) {
-                    for (l in 0 until hiddenLayer[0].size) {
+                    for (l in hiddenLayer[0].indices) {
                         //connection from input[k,l] to hidden[i,j]
                         sum += inputToHiddenWeights[k][l][i][j] * inputs[k][l]
                     }
@@ -43,11 +42,11 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
         }
         val output = Array(inputToHiddenWeights.size) { DoubleArray(inputToHiddenWeights[0].size) }
         for (i in hiddenLayer.indices) {
-            for (j in 0 until hiddenLayer[0].size) {
+            for (j in hiddenLayer[0].indices) {
                 //compute value for each output node with coordinates [i,j]
                 var sum = 0.0
                 for (k in hiddenLayer.indices) {
-                    for (l in 0 until hiddenLayer[0].size) {
+                    for (l in hiddenLayer[0].indices) {
                         //connection from hidden[k,l] to output[i,j]
                         sum += hiddenToOutputWeights[k][l][i][j] * hiddenLayer[k][l]
                     }
@@ -61,18 +60,18 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
     }
 
     init {
-        inputToHiddenWeights = Array(substrateWidth) { Array(substrateHeight) { Array(substrateWidth) { DoubleArray(substrateHeight) } } }
-        hiddenToOutputWeights = Array(substrateWidth) { Array(substrateHeight) { Array(substrateWidth) { DoubleArray(substrateHeight) } } }
+        inputToHiddenWeights = Array(SUBSTRATE_WIDTH) { Array(SUBSTRATE_HEIGHT) { Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) } } }
+        hiddenToOutputWeights = Array(SUBSTRATE_WIDTH) { Array(SUBSTRATE_HEIGHT) { Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) } } }
         var ithMax = 0.0
         var htoMax = 0.0
         //ಠ_ಠ that indent though
-        for (i in 0 until substrateWidth) {
-            for (j in 0 until substrateHeight) {
-                for (k in 0 until substrateWidth) {
-                    for (l in 0 until substrateHeight) {
-                        val x1 = startX + i
+        for (i in 0 until SUBSTRATE_WIDTH) {
+            for (j in 0 until SUBSTRATE_HEIGHT) {
+                for (k in 0 until SUBSTRATE_WIDTH) {
+                    for (l in 0 until SUBSTRATE_HEIGHT) {
+                        val x1 = START_X + i
                         val y1 = yValues[j]
-                        val x2 = startX + k
+                        val x2 = START_X + k
                         val y2 = yValues[l]
                         val output = cppnPhenotype.step(doubleArrayOf(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble(), 1.0))
                         inputToHiddenWeights[i][j][k][l] = output[0]
@@ -84,10 +83,10 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
             }
         }
         if (TestSettings.NORMALIZE) {
-            for (i in 0 until substrateWidth) {
-                for (j in 0 until substrateHeight) {
-                    for (k in 0 until substrateWidth) {
-                        for (l in 0 until substrateHeight) {
+            for (i in 0 until SUBSTRATE_WIDTH) {
+                for (j in 0 until SUBSTRATE_HEIGHT) {
+                    for (k in 0 until SUBSTRATE_WIDTH) {
+                        for (l in 0 until SUBSTRATE_HEIGHT) {
                             if (ithMax != 0.0) inputToHiddenWeights[i][j][k][l] = inputToHiddenWeights[i][j][k][l] / ithMax
                             if (htoMax != 0.0) hiddenToOutputWeights[i][j][k][l] = hiddenToOutputWeights[i][j][k][l] / htoMax
                         }
@@ -95,10 +94,10 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
                 }
             }
         }
-        for (i in 0 until substrateWidth) {
-            for (j in 0 until substrateHeight) {
-                for (k in 0 until substrateWidth) {
-                    for (l in 0 until substrateHeight) {
+        for (i in 0 until SUBSTRATE_WIDTH) {
+            for (j in 0 until SUBSTRATE_HEIGHT) {
+                for (k in 0 until SUBSTRATE_WIDTH) {
+                    for (l in 0 until SUBSTRATE_HEIGHT) {
                         if (ithMax != 0.0) inputToHiddenWeights[i][j][k][l] = inputToHiddenWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER
                         if (htoMax != 0.0) hiddenToOutputWeights[i][j][k][l] = hiddenToOutputWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER
                     }

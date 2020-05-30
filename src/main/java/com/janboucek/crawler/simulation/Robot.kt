@@ -7,4 +7,4 @@ import java.util.*
  * Created by colander on 1/13/17.
  * Class used to represent the "robot" in the JBox2D simulation.
  */
-data class Robot(val body: Body, val legs: ArrayList<RobotLeg>)
+data class Robot(val body: Body, val legs: List<RobotLeg>)

@@ -2,39 +2,14 @@ package com.janboucek.crawler.simulation
 
 import com.janboucek.crawler.neat.NodeGene
 import com.janboucek.crawler.testsettings.TestSettings
+import kotlin.math.exp
+import kotlin.math.sqrt
 
 /**
  * Created by colander on 10.3.17.
  * Activation functions container.
  */
 object ActivationFunctions {
-    private fun shiftedSigmoid(sum: Double): Double {
-        return 2 * (1 / (1 + Math.exp(-4.9 * sum)) - 0.5)
-    }
-
-    private fun linear(sum: Double): Double {
-        return sum
-    }
-
-    private fun sin(sum: Double): Double {
-        return Math.sin(sum)
-    }
-
-    private fun cos(sum: Double): Double {
-        return Math.cos(sum)
-    }
-
-    private fun abs(sum: Double): Double {
-        return Math.abs(sum)
-    }
-
-    private fun gauss(sum: Double): Double {
-        return Math.exp(-sum * sum / 2) / Math.sqrt(2 * Math.PI)
-    }
-
-    private fun sigmoid(sum: Double): Double {
-        return if (TestSettings.SIGMOID_SHIFTED) shiftedSigmoid(sum) else 1 / (1 + Math.exp(-sum))
-    }
 
     fun activate(sum: Double, activationFunction: Int): Double {
         return when (activationFunction) {
@@ -49,5 +24,33 @@ object ActivationFunctions {
                 throw  IllegalArgumentException("WRONG ACTIVATION FUNCTION VALUE: $activationFunction")
             }
         }
+    }
+
+    private fun shiftedSigmoid(sum: Double): Double {
+        return 2 * (1 / (1 + exp(-4.9 * sum)) - 0.5)
+    }
+
+    private fun linear(sum: Double): Double {
+        return sum
+    }
+
+    private fun sin(sum: Double): Double {
+        return kotlin.math.sin(sum)
+    }
+
+    private fun cos(sum: Double): Double {
+        return kotlin.math.cos(sum)
+    }
+
+    private fun abs(sum: Double): Double {
+        return kotlin.math.abs(sum)
+    }
+
+    private fun gauss(sum: Double): Double {
+        return exp(-sum * sum / 2) / sqrt(2 * Math.PI)
+    }
+
+    private fun sigmoid(sum: Double): Double {
+        return if (TestSettings.SIGMOID_SHIFTED) shiftedSigmoid(sum) else 1 / (1 + exp(-sum))
     }
 }

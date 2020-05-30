@@ -1,13 +1,13 @@
 package com.janboucek.crawler.neat
 
+import com.janboucek.crawler.iohandling.Color
 import com.janboucek.crawler.iohandling.Logger
 import com.janboucek.crawler.neat.Util.copyGenotype
 import com.janboucek.crawler.neat.Util.getAllowedConnectionList
-import com.janboucek.crawler.simulation.ParallelFitnessResolver
+import com.janboucek.crawler.simulation.CoroutineFitnessResolver
 import com.janboucek.crawler.testsettings.TestSettings
 import com.janboucek.crawler.worldbuilding.BodySettings
 import java.util.*
-import java.util.function.Consumer
 import kotlin.math.abs
 import kotlin.math.max
 
@@ -49,11 +49,6 @@ class Evolution(private val bodySettings: BodySettings, seed: Long) {
     private var best = 0.0
     private var generationNo = 0
     private val logger = Logger()
-    fun run() {
-        for (i in 0 until GENERATIONS) {
-            nextGeneration()
-        }
-    }
 
     init {
         //generate the initial population
@@ -70,15 +65,24 @@ class Evolution(private val bodySettings: BodySettings, seed: Long) {
         }
     }
 
+    fun run() {
+        for (i in 0 until GENERATIONS) {
+            nextGeneration()
+        }
+    }
+
     private fun nextGeneration() {
         generationNo++
         logger.log("GENERATION #$generationNo")
         val startTime = System.currentTimeMillis() //start time measurement
 
         //MEASURE FITNESSES
-        val resolver = ParallelFitnessResolver(generation, bodySettings)
+        val resolver = CoroutineFitnessResolver(generation, bodySettings)
         val fitnesses = resolver.resolve().sorted()
         logger.log("GEN " + generation.size + " FIT " + fitnesses.size)
+        if (generation.size != fitnesses.size) {
+            throw IllegalStateException("gen != fit")
+        }
         if (fitnesses[fitnesses.size - 1].result > best) {
             best = fitnesses[fitnesses.size - 1].result
         }
@@ -127,7 +131,7 @@ class Evolution(private val bodySettings: BodySettings, seed: Long) {
         logger.log("breeding")
         val children = ArrayList<Genotype>()
         val noMutateChildren = ArrayList<Genotype>()
-        species.forEach(Consumer { s: Species -> s.genotypes.sortBy { it.second } })
+        species.forEach { s -> s.genotypes.sortBy { it.second } }
         for (curSpec in species) {
             if (curSpec.avgFitness == -1.0) {
                 noMutateChildren.add(copyGenotype(curSpec.genotypes[curSpec.genotypes.size - 1].first))
@@ -164,7 +168,6 @@ class Evolution(private val bodySettings: BodySettings, seed: Long) {
                 }
             }
         }
-
 
         //MUTATE
         for (child in children) {
@@ -203,11 +206,11 @@ class Evolution(private val bodySettings: BodySettings, seed: Long) {
         val time = System.currentTimeMillis() - startTime
         logger.log("finished in " + time + "ms")
         logger.log("""
-    max fitness: ${fitnesses[fitnesses.size - 1].result}
-    avg: ${sum / species.size}
-    species: ${species.size}
-    size: ${generation.size}
-    """.trimIndent())
+            ${Color.BLUE}max fitness: ${fitnesses[fitnesses.size - 1].result}${Color.RESET}
+            avg: ${sum / species.size}
+            species: ${species.size}
+            size: ${generation.size}
+            """.trimIndent())
         logger.logGeneration(fitnesses, generationNo)
         logger.flush()
     }
@@ -231,8 +234,8 @@ class Evolution(private val bodySettings: BodySettings, seed: Long) {
         val toSplit = g.connectionGenes[random.nextInt(g.connectionGenes.size)]
         val nodeInnov = nextInnov()
         g.nodeGenes.add(NodeGene(nodeInnov, NodeGene.TYPE_HIDDEN, random.nextInt(NodeGene.NO_FUNCTIONS)))
-        g.connectionGenes.add(ConnectionGene(toSplit.`in`, nodeInnov, 1.0, true, nextInnov()))
-        g.connectionGenes.add(ConnectionGene(nodeInnov, toSplit.out, toSplit.weight, true, nextInnov()))
+        g.connectionGenes.add(ConnectionGene(toSplit.input, nodeInnov, 1.0, true, nextInnov()))
+        g.connectionGenes.add(ConnectionGene(nodeInnov, toSplit.output, toSplit.weight, true, nextInnov()))
         toSplit.active = false
     }
 
@@ -257,7 +260,6 @@ class Evolution(private val bodySettings: BodySettings, seed: Long) {
 
     //genotype a is the fitter one (decides disjoint and excess genes)
     private fun crossOver(a: Genotype, b: Genotype): Genotype {
-        //CONNECTIONS
         val commonConnections = ArrayList<Pair<ConnectionGene, ConnectionGene>>()
         val dominantConnections = ArrayList<ConnectionGene>()
         for (i in a.connectionGenes.indices) {
@@ -294,15 +296,15 @@ class Evolution(private val bodySettings: BodySettings, seed: Long) {
         }
         for (i in b.connectionGenes.indices) {
             val mutual = map[b.connectionGenes[i].innovation]
-            if (mutual != null) {
-                w += abs(mutual.weight - b.connectionGenes[i].weight)
+            mutual?.let {
+                w += abs(it.weight - b.connectionGenes[i].weight)
                 common++
             }
         }
         w /= common.toDouble()
         if (common == 0) w = 0.0
         val d = a.connectionGenes.size + b.connectionGenes.size - 2 * common
-        val n = max(1, Math.max(a.connectionGenes.size, b.connectionGenes.size))
+        val n = max(1, max(a.connectionGenes.size, b.connectionGenes.size))
         return COMPAT_1 / n * d + COMPAT_2 * w
     }
 

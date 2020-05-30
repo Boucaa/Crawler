@@ -16,11 +16,29 @@ import java.util.*
  * Class used to build the test world ant the robot structure
  */
 class WorldBuilder(private val world: World, private val bodySettings: BodySettings, private val worldSettings: WorldSettings) {
-    private val TORQUE = 12000
-    private val BODY_POS_X = 0
-    private val BODY_POS_Y = -8.2f
-    private val FLAT_BASE_WIDTH = 250
-    private val FLAT_BASE_HEIGHT = 5
+    companion object {
+        private const val TORQUE = 12000
+        private const val BODY_POS_X = 0
+        private const val BODY_POS_Y = -8.2f
+        private const val FLAT_BASE_WIDTH = 250
+        private const val FLAT_BASE_HEIGHT = 5
+
+        fun addDistanceMarks(world: World) {
+            for (i in 0..99) {
+                val shape = PolygonShape()
+                shape.setAsBox(0.1f, 2f)
+                val bodyDef = BodyDef()
+                bodyDef.position[i * 5.toFloat()] = -17f
+                bodyDef.type = BodyType.STATIC
+                val body = world.createBody(bodyDef)
+                val fixtureDef = FixtureDef()
+                fixtureDef.shape = shape
+                fixtureDef.density = 5.0f
+                body.createFixture(fixtureDef)
+            }
+        }
+    }
+
     private var mainBody: Body? = null
     fun build(): Robot {
         world.gravity = Vec2(0f, -worldSettings.gravity)
@@ -135,23 +153,4 @@ class WorldBuilder(private val world: World, private val bodySettings: BodySetti
         fixtureDef.filter.categoryBits = 4
         baseBody.createFixture(fixtureDef)
     }
-
-    companion object {
-        @JvmStatic
-        fun addDistanceMarks(world: World) {
-            for (i in 0..99) {
-                val shape = PolygonShape()
-                shape.setAsBox(0.1f, 2f)
-                val bodyDef = BodyDef()
-                bodyDef.position[i * 5.toFloat()] = -17f
-                bodyDef.type = BodyType.STATIC
-                val body = world.createBody(bodyDef)
-                val fixtureDef = FixtureDef()
-                fixtureDef.shape = shape
-                fixtureDef.density = 5.0f
-                body.createFixture(fixtureDef)
-            }
-        }
-    }
-
 }

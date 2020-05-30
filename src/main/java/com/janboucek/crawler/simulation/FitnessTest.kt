@@ -11,43 +11,64 @@ import org.jbox2d.dynamics.World
  * Class used to measure the fitness of a single genotype.
  */
 class FitnessTest internal constructor(var genotype: Genotype, bodySettings: BodySettings, private val id: Int) : Comparable<FitnessTest> {
-    private val ITERATIONS = 3000
-    private val CONFIRM_ITERATIONS = 1500
-    private val LIMIT_HEIGHT = true
+    companion object {
+        private const val ITERATIONS = 3000
+        private const val CONFIRM_ITERATIONS = 1500
+        private const val LIMIT_HEIGHT = true
+        private const val HEIGHT_LIMIT = -13.0
+        private const val MAX_FRAMES_WITHOUT_MOVEMENT = 300 // max frames allowed without reaching a new record fitness, helps to evaluate faster
+    }
+
     private var world: World?
     private val stepper: FitnessSimulationStepper
 
+    init {
+        val world = World(Vec2(0f, 0f), WorldPoolCache.getPool()) //setting the gravity is a responsibility of the WorldBuilder
+        this.world = world
+        stepper = FitnessSimulationStepper(world, bodySettings, genotype)
+    }
+
     var result = 0.0
     fun compute(): FitnessTest {
-        val failed = booleanArrayOf(false)
+        var failed = false
         var maxX = 0f
+        var lastBestFrame = 0
         for (i in 0 until ITERATIONS + if (LIMIT_HEIGHT) CONFIRM_ITERATIONS else 0) {
             stepper.step(true)
-            if (stepper.robot.body.position.x > maxX && i < ITERATIONS) maxX = stepper.robot.body.position.x
+            if (stepper.robot.body.position.x > maxX && i < ITERATIONS) {
+                maxX = stepper.robot.body.position.x
+                lastBestFrame = i
+            }
             if (LIMIT_HEIGHT && stepper.robot.legs.stream().anyMatch { leg: RobotLeg -> leg.segments.stream().anyMatch { segment: Body -> segment.position.y < HEIGHT_LIMIT } }) {
-                failed[0] = true
+                failed = true
+                break
+            }
+            if (i - lastBestFrame > MAX_FRAMES_WITHOUT_MOVEMENT) {
                 break
             }
         }
-        result = if (failed[0]) 0.0 else maxX.toDouble()
+        result = if (failed) 0.0 else maxX.toDouble()
         result = Math.max(result, 0.000001)
         //free up memory ASAP
-        world = null
-        System.gc()
+        destroyWorld()
         return this
     }
 
-    override fun compareTo(o: FitnessTest): Int {
-        return if (java.lang.Double.compare(result, o.result) == 0) Integer.compare(id, o.id) else java.lang.Double.compare(result, o.result)
+    private fun destroyWorld() {
+        var body = world?.bodyList
+        while (body != null) {
+            world?.destroyBody(body)
+            body = body.next
+        }
+        var joint = world?.jointList
+        while (joint != null) {
+            world?.destroyJoint(joint)
+            joint = joint.next
+        }
+        world = null
     }
 
-    companion object {
-        private const val HEIGHT_LIMIT = -13.0
-    }
-
-    init {
-        val world = World(Vec2(0f, 0f)) //setting the gravity is a responsibility of the WorldBuilder
-        this.world = world
-        stepper = FitnessSimulationStepper(world, bodySettings, genotype)
+    override fun compareTo(other: FitnessTest): Int {
+        return if (result.compareTo(other.result) == 0) id.compareTo(other.id) else result.compareTo(other.result)
     }
 }

@@ -20,6 +20,14 @@ class TestbedFitnessTest(g: Genotype, bodySettings: BodySettings, target: Double
     private val target: Double
     private var maxX = 0.0
     private var graphDrawer: GraphDrawer? = null
+
+    init {
+        setTitle("Fitness")
+        this.target = target
+        this.g = g
+        this.bodySettings = bodySettings
+    }
+
     override fun initTest(b: Boolean) {
         stepper = FitnessSimulationStepper(world, bodySettings, g)
         addDistanceMarks(world)
@@ -56,34 +64,23 @@ class TestbedFitnessTest(g: Genotype, bodySettings: BodySettings, target: Double
             addTextLine(line)
         }
         addTextLine("HIDDEN:")
-        for (i in 0 until stepper!!.annPhenotype.lastHidden.size) {
+        for (layerLine in stepper!!.annPhenotype.lastHidden) {
             var line = ""
-            for (j in 0 until stepper!!.annPhenotype.lastHidden[0].size) {
-                line += String.format("%.3f", stepper!!.annPhenotype.lastHidden[i][j]) + " "
+            for (num in stepper!!.annPhenotype.lastHidden[0]) {
+                line += String.format("%.3f", num) + " "
             }
             addTextLine(line)
         }
         addTextLine("OUTPUT:")
-        for (i in 0 until stepper!!.annPhenotype.lastHidden.size) {
+        for (layerLine in stepper!!.annPhenotype.lastHidden) {
             var line = ""
-            for (j in 0 until stepper!!.annPhenotype.lastHidden[0].size) {
-                line += String.format("%.3f", stepper!!.annPhenotype.lastOutput[i][j]) + " "
+            for (num in stepper!!.annPhenotype.lastHidden[0]) {
+                line += String.format("%.3f", num) + " "
             }
             addTextLine(line)
         }
         graphDrawer!!.draw(this.debugDraw)
         this.setCamera(Vec2(stepper!!.robot.body.position.x, 0f))
         super.step(settings)
-    }
-
-    override fun update() {
-        super.update()
-    }
-
-    init {
-        setTitle("Fitness")
-        this.target = target
-        this.g = g
-        this.bodySettings = bodySettings
     }
 }
