@@ -33,7 +33,6 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="org.jbox2d:jbox2d-testbed:2.2.1.1" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.3.72" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.3.72" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.3.71" level="project" />
@@ -42,12 +41,40 @@
     <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.7" level="project" />
     <orderEntry type="library" name="Maven: com.xenomachina:kotlin-argparser:2.0.7" level="project" />
     <orderEntry type="library" name="Maven: com.xenomachina:xenocom:0.0.7" level="project" />
-    <orderEntry type="library" name="Maven: org.jbox2d:jbox2d-testbed:2.2.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.jbox2d:jbox2d-library:2.2.1.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.jbox2d:jbox2d:jbox2d-2.3.0-BETA" level="project" />
+    <orderEntry type="library" name="Maven: com.github.jbox2d.jbox2d:jbox2d-library:jbox2d-2.3.0-BETA" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-math3:3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.github.jbox2d.jbox2d:jbox2d-serialization:jbox2d-2.3.0-BETA" level="project" />
+    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:2.5.0" level="project" />
+    <orderEntry type="library" name="Maven: com.github.jbox2d.jbox2d:jbox2d-testbed:jbox2d-2.3.0-BETA" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-log4j12:1.6.1" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.14" level="project" />
-    <orderEntry type="library" name="Maven: org.jbox2d:jbox2d-serialization:1.1.0" level="project" />
-    <orderEntry type="library" name="Maven: com.google.protobuf:protobuf-java:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:14.0.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.jbox2d.jbox2d:jbox2d-testbed-jogl:jbox2d-2.3.0-BETA" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt-main:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-android-armv6:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-amd64:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-armv6:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-armv6hf:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-linux-i586:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-macosx-universal:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-solaris-amd64:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-solaris-i586:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-windows-amd64:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.gluegen:gluegen-rt:natives-windows-i586:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all-main:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-android-armv6:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-amd64:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-armv6:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-armv6hf:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-linux-i586:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-macosx-universal:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-solaris-amd64:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-solaris-i586:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-amd64:2.1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.jogamp.jogl:jogl-all:natives-windows-i586:2.1.2" level="project" />
   </component>
 </module>

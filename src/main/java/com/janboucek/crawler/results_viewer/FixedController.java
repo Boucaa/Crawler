@@ -20,7 +20,8 @@
  * WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
- ******************************************************************************/
+ ******************************************************************************//*
+
 
 package com.janboucek.crawler.results_viewer;
 
@@ -40,17 +41,21 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
 
+*/
 /*********************************************************************
  *This class is just a modified copy of the TestbedController,       *
  *introduces some fixes in order to improve stability of the GUI     *
- *********************************************************************/
+ *********************************************************************//*
 
+
+*/
 /**
  * This class contains most control logic for the testbed and the update loop. It also watches the
  * model to switch tests and populates the model with some loop statistics.
  *
  * @author Daniel Murphy
- */
+ *//*
+
 
 public class FixedController implements Runnable {
     private static final Logger log = LoggerFactory.getLogger(FixedController.class);
@@ -368,3 +373,4 @@ public class FixedController implements Runnable {
         }
     }
 }
+*/

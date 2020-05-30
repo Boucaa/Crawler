@@ -12,26 +12,17 @@ import org.jbox2d.testbed.framework.TestbedTest
  * Created by colander on 1/13/17.
  * Class used to show a phenotype fitness test in a GUI.
  */
-class TestbedFitnessTest(g: Genotype, bodySettings: BodySettings, target: Double) : TestbedTest() {
+class TestbedFitnessTest(private val g: Genotype, private val bodySettings: BodySettings, private val target: Double) : TestbedTest() {
     private var frames = 0
-    private val bodySettings: BodySettings
-    private val g: Genotype
     private var stepper: FitnessSimulationStepper? = null
-    private val target: Double
     private var maxX = 0.0
     private var graphDrawer: GraphDrawer? = null
-
-    init {
-        setTitle("Fitness")
-        this.target = target
-        this.g = g
-        this.bodySettings = bodySettings
-    }
 
     override fun initTest(b: Boolean) {
         stepper = FitnessSimulationStepper(world, bodySettings, g)
         addDistanceMarks(world)
         graphDrawer = GraphDrawer(g)
+        println(target)
     }
 
     override fun getTestName(): String {
@@ -42,7 +33,7 @@ class TestbedFitnessTest(g: Genotype, bodySettings: BodySettings, target: Double
     override fun step(settings: TestbedSettings) {
         if (stepper!!.robot.body.position.x > 370) {
             frames = 0
-            reset()
+            // TODO reset()
             return
         }
         frames++

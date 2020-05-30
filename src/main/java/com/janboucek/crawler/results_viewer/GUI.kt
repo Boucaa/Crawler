@@ -8,6 +8,7 @@ import com.janboucek.crawler.simulation.TestbedFitnessTest
 import com.janboucek.crawler.testsettings.TestSettings
 import org.jbox2d.testbed.framework.TestbedController
 import org.jbox2d.testbed.framework.TestbedModel
+import org.jbox2d.testbed.framework.j2d.DebugDrawJ2D
 import org.jbox2d.testbed.framework.j2d.TestPanelJ2D
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -16,7 +17,6 @@ import java.io.FileNotFoundException
 import java.util.*
 import java.util.Timer
 import javax.swing.*
-import javax.swing.event.ListSelectionEvent
 
 /**
  * Class used to display the results in a GUI.
@@ -30,12 +30,113 @@ class GUI private constructor() : JFrame() {
     private val generationSelectList: JList<String>
     private val genotypeSelectList: JList<String>
     private val displayPanel: JPanel
-    private var controller: FixedController? = null
-    private val FRAME_WIDTH = 1000
+    private val FRAME_WIDTH = 1200
     private val FRAME_HEIGHT = 700
     private val TESTBED_WIDTH = 800
     private val TESTBED_HEIGHT = 600
     private val CELL_HEIGHT = 22
+
+    private val testbedModel = TestbedModel()
+    private val controller = TestbedController(testbedModel, TestbedController.UpdateBehavior.UPDATE_CALLED, TestbedController.MouseBehavior.NORMAL, null)//FixedController(testbedModel, testbedPanel, TestbedController.UpdateBehavior.UPDATE_CALLED)
+
+    companion object {
+        @JvmStatic
+        fun main(args: Array<String>) {
+            GUI()
+        }
+    }
+
+    init {
+        //set basic properties of the JFrame
+        title = "Crawler"
+        this.setSize(FRAME_WIDTH, FRAME_HEIGHT)
+        defaultCloseOperation = EXIT_ON_CLOSE
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        //create the selection panel
+        val selectionPanel = JPanel()
+        selectionPanel.preferredSize = Dimension(FRAME_WIDTH - TESTBED_WIDTH, FRAME_HEIGHT)
+        this.add(selectionPanel, BorderLayout.WEST)
+
+        //create the JLists
+        runSelectList = JList(runSelectModel)
+        generationSelectList = JList(generationSelectModel)
+        genotypeSelectList = JList(genotypeSelectModel)
+
+        //set cell height
+        runSelectList.fixedCellHeight = CELL_HEIGHT
+        generationSelectList.fixedCellHeight = CELL_HEIGHT
+        genotypeSelectList.fixedCellHeight = CELL_HEIGHT
+
+        //setup JList selection listeners
+        runSelectList.addListSelectionListener { selectRun(runSelectList.selectedIndex) }
+        generationSelectList.addListSelectionListener {
+            selectGeneration(generationSelectList.selectedIndex)
+        }
+        genotypeSelectList.addListSelectionListener { selectGenotype(genotypeSelectList.selectedIndex) }
+
+        //add the JLists to their JScrollPanes
+        val runSelectScrollPane = JScrollPane()
+        runSelectScrollPane.setViewportView(runSelectList)
+        val generationSelectScrollPane = JScrollPane()
+        generationSelectScrollPane.setViewportView(generationSelectList)
+        val genotypeSelectScrollPane = JScrollPane()
+        genotypeSelectScrollPane.setViewportView(genotypeSelectList)
+
+        //add the scroll panes to the selection panel
+        selectionPanel.add(runSelectScrollPane, BorderLayout.WEST)
+        selectionPanel.add(generationSelectScrollPane, BorderLayout.CENTER)
+        selectionPanel.add(genotypeSelectScrollPane, BorderLayout.EAST)
+
+        //create the display panel
+        displayPanel = JPanel()
+        displayPanel.preferredSize = Dimension(800, FRAME_HEIGHT)
+        this.add(displayPanel, BorderLayout.EAST)
+
+        //set the size of the scroll panes
+        runSelectScrollPane.preferredSize = Dimension(180, FRAME_HEIGHT)
+        generationSelectScrollPane.preferredSize = Dimension(100, FRAME_HEIGHT)
+        genotypeSelectScrollPane.preferredSize = Dimension(100, FRAME_HEIGHT)
+
+
+
+
+        testbedModel.settings.getSetting("Help").enabled = false
+        testbedModel.settings.getSetting("Stats").enabled = false
+
+        val testbedPanel = TestPanelJ2D(testbedModel, controller)
+        testbedPanel.preferredSize = Dimension(TESTBED_WIDTH, TESTBED_HEIGHT)
+        testbedPanel.setSize(TESTBED_WIDTH, TESTBED_HEIGHT)
+        displayPanel.add(testbedPanel, BorderLayout.NORTH)
+        displayPanel.revalidate()
+        testbedModel.panel = testbedPanel
+
+//        testbedModel.debugDraw = testbedPanel.debu
+        val debugDraw = DebugDrawJ2D(testbedPanel, true)
+        testbedModel.debugDraw = debugDraw
+
+        //generate the initial values
+        initLists()
+
+        controller.start()
+
+        //finalize window
+        pack()
+        this.isVisible = true
+
+        //create a timer which refreshes the selection JLists
+        val timer = Timer()
+        timer.scheduleAtFixedRate(object : TimerTask() {
+            override fun run() {
+                updateLists()
+            }
+        }, 1000, 1000)
+    }
+
     private fun initLists() {
         val resultsFolder = File(Logger.RESULTS_DIRECTORY)
         if (!resultsFolder.exists()) {
@@ -90,139 +191,44 @@ class GUI private constructor() : JFrame() {
             TestSettings.set(readFile(cfgFile.absolutePath)
                     ?: throw IllegalStateException("failed to read config file: ${cfgFile.absolutePath}"))
         }
-        val model: DefaultListModel<String> = DefaultListModel()
         val genFolders = runFolder.listFiles() ?: return
         Arrays.sort(genFolders)
         for (genFolder in genFolders) {
-            if (genFolder.name != "evolution.log" && genFolder.name != "config.cfg") model.addElement(genFolder.name)
+            if (genFolder.name != "evolution.log" && genFolder.name != "config.cfg") generationSelectModel.addElement(genFolder.name)
         }
-        generationSelectList.setModel(model)
-        generationSelectModel = model
         if (!generationSelectModel.isEmpty) generationSelectList.selectedIndex = generationSelectModel.size() - 1
     }
 
-    private var id = 0
     private fun selectGeneration(index: Int) {
-        genotypeSelectModel.clear()
         if (generationSelectModel.isEmpty || index < 0) return
+        genotypeSelectModel.clear()
         val genFile = File(Logger.RESULTS_DIRECTORY + runSelectModel[runSelectList.selectedIndex] + "/" + generationSelectModel[index])
-        val newJListModel: DefaultListModel<String> = DefaultListModel()
-
-        //stop the current test
-        if (controller != null) controller!!.stop()
-
-        //recreate the testbed panel
-        val testbedModel = TestbedModel()
-        testbedModel.settings.getSetting("Help").enabled = false
-        displayPanel.removeAll()
-        val testbedPanel = TestPanelJ2D(testbedModel)
-        testbedPanel.preferredSize = Dimension(TESTBED_WIDTH, TESTBED_HEIGHT)
-        testbedPanel.setSize(TESTBED_WIDTH, TESTBED_HEIGHT)
-        displayPanel.add(testbedPanel, BorderLayout.NORTH)
-        displayPanel.revalidate()
-        testbedModel.debugDraw = testbedPanel.debugDraw
+        genotypeSelectModel.clear()
         var sc: Scanner? = null
         try {
             sc = Scanner(genFile.absoluteFile)
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
         }
+
         //load the genotypes and add the tests to the testbed
+        testbedModel.clearTestList()
         var i = 0
         while (sc!!.hasNext()) {
-            newJListModel.addElement(i++.toString() + "")
+            genotypeSelectModel.addElement(i++.toString() + "")
             val fitness = sc.nextDouble()
             val genotype = Genotype.fromSerialized(sc)
             val fitnessResult = FitnessResult(fitness, genotype)
             val test = TestbedFitnessTest(fitnessResult.genotype, fitnessResult.genotype.bodySettings, fitnessResult.result)
             testbedModel.addTest(test)
         }
-        genotypeSelectList.setModel(newJListModel)
-        val controller = FixedController(testbedModel, testbedPanel, TestbedController.UpdateBehavior.UPDATE_CALLED)
-        controller.start(++id)
-        controller.playTest(0)
-        this.controller = controller
+        if (!genotypeSelectModel.isEmpty) genotypeSelectList.selectedIndex = 0
     }
 
-    //when changing the tests rapidly, this does sometimes yield a NullPointerExcepiton, because of a race condition bug in the JBox2D TestbedTest
     private fun selectGenotype(index: Int) {
-        if (index < 0 || genotypeSelectList.model.size == 0 || controller == null) return
-        controller!!.playTest(index)
-    }
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            GUI()
-        }
-    }
-
-    init {
-        //set basic properties of the JFrame
-        title = "Crawler"
-        this.setSize(FRAME_WIDTH, FRAME_HEIGHT)
-        defaultCloseOperation = EXIT_ON_CLOSE
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName())
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-
-        //create the selection panel
-        val selectionPanel = JPanel()
-        this.add(selectionPanel, BorderLayout.WEST)
-
-        //create the JLists
-        runSelectList = JList(runSelectModel)
-        generationSelectList = JList(generationSelectModel)
-        genotypeSelectList = JList(genotypeSelectModel)
-
-        //set cell height
-        runSelectList.fixedCellHeight = CELL_HEIGHT
-        generationSelectList.fixedCellHeight = CELL_HEIGHT
-        genotypeSelectList.fixedCellHeight = CELL_HEIGHT
-
-        //setup JList selection listeners
-        runSelectList.addListSelectionListener { e: ListSelectionEvent? -> selectRun(runSelectList.selectedIndex) }
-        generationSelectList.addListSelectionListener { e: ListSelectionEvent? -> selectGeneration(generationSelectList.selectedIndex) }
-        genotypeSelectList.addListSelectionListener { e: ListSelectionEvent? -> selectGenotype(genotypeSelectList.selectedIndex) }
-
-        //add the JLists to their JScrollPanes
-        val runSelectScrollPane = JScrollPane()
-        runSelectScrollPane.setViewportView(runSelectList)
-        val generationSelectScrollPane = JScrollPane()
-        generationSelectScrollPane.setViewportView(generationSelectList)
-        val genotypeSelectScrollPane = JScrollPane()
-        genotypeSelectScrollPane.setViewportView(genotypeSelectList)
-
-        //add the scroll panes to the selection panel
-        selectionPanel.add(runSelectScrollPane, BorderLayout.WEST)
-        selectionPanel.add(generationSelectScrollPane, BorderLayout.CENTER)
-        selectionPanel.add(genotypeSelectScrollPane, BorderLayout.EAST)
-
-        //create the display panel
-        displayPanel = JPanel()
-        displayPanel.preferredSize = Dimension(800, FRAME_HEIGHT)
-        this.add(displayPanel, BorderLayout.EAST)
-
-        //set the size of the scroll panes
-        runSelectScrollPane.preferredSize = Dimension(130, FRAME_HEIGHT)
-        generationSelectScrollPane.preferredSize = Dimension(100, FRAME_HEIGHT)
-        genotypeSelectScrollPane.preferredSize = Dimension(100, FRAME_HEIGHT)
-
-        //generate the initial values
-        initLists()
-
-        //finalize window
-        pack()
-        this.isVisible = true
-
-        //create a timer which refreshes the selection JLists
-        val timer = Timer()
-        timer.scheduleAtFixedRate(object : TimerTask() {
-            override fun run() {
-                updateLists()
-            }
-        }, 1000, 1000)
+        if (index < 0 || genotypeSelectList.model.size == 0) return
+        // this is kinda buggy, the test gets initialized twice, but it's only a visual bug
+        controller.nextTest()
+        controller.playTest(index)
     }
 }

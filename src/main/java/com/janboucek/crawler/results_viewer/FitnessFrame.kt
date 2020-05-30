@@ -1,3 +1,4 @@
+/*
 package com.janboucek.crawler.results_viewer
 
 import com.janboucek.crawler.simulation.FitnessResult
@@ -10,11 +11,13 @@ import java.awt.BorderLayout
 import java.awt.Component
 import javax.swing.JFrame
 
+*/
 /**
  * Created by colander on 2/8/17.
  * A modified version of the org.jbox2d.testbed.framework.TestbedFrame, which omits the unnecessary gui components.
  * Will not be used in the final release, but a cool utility for playing around with the project.
- */
+ *//*
+
 class FitnessFrame(result: FitnessResult) : JFrame() {
     init {
         val model = TestbedModel()
@@ -30,4 +33,4 @@ class FitnessFrame(result: FitnessResult) : JFrame() {
         controller.playTest(0)
         controller.start()
     }
-}
+}*/
