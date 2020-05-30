@@ -1,7 +1,6 @@
 package com.janboucek.crawler.simulation
 
 import com.janboucek.crawler.neat.Genotype
-import com.janboucek.crawler.util.Pair
 import com.janboucek.crawler.worldbuilding.BodySettings
 import java.util.*
 
@@ -32,8 +31,8 @@ class FixedParallelFitnessResolver(genotypes: ArrayList<Genotype>, settings: Bod
                     while (true) {
                         val index = nextIndex()
                         if (index >= markedGenotypes!!.size) break else {
-                            val test = FitnessTest(markedGenotypes!![index].key, settings, markedGenotypes!![index].value)
-                            results.add(FitnessResult(test.compute().result, markedGenotypes!![index].key))
+                            val test = FitnessTest(markedGenotypes!![index].first, settings, markedGenotypes!![index].second)
+                            results.add(FitnessResult(test.compute().result, markedGenotypes!![index].first))
                         }
                     }
                 }

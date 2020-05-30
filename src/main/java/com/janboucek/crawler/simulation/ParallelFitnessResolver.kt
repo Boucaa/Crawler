@@ -1,7 +1,6 @@
 package com.janboucek.crawler.simulation
 
 import com.janboucek.crawler.neat.Genotype
-import com.janboucek.crawler.util.Pair
 import com.janboucek.crawler.worldbuilding.BodySettings
 import java.util.*
 
@@ -17,8 +16,8 @@ open class ParallelFitnessResolver(genotypes: ArrayList<Genotype>, settings: Bod
             markedGenotypes.add(Pair(genotypes[i], i))
         }
         markedGenotypes.parallelStream().forEach { genoPair: Pair<Genotype, Int> ->
-            val test = FitnessTest(genoPair.key, settings, genoPair.value)
-            results.add(FitnessResult(test.compute().result, genoPair.key, genoPair.value))
+            val test = FitnessTest(genoPair.first, settings, genoPair.second)
+            results.add(FitnessResult(test.compute().result, genoPair.first, genoPair.second))
         }
         return results
     }

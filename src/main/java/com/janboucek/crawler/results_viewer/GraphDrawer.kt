@@ -3,7 +3,6 @@ package com.janboucek.crawler.results_viewer
 import com.janboucek.crawler.neat.ConnectionGene
 import com.janboucek.crawler.neat.Genotype
 import com.janboucek.crawler.neat.NodeGene
-import com.janboucek.crawler.util.Pair
 import org.jbox2d.callbacks.DebugDraw
 import org.jbox2d.common.Color3f
 import org.jbox2d.common.Vec2
@@ -43,17 +42,17 @@ class GraphDrawer(g: Genotype) {
         })
         g.connectionGenes.forEach(Consumer { connectionGene: ConnectionGene ->
             lines.add(Pair(arrayOf(
-                    nodesById[connectionGene.`in`]!!.key.x.toInt(),
-                    nodesById[connectionGene.`in`]!!.key.y.toInt(),
-                    nodesById[connectionGene.out]!!.key.x.toInt(),
-                    nodesById[connectionGene.out]!!.key.y.toInt()), connectionGene.active))
+                    nodesById[connectionGene.`in`]!!.first.x.toInt(),
+                    nodesById[connectionGene.`in`]!!.first.y.toInt(),
+                    nodesById[connectionGene.out]!!.first.x.toInt(),
+                    nodesById[connectionGene.out]!!.first.y.toInt()), connectionGene.active))
         })
     }
 
     fun draw(debugDraw: DebugDraw) {
         for (id in nodesById.keys) {
             var colour: Color3f? = null
-            when (nodesById[id]!!.value) {
+            when (nodesById[id]!!.second) {
                 NodeGene.FUNCTION_SIGMOID -> colour = Color3f.BLUE
                 NodeGene.FUNCTION_LINEAR -> colour = Color3f.GREEN
                 NodeGene.FUNCTION_SIN -> colour = Color3f.RED
@@ -61,22 +60,22 @@ class GraphDrawer(g: Genotype) {
                 NodeGene.FUNCTION_ABS -> colour = BROWN_COLOR
                 NodeGene.FUNCTION_GAUSS -> colour = YELLOW_COLOR
                 -1 -> colour = Color3f.WHITE
-                else -> println("WRONG COLOUR " + nodesById[id]!!.value)
+                else -> println("WRONG COLOUR " + nodesById[id]!!.second)
             }
-            debugDraw.drawString(Vec2(nodesById[id]!!.key.x, nodesById[id]!!.key.y), id.toString() + "", colour)
+            debugDraw.drawString(Vec2(nodesById[id]!!.first.x, nodesById[id]!!.first.y), id.toString() + "", colour)
         }
         for (line in lines) {
-            val coords = line.key
+            val coords = line.first
             debugDraw.drawSegment(
                     Vec2(debugDraw.getScreenToWorld(coords[0].toFloat(), coords[1].toFloat())),
                     Vec2(debugDraw.getScreenToWorld(coords[2].toFloat(), coords[3].toFloat())),
-                    if (line.value) Color3f.GREEN else GRAY_COLOR)
+                    if (line.second) Color3f.GREEN else GRAY_COLOR)
             val pointerX = ((coords[2] - coords[0]) * (5.0 / 6) + coords[0]).toInt()
             val pointerY = ((coords[3] - coords[1]) * (5.0 / 6) + coords[1]).toInt()
             debugDraw.drawSegment(
                     Vec2(debugDraw.getScreenToWorld(pointerX.toFloat(), pointerY.toFloat())),
                     Vec2(debugDraw.getScreenToWorld(coords[2].toFloat(), coords[3].toFloat())),
-                    if (line.value) Color3f.RED else Color3f.WHITE)
+                    if (line.second) Color3f.RED else Color3f.WHITE)
         }
     }
 }

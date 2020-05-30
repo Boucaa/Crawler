@@ -13,14 +13,14 @@ import java.util.*
 object IOHandler {
     fun createDirectory(address: String) {
         val dir = File(address)
-        if (!dir.mkdir()) {
-            println("IOHANDLER MKDIR ERROR: $address")
+        if (!dir.mkdirs()) {
+            println("failed to create directory: $address")
         }
     }
 
-    fun writeFile(adddress: String, text: String) {
+    fun writeFile(address: String, text: String) {
         try {
-            val fw = FileWriter(adddress)
+            val fw = FileWriter(address)
             fw.write(text)
             fw.close()
         } catch (e: IOException) {
@@ -30,13 +30,14 @@ object IOHandler {
 
     //not efficient, works well enough
     fun readFile(address: String): String? {
+        val file = File(address)
         try {
-            val sc = Scanner(File(address))
+            val sc = Scanner(file)
             sc.useDelimiter("\\Z")
             return sc.next()
         } catch (e: FileNotFoundException) {
             e.printStackTrace()
+            throw IllegalStateException("failed to read config from: ${file.absolutePath}")
         }
-        return null
     }
 }

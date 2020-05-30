@@ -44,7 +44,7 @@ class WorldBuilder(private val world: World, private val bodySettings: BodySetti
             legs.add(buildLeg(x.toFloat()))
             legs.add(buildLeg(x.toFloat()))
         }
-        return Robot(mainBody, legs)
+        return Robot(mainBody!!, legs)
     }
 
     private fun buildLeg(x: Float): RobotLeg {

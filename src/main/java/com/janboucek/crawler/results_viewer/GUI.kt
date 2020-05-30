@@ -87,7 +87,8 @@ class GUI private constructor() : JFrame() {
         if (!cfgFile.exists()) {
             System.err.println("NO CFG FILE, leaving default")
         } else {
-            TestSettings.set(readFile(cfgFile.absolutePath))
+            TestSettings.set(readFile(cfgFile.absolutePath)
+                    ?: throw IllegalStateException("failed to read config file: ${cfgFile.absolutePath}"))
         }
         val model: DefaultListModel<String> = DefaultListModel()
         val genFolders = runFolder.listFiles() ?: return

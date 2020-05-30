@@ -1,6 +1,5 @@
 package com.janboucek.crawler.neat
 
-import com.janboucek.crawler.util.Pair
 import java.util.*
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
@@ -98,7 +97,7 @@ object Util {
 
     @JvmStatic
     fun getAllowedConnectionList(g: Genotype): List<Pair<Int, Int>> {
-        return getNonEdgeList(g).filter { edge: Pair<Int, Int> -> allowedToConnect(g, edge.key, edge.value) }
+        return getNonEdgeList(g).filter { edge: Pair<Int, Int> -> allowedToConnect(g, edge.first, edge.second) }
     }
 
     @JvmStatic
