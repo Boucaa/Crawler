@@ -18,9 +18,7 @@ object Main {
                         ?: throw IllegalStateException("could not read config file")
         )
         for (i in 0..19) {
-            println("EVOLVING WITH SEED #$i")
-            val seed = i * 1234 * 987 + (i - 1).toLong()
-            val evo = Evolution(set, seed)
+            val evo = Evolution(set, i.toLong())
             evo.run()
         }
     }

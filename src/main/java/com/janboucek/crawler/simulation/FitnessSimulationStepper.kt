@@ -78,9 +78,11 @@ class FitnessSimulationStepper internal constructor(world: World, bodySettings: 
                             robot.legs[1].touchValue
                     ),
                     doubleArrayOf(
-                            robot.body.angle.toDouble(), 1.0,
+                            robot.body.angle.toDouble(),
+                            1.0,
                             sin(framesElapsed / FUNC_DIVIDER),
-                            cos(framesElapsed / FUNC_DIVIDER), 1.0,
+                            cos(framesElapsed / FUNC_DIVIDER),
+                            1.0,
                             robot.body.angle.toDouble()
                     ),
                     doubleArrayOf(

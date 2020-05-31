@@ -13,7 +13,7 @@ import java.io.IOException
  * Created by colander on 2/5/17.
  * Logs debug messages and the results of an evolution run.
  */
-class Logger {
+class Logger(val runId: Long) {
     companion object {
         const val RESULTS_DIRECTORY = "results/"
     }
@@ -25,7 +25,7 @@ class Logger {
         val resultsDir = File(RESULTS_DIRECTORY)
         if (!resultsDir.exists()) resultsDir.mkdirs()
         if (!resultsDir.isDirectory) throw IllegalStateException("failed to create results folder")
-        runDir = RESULTS_DIRECTORY + System.currentTimeMillis()
+        runDir = "$RESULTS_DIRECTORY${System.currentTimeMillis() / 1000}$runId"
         createDirectory(runDir)
         val logFile = File("$runDir/evolution.log")
         logWriter = BufferedWriter(FileWriter(logFile))

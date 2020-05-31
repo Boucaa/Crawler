@@ -5,6 +5,7 @@ import com.janboucek.crawler.worldbuilding.BodySettings
 import org.jbox2d.common.Vec2
 import org.jbox2d.dynamics.Body
 import org.jbox2d.dynamics.World
+import kotlin.math.max
 
 /**
  * Created by colander on 1/13/17.
@@ -43,12 +44,12 @@ class FitnessTest internal constructor(var genotype: Genotype, bodySettings: Bod
                 failed = true
                 break
             }
-            if (i < ITERATIONS && i - lastBestFrame > MAX_FRAMES_WITHOUT_MOVEMENT) {
-                break
-            }
+            /*   if (i < ITERATIONS && i - lastBestFrame > MAX_FRAMES_WITHOUT_MOVEMENT) {
+                   break
+               }*/
         }
         result = if (failed) 0.0 else maxX.toDouble()
-        result = Math.max(result, 0.000001)
+        result = max(result, 0.000001)
         //free up memory ASAP
         destroyWorld()
         return this

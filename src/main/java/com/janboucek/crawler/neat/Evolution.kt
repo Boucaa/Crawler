@@ -15,7 +15,7 @@ import kotlin.math.max
  * Created by colander on 1/3/17.
  * The main CPPN-NEAT class.
  */
-class Evolution(private val bodySettings: BodySettings, seed: Long) {
+class Evolution(private val bodySettings: BodySettings, runId: Long) {
 
     companion object {
         private const val GENERATIONS = 2000
@@ -41,16 +41,17 @@ class Evolution(private val bodySettings: BodySettings, seed: Long) {
     }
 
     private val speciesResetCounter = TestSettings.SPECIES_RESET_COUNTER.toDouble()
-    private val random = Random(seed)
+    private val random = Random(runId * 1234 * 987 + (runId - 1))
     private var innovation = 0
     private var speciesID = 0
     private var generation = ArrayList<Genotype>()
     private val species = ArrayList<Species>()
     private var best = 0.0
     private var generationNo = 0
-    private val logger = Logger()
+    private val logger = Logger(runId)
 
     init {
+        logger.log("STARTING RUN #$runId")
         //generate the initial population
         val defaultNodes = ArrayList<NodeGene>()
         for (i in 0 until INPUT_NODES) {
