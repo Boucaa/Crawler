@@ -1,4 +1,4 @@
-package com.janboucek.crawler.worldbuilding
+package com.janboucek.crawler.simulation.worldbuilding
 
 import java.util.*
 

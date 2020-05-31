@@ -3,9 +3,9 @@ package com.janboucek.crawler.simulation
 import com.janboucek.crawler.fitness.ANNPhenotype
 import com.janboucek.crawler.neat.Genotype
 import com.janboucek.crawler.settings.TestSettings
-import com.janboucek.crawler.worldbuilding.BodySettings
-import com.janboucek.crawler.worldbuilding.WorldBuilder
-import com.janboucek.crawler.worldbuilding.WorldSettings
+import com.janboucek.crawler.simulation.worldbuilding.BodySettings
+import com.janboucek.crawler.simulation.worldbuilding.WorldBuilder
+import com.janboucek.crawler.simulation.worldbuilding.WorldSettings
 import org.jbox2d.callbacks.ContactImpulse
 import org.jbox2d.callbacks.ContactListener
 import org.jbox2d.collision.Manifold

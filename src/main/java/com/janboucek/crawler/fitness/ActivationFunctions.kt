@@ -1,4 +1,4 @@
-package com.janboucek.crawler.simulation
+package com.janboucek.crawler.fitness
 
 import com.janboucek.crawler.neat.NodeGene
 import com.janboucek.crawler.settings.TestSettings

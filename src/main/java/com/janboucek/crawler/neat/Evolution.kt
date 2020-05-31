@@ -6,7 +6,7 @@ import com.janboucek.crawler.neat.Util.copyGenotype
 import com.janboucek.crawler.neat.Util.getAllowedConnectionList
 import com.janboucek.crawler.fitness.CoroutineFitnessResolver
 import com.janboucek.crawler.settings.TestSettings
-import com.janboucek.crawler.worldbuilding.BodySettings
+import com.janboucek.crawler.simulation.worldbuilding.BodySettings
 import java.util.*
 import kotlin.math.abs
 import kotlin.math.max

@@ -2,10 +2,8 @@ package com.janboucek.crawler.fitness
 
 import com.janboucek.crawler.neat.Genotype
 import com.janboucek.crawler.neat.NodeGene
-import com.janboucek.crawler.simulation.ActivationFunctions
 import com.janboucek.crawler.simulation.NetworkNode
 import java.util.*
-import java.util.function.Consumer
 
 /**
  * Created by colander on 1/3/17.
@@ -32,11 +30,11 @@ class CPPNPhenotype(g: Genotype) {
             nodesByInnov[connectionGene.output]!!.inputs.add(nodesByInnov[connectionGene.input]!!)
             nodesByInnov[connectionGene.output]!!.inputWeights.add(connectionGene.weight)
         }
-        network.forEach(Consumer { node: NetworkNode -> node.triggered = true })
+        network.forEach { node: NetworkNode -> node.triggered = true }
     }
 
     fun step(inputs: DoubleArray): DoubleArray {
-        hidden.forEach(Consumer { node: NetworkNode -> node.triggered = false })
+        hidden.forEach { node: NetworkNode -> node.triggered = false }
         for (i in this.inputs.indices) {
             this.inputs[i].currentValue = inputs[i]
         }
@@ -49,7 +47,7 @@ class CPPNPhenotype(g: Genotype) {
     }
 
     private fun triggerNode(node: NetworkNode) {
-        node.inputs.stream().filter { input: NetworkNode -> !input.triggered }.forEach { n: NetworkNode -> triggerNode(n) }
+        node.inputs.filter { input: NetworkNode -> !input.triggered }.forEach { n: NetworkNode -> triggerNode(n) }
         var sum = 0.0
         for (i in node.inputs.indices) {
             sum += node.inputs[i].currentValue * node.inputWeights[i]

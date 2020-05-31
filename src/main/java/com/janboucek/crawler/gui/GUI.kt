@@ -1,11 +1,11 @@
 package com.janboucek.crawler.gui
 
+import com.janboucek.crawler.fitness.FitnessResult
 import com.janboucek.crawler.io.IOHandler.readFile
 import com.janboucek.crawler.io.Logger
 import com.janboucek.crawler.neat.Genotype
-import com.janboucek.crawler.fitness.FitnessResult
-import com.janboucek.crawler.simulation.TestbedFitnessTest
 import com.janboucek.crawler.settings.TestSettings
+import com.janboucek.crawler.simulation.TestbedFitnessTest
 import org.jbox2d.testbed.framework.TestbedController
 import org.jbox2d.testbed.framework.TestbedModel
 import org.jbox2d.testbed.framework.j2d.DebugDrawJ2D
@@ -23,6 +23,20 @@ import javax.swing.*
  * Created by colander on 2/8/17.
  */
 class GUI private constructor() : JFrame() {
+
+    companion object {
+        private const val FRAME_WIDTH = 1200
+        private const val FRAME_HEIGHT = 700
+        private const val TESTBED_WIDTH = 800
+        private const val TESTBED_HEIGHT = 600
+        private const val CELL_HEIGHT = 22
+
+        @JvmStatic
+        fun main(args: Array<String>) {
+            GUI()
+        }
+    }
+
     private val runSelectModel = DefaultListModel<String>()
     private var generationSelectModel = DefaultListModel<String>()
     private val genotypeSelectModel = DefaultListModel<String>()
@@ -30,21 +44,9 @@ class GUI private constructor() : JFrame() {
     private val generationSelectList: JList<String>
     private val genotypeSelectList: JList<String>
     private val displayPanel: JPanel
-    private val FRAME_WIDTH = 1200
-    private val FRAME_HEIGHT = 700
-    private val TESTBED_WIDTH = 800
-    private val TESTBED_HEIGHT = 600
-    private val CELL_HEIGHT = 22
 
     private val testbedModel = TestbedModel()
     private val controller = TestbedController(testbedModel, TestbedController.UpdateBehavior.UPDATE_CALLED, TestbedController.MouseBehavior.NORMAL, null)//FixedController(testbedModel, testbedPanel, TestbedController.UpdateBehavior.UPDATE_CALLED)
-
-    companion object {
-        @JvmStatic
-        fun main(args: Array<String>) {
-            GUI()
-        }
-    }
 
     init {
         //set basic properties of the JFrame
@@ -74,9 +76,7 @@ class GUI private constructor() : JFrame() {
 
         //setup JList selection listeners
         runSelectList.addListSelectionListener { selectRun(runSelectList.selectedIndex) }
-        generationSelectList.addListSelectionListener {
-            selectGeneration(generationSelectList.selectedIndex)
-        }
+        generationSelectList.addListSelectionListener { selectGeneration(generationSelectList.selectedIndex) }
         genotypeSelectList.addListSelectionListener { selectGenotype(genotypeSelectList.selectedIndex) }
 
         //add the JLists to their JScrollPanes
@@ -102,9 +102,6 @@ class GUI private constructor() : JFrame() {
         generationSelectScrollPane.preferredSize = Dimension(100, FRAME_HEIGHT)
         genotypeSelectScrollPane.preferredSize = Dimension(100, FRAME_HEIGHT)
 
-
-
-
         testbedModel.settings.getSetting("Help").enabled = false
         testbedModel.settings.getSetting("Stats").enabled = false
 
@@ -115,7 +112,6 @@ class GUI private constructor() : JFrame() {
         displayPanel.revalidate()
         testbedModel.panel = testbedPanel
 
-//        testbedModel.debugDraw = testbedPanel.debu
         val debugDraw = DebugDrawJ2D(testbedPanel, true)
         testbedModel.debugDraw = debugDraw
 
@@ -159,7 +155,7 @@ class GUI private constructor() : JFrame() {
     private fun updateLists() {
         val resultsFolder = File(Logger.RESULTS_DIRECTORY)
         val runFolders = resultsFolder.listFiles()
-        if (runFolders.size == 0) return
+        if (runFolders?.isEmpty() != false) return
         Arrays.sort(runFolders)
         run {
             var i = runSelectModel.size()
@@ -171,12 +167,14 @@ class GUI private constructor() : JFrame() {
         if (runSelectList.selectedIndex == -1) return
         val selectedRunFolder = File(Logger.RESULTS_DIRECTORY + runSelectModel[runSelectList.selectedIndex])
         val genFiles = selectedRunFolder.listFiles()
-        Arrays.sort(genFiles)
-        var i = generationSelectModel.size()
-        while (generationSelectModel.size() < genFiles.size - 2) {
-            //-1 to compensate for the evolution.log file
-            generationSelectModel.addElement(genFiles[i].name)
-            i++
+        if (genFiles?.isNotEmpty() == true) {
+            Arrays.sort(genFiles)
+            var i = generationSelectModel.size()
+            while (generationSelectModel.size() < genFiles.size - 2) {
+                //-1 to compensate for the evolution.log file
+                generationSelectModel.addElement(genFiles[i].name)
+                i++
+            }
         }
     }
 

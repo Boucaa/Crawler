@@ -3,7 +3,7 @@ package com.janboucek.crawler.simulation
 import com.janboucek.crawler.fitness.ANNPhenotype
 import com.janboucek.crawler.fitness.CPPNPhenotype
 import com.janboucek.crawler.neat.Genotype
-import com.janboucek.crawler.worldbuilding.BodySettings
+import com.janboucek.crawler.simulation.worldbuilding.BodySettings
 import org.jbox2d.common.Vec2
 import org.jbox2d.dynamics.Body
 import org.jbox2d.dynamics.World
@@ -19,7 +19,7 @@ class FitnessTest internal constructor(var genotype: Genotype, bodySettings: Bod
         private const val CONFIRM_ITERATIONS = 1500
         private const val LIMIT_HEIGHT = true
         private const val HEIGHT_LIMIT = -13.0
-        private const val MAX_FRAMES_WITHOUT_MOVEMENT = 800 // max frames allowed without reaching a new record fitness, helps to evaluate faster
+        private const val MAX_FRAMES_WITHOUT_MOVEMENT = 800 // max frames allowed without reaching a new record fitness, helps to evaluate faster, but unused because it yielded worse results
     }
 
     private var world: World?
@@ -37,12 +37,12 @@ class FitnessTest internal constructor(var genotype: Genotype, bodySettings: Bod
     fun compute(): FitnessTest {
         var failed = false
         var maxX = 0f
-        var lastBestFrame = 0
+//        var lastBestFrame = 0
         for (i in 0 until (ITERATIONS + if (LIMIT_HEIGHT) CONFIRM_ITERATIONS else 0)) {
             stepper.step(true)
             if (stepper.robot.body.position.x > maxX && i < ITERATIONS) {
                 maxX = stepper.robot.body.position.x
-                lastBestFrame = i
+//                lastBestFrame = i
             }
             if (LIMIT_HEIGHT && stepper.robot.legs.any { leg: RobotLeg -> leg.segments.any { segment: Body -> segment.position.y < HEIGHT_LIMIT } }) {
                 failed = true

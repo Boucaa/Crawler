@@ -1,7 +1,6 @@
 package com.janboucek.crawler.fitness
 
 import com.janboucek.crawler.settings.TestSettings
-import com.janboucek.crawler.simulation.ActivationFunctions
 
 /**
  * Created by colander on 14.3.17.
@@ -24,41 +23,6 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
     var lastInput = Array(1) { DoubleArray(1) }
     var lastOutput = Array(1) { DoubleArray(1) }
     var lastHidden = Array(1) { DoubleArray(1) }
-
-    fun step(inputs: Array<DoubleArray>): Array<DoubleArray> {
-        lastInput = inputs
-        val hiddenLayer = Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) }
-        for (i in hiddenLayer.indices) {
-            for (j in hiddenLayer[0].indices) {
-                //compute value for each hidden node with coordinates [i,j]
-                var sum = 0.0
-                for (k in hiddenLayer.indices) {
-                    for (l in hiddenLayer[0].indices) {
-                        //connection from input[k,l] to hidden[i,j]
-                        sum += inputToHiddenWeights[k][l][i][j] * inputs[k][l]
-                    }
-                }
-                hiddenLayer[i][j] = ActivationFunctions.activate(sum, TestSettings.ANN_FUNCTION)
-            }
-        }
-        val output = Array(inputToHiddenWeights.size) { DoubleArray(inputToHiddenWeights[0].size) }
-        for (i in hiddenLayer.indices) {
-            for (j in hiddenLayer[0].indices) {
-                //compute value for each output node with coordinates [i,j]
-                var sum = 0.0
-                for (k in hiddenLayer.indices) {
-                    for (l in hiddenLayer[0].indices) {
-                        //connection from hidden[k,l] to output[i,j]
-                        sum += hiddenToOutputWeights[k][l][i][j] * hiddenLayer[k][l]
-                    }
-                }
-                output[i][j] = ActivationFunctions.activate(sum, TestSettings.ANN_FUNCTION)
-            }
-        }
-        lastOutput = output
-        lastHidden = hiddenLayer
-        return output
-    }
 
     init {
         inputToHiddenWeights = Array(SUBSTRATE_WIDTH) { Array(SUBSTRATE_HEIGHT) { Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) } } }
@@ -105,5 +69,40 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
                 }
             }
         }
+    }
+
+    fun step(inputs: Array<DoubleArray>): Array<DoubleArray> {
+        lastInput = inputs
+        val hiddenLayer = Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) }
+        for (i in hiddenLayer.indices) {
+            for (j in hiddenLayer[0].indices) {
+                //compute value for each hidden node with coordinates [i,j]
+                var sum = 0.0
+                for (k in hiddenLayer.indices) {
+                    for (l in hiddenLayer[0].indices) {
+                        //connection from input[k,l] to hidden[i,j]
+                        sum += inputToHiddenWeights[k][l][i][j] * inputs[k][l]
+                    }
+                }
+                hiddenLayer[i][j] = ActivationFunctions.activate(sum, TestSettings.ANN_FUNCTION)
+            }
+        }
+        val output = Array(inputToHiddenWeights.size) { DoubleArray(inputToHiddenWeights[0].size) }
+        for (i in hiddenLayer.indices) {
+            for (j in hiddenLayer[0].indices) {
+                //compute value for each output node with coordinates [i,j]
+                var sum = 0.0
+                for (k in hiddenLayer.indices) {
+                    for (l in hiddenLayer[0].indices) {
+                        //connection from hidden[k,l] to output[i,j]
+                        sum += hiddenToOutputWeights[k][l][i][j] * hiddenLayer[k][l]
+                    }
+                }
+                output[i][j] = ActivationFunctions.activate(sum, TestSettings.ANN_FUNCTION)
+            }
+        }
+        lastOutput = output
+        lastHidden = hiddenLayer
+        return output
     }
 }

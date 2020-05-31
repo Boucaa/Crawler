@@ -2,7 +2,7 @@ package com.janboucek.crawler.neat
 
 import com.janboucek.crawler.io.IOHandler
 import com.janboucek.crawler.settings.TestSettings
-import com.janboucek.crawler.worldbuilding.BodySettings
+import com.janboucek.crawler.simulation.worldbuilding.BodySettings
 
 /**
  * Created by colander on 12/13/16.

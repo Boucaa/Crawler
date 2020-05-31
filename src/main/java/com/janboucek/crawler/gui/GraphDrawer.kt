@@ -14,17 +14,18 @@ import java.util.function.Consumer
  * Class used to draw the visualization of the CPPN onto the testbed panel.
  */
 class GraphDrawer(g: Genotype) {
-    private val lines = ArrayList<Pair<Array<Int>, Boolean>>()
-    private val nodesById = HashMap<Int, Pair<Vec2, Int>>()
-    private val X_OFFSET = 330
-    private val Y_OFFSET = 50
 
     companion object {
         private val GRAY_COLOR = Color3f(0.2f, 0.2f, 0.2f)
         private val PINK_COLOR = Color3f(1f, 0.412f, 0.706f)
         private val BROWN_COLOR = Color3f(0.545f, 0.271f, 0.075f)
         private val YELLOW_COLOR = Color3f(0.855f, 0.647f, 0.125f)
+        private const val X_OFFSET = 330
+        private const val Y_OFFSET = 50
     }
+
+    private val lines = ArrayList<Pair<Array<Int>, Boolean>>()
+    private val nodesById = HashMap<Int, Pair<Vec2, Int>>()
 
     init {
         val rand = Random(69 * 420)

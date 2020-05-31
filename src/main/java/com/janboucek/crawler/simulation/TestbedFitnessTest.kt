@@ -4,8 +4,8 @@ import com.janboucek.crawler.fitness.ANNPhenotype
 import com.janboucek.crawler.fitness.CPPNPhenotype
 import com.janboucek.crawler.gui.GraphDrawer
 import com.janboucek.crawler.neat.Genotype
-import com.janboucek.crawler.worldbuilding.BodySettings
-import com.janboucek.crawler.worldbuilding.WorldBuilder.Companion.addDistanceMarks
+import com.janboucek.crawler.simulation.worldbuilding.BodySettings
+import com.janboucek.crawler.simulation.worldbuilding.WorldBuilder.Companion.addDistanceMarks
 import org.jbox2d.common.Vec2
 import org.jbox2d.testbed.framework.TestbedSettings
 import org.jbox2d.testbed.framework.TestbedTest

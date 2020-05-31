@@ -1,6 +1,6 @@
 package com.janboucek.crawler.neat
 
-import com.janboucek.crawler.worldbuilding.BodySettings
+import com.janboucek.crawler.simulation.worldbuilding.BodySettings
 import java.util.*
 
 /**

@@ -1,4 +1,4 @@
-package com.janboucek.crawler.worldbuilding
+package com.janboucek.crawler.simulation.worldbuilding
 
 import com.janboucek.crawler.simulation.Robot
 import com.janboucek.crawler.simulation.RobotLeg

@@ -5,9 +5,7 @@ package com.janboucek.crawler.io
  * source: https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println
  */
 
-enum class Color(
-        private val code: String
-) {
+enum class Color(private val code: String) {
     //Color end string, color reset
     RESET("\u001b[0m"),  // Regular Colors.
     BLACK("\u001b[0;30m"),

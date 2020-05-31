@@ -1,8 +1,8 @@
 package com.janboucek.crawler.io
 
+import com.janboucek.crawler.fitness.FitnessResult
 import com.janboucek.crawler.io.IOHandler.createDirectory
 import com.janboucek.crawler.io.IOHandler.writeFile
-import com.janboucek.crawler.fitness.FitnessResult
 import com.janboucek.crawler.settings.TestSettings
 import java.io.BufferedWriter
 import java.io.File
@@ -13,7 +13,7 @@ import java.io.IOException
  * Created by colander on 2/5/17.
  * Logs debug messages and the results of an evolution run.
  */
-class Logger(val runId: Long) {
+class Logger(runId: Long) {
     companion object {
         const val RESULTS_DIRECTORY = "results/"
     }

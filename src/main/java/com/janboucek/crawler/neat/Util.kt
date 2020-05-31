@@ -62,7 +62,7 @@ object Util {
         return map
     }
 
-    private fun getNonEdgeList(g: Genotype): java.util.ArrayList<Pair<Int, Int>> {
+    private fun getNonEdgeList(g: Genotype): ArrayList<Pair<Int, Int>> {
         //create an edge "matrix" for the connection graph
         val map = generateEdgeMatrix(g)
 
@@ -88,7 +88,7 @@ object Util {
         while (!q.isEmpty()) {
             val cur = q.poll()
             if (cur == b) return false
-            g.connectionGenes.stream().filter { connection: ConnectionGene -> connection.output == cur }.forEach { connection: ConnectionGene -> q.add(connection.input) }
+            g.connectionGenes.filter { connection: ConnectionGene -> connection.output == cur }.forEach { connection: ConnectionGene -> q.add(connection.input) }
         }
         return true
     }
