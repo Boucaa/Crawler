@@ -1,4 +1,4 @@
-package com.janboucek.crawler.testsettings
+package com.janboucek.crawler.settings
 
 import java.util.*
 

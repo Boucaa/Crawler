@@ -1,4 +1,4 @@
-package com.janboucek.crawler.results_viewer
+package com.janboucek.crawler.gui
 
 import com.janboucek.crawler.neat.ConnectionGene
 import com.janboucek.crawler.neat.Genotype

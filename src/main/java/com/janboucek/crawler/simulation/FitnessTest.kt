@@ -1,5 +1,7 @@
 package com.janboucek.crawler.simulation
 
+import com.janboucek.crawler.fitness.ANNPhenotype
+import com.janboucek.crawler.fitness.CPPNPhenotype
 import com.janboucek.crawler.neat.Genotype
 import com.janboucek.crawler.worldbuilding.BodySettings
 import org.jbox2d.common.Vec2
@@ -26,7 +28,9 @@ class FitnessTest internal constructor(var genotype: Genotype, bodySettings: Bod
     init {
         val world = World(Vec2(0f, 0f), WorldPoolCache.getPool()) //setting the gravity is a responsibility of the WorldBuilder
         this.world = world
-        stepper = FitnessSimulationStepper(world, bodySettings, genotype)
+        val cppnPhenotype = CPPNPhenotype(genotype)
+        val annPhenotype = ANNPhenotype(cppnPhenotype)
+        stepper = FitnessSimulationStepper(world, bodySettings, annPhenotype)
     }
 
     var result = 0.0

@@ -1,6 +1,7 @@
-package com.janboucek.crawler.simulation
+package com.janboucek.crawler.fitness
 
 import com.janboucek.crawler.neat.Genotype
+import com.janboucek.crawler.simulation.FitnessTest
 import com.janboucek.crawler.worldbuilding.BodySettings
 import java.util.*
 import java.util.stream.Collectors

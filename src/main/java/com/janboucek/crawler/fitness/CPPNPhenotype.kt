@@ -1,13 +1,15 @@
-package com.janboucek.crawler.simulation
+package com.janboucek.crawler.fitness
 
 import com.janboucek.crawler.neat.Genotype
 import com.janboucek.crawler.neat.NodeGene
+import com.janboucek.crawler.simulation.ActivationFunctions
+import com.janboucek.crawler.simulation.NetworkNode
 import java.util.*
 import java.util.function.Consumer
 
 /**
  * Created by colander on 1/3/17.
- * Class used as the single phenotype constructed from a genotype.
+ * Class used as the single phenotype constructed from a genotype. This is only used to generate the ANN phenotype which is used in the actual simulation
  */
 class CPPNPhenotype(g: Genotype) {
     private val nodesByInnov = HashMap<Int, NetworkNode>()

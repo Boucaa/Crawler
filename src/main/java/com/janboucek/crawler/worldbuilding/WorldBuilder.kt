@@ -2,7 +2,7 @@ package com.janboucek.crawler.worldbuilding
 
 import com.janboucek.crawler.simulation.Robot
 import com.janboucek.crawler.simulation.RobotLeg
-import com.janboucek.crawler.testsettings.TestSettings
+import com.janboucek.crawler.settings.TestSettings
 import org.jbox2d.collision.shapes.PolygonShape
 import org.jbox2d.common.Vec2
 import org.jbox2d.dynamics.*

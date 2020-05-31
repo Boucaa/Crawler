@@ -1,4 +1,4 @@
-package com.janboucek.crawler.iohandling
+package com.janboucek.crawler.io
 
 import java.io.File
 import java.io.FileNotFoundException

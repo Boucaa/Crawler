@@ -1,9 +1,9 @@
-package com.janboucek.crawler.iohandling
+package com.janboucek.crawler.io
 
-import com.janboucek.crawler.iohandling.IOHandler.createDirectory
-import com.janboucek.crawler.iohandling.IOHandler.writeFile
-import com.janboucek.crawler.simulation.FitnessResult
-import com.janboucek.crawler.testsettings.TestSettings
+import com.janboucek.crawler.io.IOHandler.createDirectory
+import com.janboucek.crawler.io.IOHandler.writeFile
+import com.janboucek.crawler.fitness.FitnessResult
+import com.janboucek.crawler.settings.TestSettings
 import java.io.BufferedWriter
 import java.io.File
 import java.io.FileWriter

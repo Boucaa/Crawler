@@ -1,6 +1,7 @@
-package com.janboucek.crawler.simulation
+package com.janboucek.crawler.fitness
 
-import com.janboucek.crawler.testsettings.TestSettings
+import com.janboucek.crawler.settings.TestSettings
+import com.janboucek.crawler.simulation.ActivationFunctions
 
 /**
  * Created by colander on 14.3.17.

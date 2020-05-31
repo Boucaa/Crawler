@@ -1,8 +1,7 @@
-package com.janboucek.crawler.launcher
+package com.janboucek.crawler.neat
 
-import com.janboucek.crawler.iohandling.IOHandler
-import com.janboucek.crawler.neat.Evolution
-import com.janboucek.crawler.testsettings.TestSettings
+import com.janboucek.crawler.io.IOHandler
+import com.janboucek.crawler.settings.TestSettings
 import com.janboucek.crawler.worldbuilding.BodySettings
 
 /**

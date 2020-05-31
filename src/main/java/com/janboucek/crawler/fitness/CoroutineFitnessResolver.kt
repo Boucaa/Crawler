@@ -1,6 +1,7 @@
-package com.janboucek.crawler.simulation
+package com.janboucek.crawler.fitness
 
 import com.janboucek.crawler.neat.Genotype
+import com.janboucek.crawler.simulation.FitnessTest
 import com.janboucek.crawler.worldbuilding.BodySettings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -9,7 +10,6 @@ import kotlinx.coroutines.runBlocking
 import java.util.*
 
 /**
- * Created by colander on 2/5/17.
  * A refined version of the FitnessResolver, which coroutines to run tests in parallel.
  */
 open class CoroutineFitnessResolver(genotypes: ArrayList<Genotype>, settings: BodySettings) : FitnessResolver(genotypes, settings) {

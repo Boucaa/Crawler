@@ -1,11 +1,11 @@
 package com.janboucek.crawler.neat
 
-import com.janboucek.crawler.iohandling.Color
-import com.janboucek.crawler.iohandling.Logger
+import com.janboucek.crawler.io.Color
+import com.janboucek.crawler.io.Logger
 import com.janboucek.crawler.neat.Util.copyGenotype
 import com.janboucek.crawler.neat.Util.getAllowedConnectionList
-import com.janboucek.crawler.simulation.CoroutineFitnessResolver
-import com.janboucek.crawler.testsettings.TestSettings
+import com.janboucek.crawler.fitness.CoroutineFitnessResolver
+import com.janboucek.crawler.settings.TestSettings
 import com.janboucek.crawler.worldbuilding.BodySettings
 import java.util.*
 import kotlin.math.abs

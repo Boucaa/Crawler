@@ -1,7 +1,7 @@
 package com.janboucek.crawler.simulation
 
 import com.janboucek.crawler.neat.NodeGene
-import com.janboucek.crawler.testsettings.TestSettings
+import com.janboucek.crawler.settings.TestSettings
 import kotlin.math.exp
 import kotlin.math.sqrt
 

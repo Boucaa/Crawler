@@ -1,4 +1,4 @@
-package com.janboucek.crawler.iohandling
+package com.janboucek.crawler.io
 
 
 /**

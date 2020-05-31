@@ -1,11 +1,11 @@
-package com.janboucek.crawler.results_viewer
+package com.janboucek.crawler.gui
 
-import com.janboucek.crawler.iohandling.IOHandler.readFile
-import com.janboucek.crawler.iohandling.Logger
+import com.janboucek.crawler.io.IOHandler.readFile
+import com.janboucek.crawler.io.Logger
 import com.janboucek.crawler.neat.Genotype
-import com.janboucek.crawler.simulation.FitnessResult
+import com.janboucek.crawler.fitness.FitnessResult
 import com.janboucek.crawler.simulation.TestbedFitnessTest
-import com.janboucek.crawler.testsettings.TestSettings
+import com.janboucek.crawler.settings.TestSettings
 import org.jbox2d.testbed.framework.TestbedController
 import org.jbox2d.testbed.framework.TestbedModel
 import org.jbox2d.testbed.framework.j2d.DebugDrawJ2D

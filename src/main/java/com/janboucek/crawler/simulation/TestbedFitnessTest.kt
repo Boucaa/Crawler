@@ -1,7 +1,9 @@
 package com.janboucek.crawler.simulation
 
+import com.janboucek.crawler.fitness.ANNPhenotype
+import com.janboucek.crawler.fitness.CPPNPhenotype
+import com.janboucek.crawler.gui.GraphDrawer
 import com.janboucek.crawler.neat.Genotype
-import com.janboucek.crawler.results_viewer.GraphDrawer
 import com.janboucek.crawler.worldbuilding.BodySettings
 import com.janboucek.crawler.worldbuilding.WorldBuilder.Companion.addDistanceMarks
 import org.jbox2d.common.Vec2
@@ -20,7 +22,9 @@ class TestbedFitnessTest(private val g: Genotype, private val bodySettings: Body
     private var maxX = 0.0
 
     override fun initTest(b: Boolean) {
-        stepper = FitnessSimulationStepper(world, bodySettings, g)
+        val cppnPhenotype = CPPNPhenotype(g)
+        val annPhenotype = ANNPhenotype(cppnPhenotype)
+        stepper = FitnessSimulationStepper(world, bodySettings, annPhenotype)
         addDistanceMarks(world)
         graphDrawer = GraphDrawer(g)
     }
@@ -44,15 +48,15 @@ class TestbedFitnessTest(private val g: Genotype, private val bodySettings: Body
         addTextLine("FRAMES: $frames")
         addTextLine("Y: $cury")
         addTextLine("INPUT:")
-        for (i in stepper.annPhenotype.lastInput.indices) {
+        for (i in stepper.phenotype.lastInput.indices) {
             var line = ""
-            for (element in stepper.annPhenotype.lastInput[i]) {
+            for (element in stepper.phenotype.lastInput[i]) {
                 line += String.format("%.3f", element) + " "
             }
             addTextLine(line)
         }
         addTextLine("HIDDEN:")
-        for (layerLine in stepper.annPhenotype.lastHidden) {
+        for (layerLine in stepper.phenotype.lastHidden) {
             var line = ""
             for (num in layerLine) {
                 line += String.format("%.3f", num) + " "
@@ -60,7 +64,7 @@ class TestbedFitnessTest(private val g: Genotype, private val bodySettings: Body
             addTextLine(line)
         }
         addTextLine("OUTPUT:")
-        for (layerLine in stepper.annPhenotype.lastOutput) {
+        for (layerLine in stepper.phenotype.lastOutput) {
             var line = ""
             for (num in layerLine) {
                 line += String.format("%.3f", num) + " "

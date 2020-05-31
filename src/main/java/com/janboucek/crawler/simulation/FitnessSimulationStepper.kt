@@ -1,7 +1,8 @@
 package com.janboucek.crawler.simulation
 
+import com.janboucek.crawler.fitness.ANNPhenotype
 import com.janboucek.crawler.neat.Genotype
-import com.janboucek.crawler.testsettings.TestSettings
+import com.janboucek.crawler.settings.TestSettings
 import com.janboucek.crawler.worldbuilding.BodySettings
 import com.janboucek.crawler.worldbuilding.WorldBuilder
 import com.janboucek.crawler.worldbuilding.WorldSettings
@@ -19,12 +20,11 @@ import kotlin.math.sin
  * Created by colander on 1/18/17.
  * Class used to commit the actual steps (frames) of the simulation.
  */
-class FitnessSimulationStepper internal constructor(world: World, bodySettings: BodySettings, g: Genotype) {
+class FitnessSimulationStepper internal constructor(world: World, bodySettings: BodySettings, val phenotype: ANNPhenotype) {
     private var framesElapsed = 0
     private val world: World
     val robot: Robot
     var genotype: Genotype? = null
-    var annPhenotype: ANNPhenotype
 
     companion object {
         private const val FUNC_DIVIDER = 40.0
@@ -41,8 +41,7 @@ class FitnessSimulationStepper internal constructor(world: World, bodySettings: 
         val worldBuilder = WorldBuilder(world, bodySettings, worldSettings)
         robot = worldBuilder.build()
         this.world = world
-        val cppnPhenotype = CPPNPhenotype(g)
-        annPhenotype = ANNPhenotype(cppnPhenotype)
+
         this.world.setContactListener(object : ContactListener {
             override fun beginContact(contact: Contact) {
                 for (leg in robot.legs) {
@@ -93,7 +92,7 @@ class FitnessSimulationStepper internal constructor(world: World, bodySettings: 
                             angleToValue(robot.legs[3].joints[0].jointAngle.toDouble()),
                             robot.legs[3].touchValue
                     ))
-            val outputs = annPhenotype.step(inputs)
+            val outputs = phenotype.step(inputs)
             setAngle(robot.legs[0].joints[0], outputs[0][1])
             setAngle(robot.legs[0].joints[1], outputs[0][2])
             setAngle(robot.legs[1].joints[1], outputs[0][3])
