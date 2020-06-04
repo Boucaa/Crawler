@@ -48,12 +48,63 @@ V tomto projektu je použito rozložení zvané *state-space sandwich* ([ref](ht
 
 Projekt je implementován v jazyce Kotlin (původní verze byla v Javě), byl vybrán zejména pro dobrou objektovou strukturu a protože se mi v něm programuje nejpohodlněji. V následním textu je popsáno, jak jednotlivé komponenty projektu fungují a jaké všechny vylepšení jsem vystavěl na základním algoritmu.
 
+Program zkouší evoluci 20 krát s různým seedem generátoru náhodných čísel. 
+
 #### NEAT
 
-NEAT je impementován V tomto projektu je použito ještě několik dalších mutačních operátorů:
+NEAT je impementován velmi blízko tomu, jak byl výše popsán. Kromě několika základních jsem ještě přidal několik dalších mutačních operátorů:
 
 - aktivace/deaktivace jedné hrany
 - změna jedné váhy na náhodnou hodnotu
 - změna jedné váhy o~maximálně $\pm 5\%$
 
 Díky této malé úpravě dokáže algoritmus ladit neuronovou síť v mírně detailnějším měřítku. 
+
+#### HyperNEAT
+
+HyperNEAT je také implementován docela standardním způsobem. Největší otázkou bylo, jak v *state-space sandwich* rozmístit neurony. 
+
+Na rozdíl od klasických neuronových sítí jsou si sítě generované HyperNEATem vědomé geometrických souvislostí  ([ref](http://www.mitpressjournals.org/doi/10.1162/artl.2009.15.2.15202)). Clune et al. ([ref](http://ieeexplore.ieee.org/document/4983289/)) umisťuje do každého řádku v *substrátu* jednu nohu a do posledního sloupce přidává neuspořádaně zbývající informace:
+
+<img src="../images/clunenet.jpg" alt="clunenet" style="zoom: 50%;" />
+
+Tento postup sice dává geometricky najevo související buňky - podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomoci symetrie dává najevo souvislosti typu *přední/zadní pár nohou* a *levá/pravá noha*. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbývající informace jsou v prostřední řadě mezi nohama (viz obr. 3). Každá noha je popsána pomocí dvou úhlů kloubů (označeno $\phi$) a dotykového *senzoru* (vstup označený $T$) na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez dotyku a $1$ s dotykem, pro plynulost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.
+Jako přídavné proměnné jsou v~tomto rozložení $sin(t/\tau)$, $cos(t/\tau)$, kde $\tau$ je experimentálně určená konstanta 40, dále úhel těla robota se zemí $\Phi$ a $1$ jakožto lineární konstanta.
+Z výstupní vrstvy jsou využívány pouze neurony v pozicích úhlů nohou, které jsou převedeny na úhlovou rychlost podobně jako v ([ref](http://ieeexplore.ieee.org/document/4983289/)): $\omega = 4,5\cdot(\phi_{new} - \phi_{cur})$.
+
+Pro ilustraci této struktury poslouží následující obrázek:
+
+![sandwich](../images/sandwich.png)
+
+*symetrické rozložení sítě, barvy označují jednotlivé nohy, vlevo vstupní vrstva, vpravo výstupní vrstva, prostřední skrytá vrstva nevyobrazena*
+
+#### Simulace
+
+K simulaci je použita knihovna JBox2D ([ref](http://www.jbox2d.org/)), která poskytuje v celku věrohodný model dvojrozměrného světa, ale bohužel nesimuluje úplně deterministicky, takže každý běh programu se ve výsledcích liší. 
+
+Robot se skládá z hlavního těla, na které jsou napojeny nohy (viz obr níže) . Každá z nich je napojena pomocí rotujícího *RevoluteJointu* a stejným způsobem je napojen i spodní segment v koleni.
+
+![robot_new](../images/robot_new.png)
+
+Měření vzdálenosti probíhá 3000 snímků při 60 snímcích za sekundu a dalších 1500 snímků se čeká, jestli robot po konci měření upadne na zem. Tím se zabraňuje strategiím, kdy místo snahy o chůzi robot pouze skočí směrem kupředu.
+
+Výsledná vzdálenost se přímo využívá jako fitness v evolučním algoritmu, pokud robot upadl, počítá se jako $0$.
+
+### Výsledky
+
+Nejlepším výsledkem programu je ovladač robota, který je schopen během 3000 snímků ujít 257 délkových jednotek. Výsledá "chůze" je ale ve skutečnosti spíše skákaní, které sice nebylo původním cílem, ale v rámci daných pravidel je zřejmě efektvnější než opravdová chůze. 
+
+U několika ovladačů se ale opravdu vyvinulo něco, co se za chůzi považovat dá, nejlepší takový ovladač dosahuje vzdálenosti 195. K lidské, či zvířecí chůzi ale chybí jedna zásadní vlastnost - při chůzi nezvedá nohy. K tomu dochází zejména z toho důvodu, že při chůzi na úplně hladkém povrchu k tomu ani není důvod a stálý kontakt se zemí mu dodává další stabilitu.
+
+<video src="../images/bunny.mkv"></video>
+
+*nejlepší výsledek*
+
+<video src="../images/walk.mkv"></video>
+
+*výsledek s chůzí*
+
+![results](../images/results.png)
+
+*průběh vývoje fitness podle generace<img src="../images/clunenet.jpg" alt="clunenet" style="zoom: 50%;" /> napčíč všemi 20 běhy*
+
