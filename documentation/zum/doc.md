@@ -8,7 +8,7 @@ Upozornění: tato dokumentace je z velké části pouze zkrácená, aktualizova
 
 Cílem projektu je vyvinout ovladač simulovaného čtyřnohého 2D robota, který dosahuje co nejrychlejší plynulé chůze v jednom směru, pomocí HyperNEAT.
 
-Chůzi lze definovat jakožto sérii stavů kráčivého tělesa, kde každý stav lze zjednodušit jako soubor informací popisujících jednotlivé pohyblivé prvky robota. V rámci tohoto projektu budeme pracovat s dvojrozměrnou simulací čtyřnohého robota, jehož každá noha je ovládána dvěma klouby. Stav robota tak lze vystihnout jako osmirozměrný vektor $\vec{s}$. Hledáme pak ovladač robota, který pro každý stav malezne osmirozměrný vektor $\vec{\omega}$, ten každému kloubu určuje úhlovou rychlost.
+Chůzi lze definovat jako sérii stavů kráčivého tělesa, kde každý stav lze zjednodušit jako soubor informací popisujících jednotlivé pohyblivé prvky robota. V rámci tohoto projektu budeme pracovat s dvojrozměrnou simulací čtyřnohého robota, jehož každá noha je ovládána dvěma klouby. Stav robota tak lze vystihnout jako osmirozměrný vektor $\vec{s}$. Hledáme pak ovladač robota, který pro každý stav malezne osmirozměrný vektor $\vec{\omega}$, ten každému kloubu určuje úhlovou rychlost, která ovlivní pohyb v dalším snímku.
 
 ### Využitá teorie
 
@@ -20,7 +20,7 @@ Chůzi lze definovat jakožto sérii stavů kráčivého tělesa, kde každý st
 Tento systém každou neuronovou síť popisuje jako ohodnocený graf pomocí dvou seznamů *genů* - seznamu vrcholů a seznamu hran. Každému vrcholu a hraně přisuzuje číselné identifikátory, pomocí kterých dokáže udržovat přehled o tom, kteří jedinci jsou si *geneticky* podobní.
 Stanley a Miikkulainen  díky tomu zavádí i proces *speciace*, který ještě před rozmnožováním roztřídí jedince na různé *druhy* podle příbuznosti tak, aby se spolu křížily jen sítě s menšími rozdíly. Každý druh je pak ohodnocen svojí průměrnou hodnotou fitness, pomocí které se určí počet potomků v další generaci daného druhu.
 Při procesu rozmnožování je z každého druhu vybrána *silnější* část, ze které se vytvoří požadovaný počet potomků, z nichž každý může vzniknout křížením - většinu genů zdědí po silnějším rodiči, ale část od slabšího, nebo bez křížení, kdy se jedinec pouze zkopíruje do další generace.
-Pak na všech potomcích proběhnou mutace, přičemž je náhodně rozhodnuto, které z druhů mutací na nich proběhnou, Stanley a Miikkulainen jich popisují hned několik:
+Pak na všech potomcích proběhnou mutace, přičemž je náhodně rozhodnuto, které z druhů mutací na nich proběhnou, Stanley a Miikkulainen jich popisují několik:
 
 - přidání nové hrany do sítě
 - rozdělení hrany na dvě hrany s novým neuronem uprostřed
@@ -40,7 +40,7 @@ V samotném algoritmu stačí jen při tvoření nových neuronů určit náhodn
 
 #### HyperNEAT
 
-Technika HyperNEAT ([ref](http://www.mitpressjournals.org/doi/10.1162/artl.2009.15.2.15202)) využívá CPPN sítě ke generování čtyřrozměrného prostoru, který ve výsledku slouží jako definice vah v další neuronové síti.  Tzn. "organická struktura", kterou generujeme pomocí CPPN-NEAT je *mozek*.
+Technika HyperNEAT ([ref](http://www.mitpressjournals.org/doi/10.1162/artl.2009.15.2.15202)) využívá CPPN sítě ke generování čtyřrozměrného prostoru, který ve výsledku slouží jako definice vah v další neuronové síti.  Tzn. "organická struktura", kterou generujeme pomocí CPPN-NEAT je "mozek".
 To znamená, že generujeme CPPN síť, která má čtyři vstupy - $x_1$, $y_1$, $x_2$, $y_2$. Výstup nám pak určuje váhu spoje z neuronu na *fyzických* souřadnicích $[x_1;y_1]$ do neuronu na souřadnicích $[x_2;y_2]$. Stačí nám pak navrhnout *fyzickou* strukturu sítě k využití této techniky.
 V tomto projektu je použito rozložení zvané *state-space sandwich* ([ref](http://ieeexplore.ieee.org/document/4983289/)) o třech vrstvách podobně jako v referovaném článku, kde výsledná síť je rozvrstvená do trojrozměrného prostoru a z každého neuronu vede spoj do každého neuronu v další vrstvě. CPPN síť má pak dva výstupy, kde první určuje váhu mezi souřadnicemi $[x_1;y_1]$ z první vrstvy do $[x_2;y_2]$ v druhé a druhý výstup určuje stejným způsobem váhy mezi druhou a třetí vrstvou.
 
@@ -62,14 +62,14 @@ Díky této malé úpravě dokáže algoritmus ladit neuronovou síť v mírně 
 
 #### HyperNEAT
 
-HyperNEAT je také implementován docela standardním způsobem. Největší otázkou bylo, jak v *state-space sandwich* rozmístit neurony. 
+HyperNEAT je také implementován docela standardním způsobem. Největší otázkou bylo, jak ve *state-space sandwichi* rozmístit neurony. 
 
 Na rozdíl od klasických neuronových sítí jsou si sítě generované HyperNEATem vědomé geometrických souvislostí  ([ref](http://www.mitpressjournals.org/doi/10.1162/artl.2009.15.2.15202)). Clune et al. ([ref](http://ieeexplore.ieee.org/document/4983289/)) umisťuje do každého řádku v *substrátu* jednu nohu a do posledního sloupce přidává neuspořádaně zbývající informace:
 
 <img src="../images/clunenet.jpg" alt="clunenet" style="zoom: 50%;" />
 
-Tento postup sice dává geometricky najevo související buňky - podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomoci symetrie dává najevo souvislosti typu *přední/zadní pár nohou* a *levá/pravá noha*. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbývající informace jsou v prostřední řadě mezi nohama (viz obr. 3). Každá noha je popsána pomocí dvou úhlů kloubů (označeno $\phi$) a dotykového *senzoru* (vstup označený $T$) na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez dotyku a $1$ s dotykem, pro plynulost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.
-Jako přídavné proměnné jsou vtomt o rozložení $sin(t/\tau)$, $cos(t/\tau)$, kde $\tau$ je experimentálně určená konstanta 40, dále úhel těla robota se zemí $\Phi$ a $1$ jakožto lineární konstanta.
+Tento postup sice dává geometricky najevo související buňky - podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomoci symetrie dává najevo souvislosti typu *přední/zadní pár nohou* a *levá/pravá noha*. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbývající informace jsou v prostřední řadě mezi nohama (viz obr níže). Každá noha je popsána pomocí dvou úhlů kloubů (označeno $\phi$) a dotykového *senzoru* (vstup označený $T$) na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez dotyku a $1$ s dotykem, pro plynulost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.
+Jako přídavné proměnné jsou v tomto rozložení $sin(t/\tau)$, $cos(t/\tau)$, kde $\tau$ je experimentálně určená konstanta 40, dále úhel těla robota se zemí $\Phi$ a $1$ jakožto *bias*.
 Z výstupní vrstvy jsou využívány pouze neurony v pozicích úhlů nohou, které jsou převedeny na úhlovou rychlost podobně jako v ([ref](http://ieeexplore.ieee.org/document/4983289/)): $\omega = 4,5\cdot(\phi_{new} - \phi_{cur})$.
 
 Pro ilustraci této struktury poslouží následující obrázek:
@@ -82,23 +82,23 @@ Pro ilustraci této struktury poslouží následující obrázek:
 
 K simulaci je použita knihovna JBox2D ([ref](http://www.jbox2d.org/)), která poskytuje v celku věrohodný model dvojrozměrného světa, ale bohužel nesimuluje úplně deterministicky, takže každý běh programu se ve výsledcích liší. 
 
-Robot se skládá z hlavního těla, na které jsou napojeny nohy (viz obr níže) . Každá z nich je napojena pomocí rotujícího *RevoluteJointu* a stejným způsobem je napojen i spodní segment v koleni.
+Robot se skládá z hlavního těla, na které jsou napojeny nohy (viz obr. níže). Každá z nich je napojena pomocí rotujícího *RevoluteJointu* a stejným způsobem je napojen i spodní segment v koleni.
 
 ![robot_new](../images/robot_new.png)
 
-Měření vzdálenosti probíhá 3000 snímků při 60 snímcích za sekundu a dalších 1500 snímků se čeká, jestli robot po konci měření upadne na zem. Tím se zabraňuje strategiím, kdy místo snahy o chůzi robot pouze skočí směrem kupředu.
+Měření vzdálenosti probíhá 3000 snímků při 60 snímcích za sekundu a dalších 1500 snímků se čeká, jestli robot po konci měření upadne na zem. Tím se zabraňuje strategiím, kdy místo snahy o chůzi robot pouze skočí směrem kupředu a robota je nucen chodit vzpřímeně místo plazení.
 
 Výsledná vzdálenost se přímo využívá jako fitness v evolučním algoritmu, pokud robot upadl, počítá se jako $0$.
 
 Pro zrychlení se simulace pouští paralelně a výsledky pro konkrétní genotyp se ukládají do cache, aby se simulace pro stejný genotyp nemusela počítat znovu (což je poměrně častý jev, protože některé genotypy se rozmnoží bez mutace).
 
-Jedna z nových úprav je také cachování poolů objektů pro JBox2D v rámci každého vlákna, což spolu s několika dalšími optimalizacemi znamenala desetinásobné zrychlení evolučního algoritmu oproti původní verzi. Ve výsledku všech 20 běhů programu trvá na průměrném laptopu (Intel i5-8250U) přibližně 10 hodin.
+Jedna z nových úprav je také cachování poolů objektů pro JBox2D v rámci každého vlákna, což spolu s několika dalšími optimalizacemi znamenalo desetinásobné zrychlení evolučního algoritmu oproti původní verzi. Ve výsledku všech 20 běhů programu trvá na průměrném laptopu (Intel i5-8250U) přibližně 10 hodin.
 
 ### Výsledky
 
-Nejlepším výsledkem programu je ovladač robota, který je schopen během 3000 snímků ujít 257 délkových jednotek. Výsledá "chůze" je ale ve skutečnosti spíše skákaní, které sice nebylo původním cílem, ale v rámci daných pravidel je zřejmě efektvnější než opravdová chůze. 
+Nejlepším výsledkem programu je ovladač robota, který je schopen během 3000 snímků ujít 257 délkových jednotek. Výsledá "chůze" je ale ve skutečnosti spíš skákaní, které sice nebylo původním cílem, ale v rámci daných pravidel je zřejmě efektvnější než opravdová chůze. 
 
-U několika ovladačů se ale opravdu vyvinulo něco, co se za chůzi považovat dá, nejlepší takový ovladač dosahuje vzdálenosti 195. K lidské, či zvířecí chůzi ale chybí jedna zásadní vlastnost - při chůzi nezvedá nohy. K tomu dochází zejména z toho důvodu, že při chůzi na úplně hladkém povrchu k tomu ani není důvod a stálý kontakt se zemí mu dodává další stabilitu.
+U několika ovladačů se ale opravdu vyvinulo něco, co se za chůzi považovat dá, nejlepší takový ovladač dosahuje vzdálenosti 195. K lidské, či zvířecí chůzi ale chybí jedna zásadní vlastnost - při chůzi moc nezvedá nohy. K tomu dochází zejména z toho důvodu, že při chůzi na úplně hladkém povrchu k tomu ani není důvod a stálý kontakt se zemí mu dodává další stabilitu.
 
 nejlepší výsledek: [video](https://youtu.be/Pl6iVdWFQ2U)
 
@@ -112,7 +112,7 @@ výsledek s chůzí: [video](https://youtu.be/WHFGC1gKz9E)
 
 Výstupem projektu jsou dva programy - evoluční algoritmus a prohlížeč výsledků. Kompilace i běh programů vyžaduje Javu ve verzi 8 a novější, projekt byl otestován na Linux Mint 19.3 s Oracle JDK, kompatibilita s jinýmy systémy je velmi pravděpodobná. Kód lze zkompilovat pomocí Mavenu příkazem `mvn package`. Bez kompilace lze využít dodávaný předkompilovaný archiv.
 
-Po kompilaci nebo extrakci archivu lze programy spustit v terminálu následovně.
+Po kompilaci nebo extrakci archivu lze programy spustit **v hlavní složce projektu** v terminálu následovně.
 
 Prohlížeč výsledků:
 
