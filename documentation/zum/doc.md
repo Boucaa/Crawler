@@ -100,13 +100,9 @@ Nejlepším výsledkem programu je ovladač robota, který je schopen během 300
 
 U několika ovladačů se ale opravdu vyvinulo něco, co se za chůzi považovat dá, nejlepší takový ovladač dosahuje vzdálenosti 195. K lidské, či zvířecí chůzi ale chybí jedna zásadní vlastnost - při chůzi nezvedá nohy. K tomu dochází zejména z toho důvodu, že při chůzi na úplně hladkém povrchu k tomu ani není důvod a stálý kontakt se zemí mu dodává další stabilitu.
 
-<video src="../images/bunny.mkv"></video>
+nejlepší výsledek: [video](https://youtu.be/Pl6iVdWFQ2U)
 
-*nejlepší výsledek*
-
-<video src="../images/walk.mkv"></video>
-
-*výsledek s chůzí*
+výsledek s chůzí: [video](https://youtu.be/WHFGC1gKz9E)
 
 ![results](../images/results.png)
 
