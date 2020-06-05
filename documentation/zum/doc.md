@@ -24,7 +24,7 @@ Pak na všech potomcích proběhnou mutace, přičemž je náhodně rozhodnuto, 
 
 - přidání nové hrany do sítě
 - rozdělení hrany na dvě hrany s novým neuronem uprostřed
-- změna všech vah o~malou hodnotu, nebo na náhodnou hodnotu
+- změna všech vah o malou hodnotu, nebo na náhodnou hodnotu
 
 Po zmutování jsou všichni potomci prohlášeni za současnou generaci a algoritmus pokračuje znovu hodnocením jedinců.
 
@@ -69,7 +69,7 @@ Na rozdíl od klasických neuronových sítí jsou si sítě generované HyperNE
 <img src="../images/clunenet.jpg" alt="clunenet" style="zoom: 50%;" />
 
 Tento postup sice dává geometricky najevo související buňky - podobné informace jsou ve stejných sloupcích, ale opomíjí rozložení nohou v prostoru, proto se v tomto projektu používá struktura, která za pomoci symetrie dává najevo souvislosti typu *přední/zadní pár nohou* a *levá/pravá noha*. Pro nejlepší výsledky je v rozložení nohou středová souměrnost a zbývající informace jsou v prostřední řadě mezi nohama (viz obr. 3). Každá noha je popsána pomocí dvou úhlů kloubů (označeno $\phi$) a dotykového *senzoru* (vstup označený $T$) na spodním článku nohy, jehož hodnota je nastavena na $-1$ bez dotyku a $1$ s dotykem, pro plynulost pohybu mají tyto hodnoty lineární přechod o délce 25 snímků.
-Jako přídavné proměnné jsou v~tomto rozložení $sin(t/\tau)$, $cos(t/\tau)$, kde $\tau$ je experimentálně určená konstanta 40, dále úhel těla robota se zemí $\Phi$ a $1$ jakožto lineární konstanta.
+Jako přídavné proměnné jsou vtomt o rozložení $sin(t/\tau)$, $cos(t/\tau)$, kde $\tau$ je experimentálně určená konstanta 40, dále úhel těla robota se zemí $\Phi$ a $1$ jakožto lineární konstanta.
 Z výstupní vrstvy jsou využívány pouze neurony v pozicích úhlů nohou, které jsou převedeny na úhlovou rychlost podobně jako v ([ref](http://ieeexplore.ieee.org/document/4983289/)): $\omega = 4,5\cdot(\phi_{new} - \phi_{cur})$.
 
 Pro ilustraci této struktury poslouží následující obrázek:
