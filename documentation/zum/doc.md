@@ -56,7 +56,7 @@ NEAT je impementován velmi blízko tomu, jak byl výše popsán. Kromě několi
 
 - aktivace/deaktivace jedné hrany
 - změna jedné váhy na náhodnou hodnotu
-- změna jedné váhy o~maximálně $\pm 5\%$
+- změna jedné váhy o maximálně $\pm 5\%$
 
 Díky této malé úpravě dokáže algoritmus ladit neuronovou síť v mírně detailnějším měřítku. 
 
@@ -90,6 +90,10 @@ Měření vzdálenosti probíhá 3000 snímků při 60 snímcích za sekundu a d
 
 Výsledná vzdálenost se přímo využívá jako fitness v evolučním algoritmu, pokud robot upadl, počítá se jako $0$.
 
+Pro zrychlení se simulace pouští paralelně a výsledky pro konkrétní genotyp se ukládají do cache, aby se simulace pro stejný genotyp nemusela počítat znovu (což je poměrně častý jev, protože některé genotypy se rozmnoží bez mutace).
+
+Jedna z nových úprav je také cachování poolů objektů pro JBox2D v rámci každého vlákna, což spolu s několika dalšími optimalizacemi znamenala desetinásobné zrychlení evolučního algoritmu oproti původní verzi. Ve výsledku všech 20 běhů programu trvá na průměrném laptopu (Intel i5-8250U) přibližně 10 hodin.
+
 ### Výsledky
 
 Nejlepším výsledkem programu je ovladač robota, který je schopen během 3000 snímků ujít 257 délkových jednotek. Výsledá "chůze" je ale ve skutečnosti spíše skákaní, které sice nebylo původním cílem, ale v rámci daných pravidel je zřejmě efektvnější než opravdová chůze. 
@@ -106,5 +110,47 @@ U několika ovladačů se ale opravdu vyvinulo něco, co se za chůzi považovat
 
 ![results](../images/results.png)
 
-*průběh vývoje fitness podle generace<img src="../images/clunenet.jpg" alt="clunenet" style="zoom: 50%;" /> napčíč všemi 20 běhy*
+*průběh vývoje fitness podle generace napčíč všemi 20 běhy*
 
+### Uživatelská příručka
+
+Výstupem projektu jsou dva programy - evoluční algoritmus a prohlížeč výsledků. Kompilace i běh programů vyžaduje Javu ve verzi 8 a novější, projekt byl otestován na Linux Mint 19.3 s Oracle JDK, kompatibilita s jinýmy systémy je velmi pravděpodobná. Kód lze zkompilovat pomocí Mavenu příkazem `mvn package`. Bez kompilace lze využít dodávaný předkompilovaný archiv.
+
+Po kompilaci nebo extrakci archivu lze programy spustit v terminálu následovně.
+
+Prohlížeč výsledků:
+
+```shell
+java -jar target/crawler-gui-jar-with-dependencies.jar
+```
+
+Evoluční algoritmus:
+
+```shell
+java -jar target/crawler-learn-jar-with-dependencies.jar
+```
+
+#### Prohlížeč výsledků
+
+Grafické prostředí je ovládané poměrně intuitivně, v levé části je na výběr postupně:
+
+- běh programu (podle názvu složky)
+- generace programu
+- jedinec z generace
+
+Na pravé straně se zobrazuje simulace společně s užitečnými daty umístěnými v levé části simulačního panelu:
+
+- souřadnice $x$ těla robota
+- maximální dosažená souřadnice $x$ těla robota v současné simulaci
+- maximální dosažená souřadnice $x$ těla robota po 3000 snímků
+- počet uběhlých snímků
+- souřadnice $y$ těla robota
+- současné hodnoty vstupní vrstvy neuronové sítě
+- současné hodnoty skryté vrstvy neuronové sítě
+- současné hodnoty výstupní vrstvy neuronové sítě
+
+Napravo od těchto dat je vyobrazena CPPN síť. Vstupní neurony jsou na jejím levém okraji, výstupní neurony na pravém okraji, mezi nimi jsou náhodně rozloženy skryté neurony, jejichž barva značí použitou aktivační funkci. Spoje v síti mají svůj cílový neuron označený kratším obarveným koncem. Neaktivní spoje jsou vyznačeny šedou barvou.
+
+#### Evoluční algoritmus
+
+Evoluční program vyžaduje soubor `config.cfg`, který obsahuje nastavení několika klíčových konstant, které lze měnit. Program ukládá výsledky do složky `results`, kam také ukládá záznam průběhu programu, který rovněž vypisuje do konzole. Vypisuje několik důležitých informací, jako nejdelší dosaženou vzdálenost, počet potomků, popis jednotlivých druhů apod.
