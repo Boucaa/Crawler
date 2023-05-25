@@ -14,7 +14,8 @@ import org.jbox2d.testbed.framework.TestbedTest
  * Created by colander on 1/13/17.
  * Class used to show a phenotype fitness test in a GUI.
  */
-class TestbedFitnessTest(private val g: Genotype, private val bodySettings: BodySettings, private val target: Double) : TestbedTest() {
+class TestbedFitnessTest(private val g: Genotype, private val bodySettings: BodySettings, private val target: Double) :
+    TestbedTest() {
 
     private lateinit var stepper: FitnessSimulationStepper
     private lateinit var graphDrawer: GraphDrawer

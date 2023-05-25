@@ -3,7 +3,6 @@ package com.janboucek.crawler.fitness
 import com.janboucek.crawler.neat.Genotype
 import com.janboucek.crawler.neat.NodeGene
 import com.janboucek.crawler.simulation.NetworkNode
-import java.util.*
 
 /**
  * Created by colander on 1/3/17.
@@ -22,7 +21,9 @@ class CPPNPhenotype(g: Genotype) {
             val node = NetworkNode(nodeInnov, g.nodeGenes[i].activateFunction)
             nodesByInnov[nodeInnov] = node
             network.add(node)
-            if (g.nodeGenes[i].type == NodeGene.TYPE_INPUT) inputs.add(node) else if (g.nodeGenes[i].type == NodeGene.TYPE_OUTPUT) outputs.add(node) else hidden.add(node)
+            if (g.nodeGenes[i].type == NodeGene.TYPE_INPUT) inputs.add(node) else if (g.nodeGenes[i].type == NodeGene.TYPE_OUTPUT) outputs.add(
+                node
+            ) else hidden.add(node)
         }
         for (i in g.connectionGenes.indices) {
             val connectionGene = g.connectionGenes[i]

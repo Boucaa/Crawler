@@ -1,7 +1,5 @@
 package com.janboucek.crawler.simulation
 
-import java.util.*
-
 /**
  * Created by colander on 1/13/17.
  * Class used in simulation as a single neural network node.

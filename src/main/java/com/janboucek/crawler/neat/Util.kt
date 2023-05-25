@@ -88,7 +88,8 @@ object Util {
         while (!q.isEmpty()) {
             val cur = q.poll()
             if (cur == b) return false
-            g.connectionGenes.filter { connection: ConnectionGene -> connection.output == cur }.forEach { connection: ConnectionGene -> q.add(connection.input) }
+            g.connectionGenes.filter { connection: ConnectionGene -> connection.output == cur }
+                .forEach { connection: ConnectionGene -> q.add(connection.input) }
         }
         return true
     }
@@ -98,7 +99,13 @@ object Util {
     }
 
     private fun copyConnection(connectionGene: ConnectionGene): ConnectionGene {
-        return ConnectionGene(connectionGene.input, connectionGene.output, connectionGene.weight, connectionGene.active, connectionGene.innovation)
+        return ConnectionGene(
+            connectionGene.input,
+            connectionGene.output,
+            connectionGene.weight,
+            connectionGene.active,
+            connectionGene.innovation
+        )
     }
 
     private fun copyNode(nodeGene: NodeGene): NodeGene {

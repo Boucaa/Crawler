@@ -21,7 +21,7 @@ object ActivationFunctions {
             NodeGene.FUNCTION_GAUSS -> gauss(sum)
             NodeGene.FUNCTION_SHIFTED_SIGMOID -> shiftedSigmoid(sum)
             else -> {
-                throw  IllegalArgumentException("WRONG ACTIVATION FUNCTION VALUE: $activationFunction")
+                throw IllegalArgumentException("WRONG ACTIVATION FUNCTION VALUE: $activationFunction")
             }
         }
     }

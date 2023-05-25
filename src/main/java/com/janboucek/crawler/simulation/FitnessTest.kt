@@ -13,20 +13,23 @@ import kotlin.math.max
  * Created by colander on 1/13/17.
  * Class used to measure the fitness of a single genotype.
  */
-class FitnessTest internal constructor(var genotype: Genotype, bodySettings: BodySettings, private val id: Int) : Comparable<FitnessTest> {
+class FitnessTest internal constructor(var genotype: Genotype, bodySettings: BodySettings, private val id: Int) :
+    Comparable<FitnessTest> {
     companion object {
         private const val ITERATIONS = 3000
         private const val CONFIRM_ITERATIONS = 1500
         private const val LIMIT_HEIGHT = true
         private const val HEIGHT_LIMIT = -13.0
-        private const val MAX_FRAMES_WITHOUT_MOVEMENT = 800 // max frames allowed without reaching a new record fitness, helps to evaluate faster, but unused because it yielded worse results
+        private const val MAX_FRAMES_WITHOUT_MOVEMENT =
+            800 // max frames allowed without reaching a new record fitness, helps to evaluate faster, but unused because it yielded worse results
     }
 
     private var world: World?
     private val stepper: FitnessSimulationStepper
 
     init {
-        val world = World(Vec2(0f, 0f), WorldPoolCache.getPool()) //setting the gravity is a responsibility of the WorldBuilder
+        val world =
+            World(Vec2(0f, 0f), WorldPoolCache.getPool()) //setting the gravity is a responsibility of the WorldBuilder
         this.world = world
         val cppnPhenotype = CPPNPhenotype(genotype)
         val annPhenotype = ANNPhenotype(cppnPhenotype)

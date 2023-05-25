@@ -20,7 +20,11 @@ import kotlin.math.sin
  * Created by colander on 1/18/17.
  * Class used to commit the actual steps (frames) of the simulation.
  */
-class FitnessSimulationStepper internal constructor(world: World, bodySettings: BodySettings, val phenotype: ANNPhenotype) {
+class FitnessSimulationStepper internal constructor(
+    world: World,
+    bodySettings: BodySettings,
+    val phenotype: ANNPhenotype
+) {
     private var framesElapsed = 0
     private val world: World
     val robot: Robot
@@ -66,32 +70,38 @@ class FitnessSimulationStepper internal constructor(world: World, bodySettings: 
 
     fun step(stepWorld: Boolean) {
         if (++framesElapsed > STARTUP_FRAMES) {
-            robot.legs.forEach(Consumer { l: RobotLeg -> l.touchValue = if (l.touch) Math.min(1.0, l.touchValue + TOUCH_CHANGE_SPEED) else Math.max(-1.0, l.touchValue - TOUCH_CHANGE_SPEED) })
+            robot.legs.forEach(Consumer { l: RobotLeg ->
+                l.touchValue = if (l.touch) Math.min(1.0, l.touchValue + TOUCH_CHANGE_SPEED) else Math.max(
+                    -1.0,
+                    l.touchValue - TOUCH_CHANGE_SPEED
+                )
+            })
             val inputs = arrayOf(
-                    doubleArrayOf(
-                            robot.legs[0].touchValue,
-                            angleToValue(robot.legs[0].joints[0].jointAngle.toDouble()),
-                            angleToValue(robot.legs[0].joints[1].jointAngle.toDouble()),
-                            angleToValue(robot.legs[1].joints[1].jointAngle.toDouble()),
-                            angleToValue(robot.legs[1].joints[0].jointAngle.toDouble()),
-                            robot.legs[1].touchValue
-                    ),
-                    doubleArrayOf(
-                            robot.body.angle.toDouble(),
-                            1.0,
-                            sin(framesElapsed / FUNC_DIVIDER),
-                            cos(framesElapsed / FUNC_DIVIDER),
-                            1.0,
-                            robot.body.angle.toDouble()
-                    ),
-                    doubleArrayOf(
-                            robot.legs[2].touchValue,
-                            angleToValue(robot.legs[2].joints[0].jointAngle.toDouble()),
-                            angleToValue(robot.legs[2].joints[1].jointAngle.toDouble()),
-                            angleToValue(robot.legs[3].joints[1].jointAngle.toDouble()),
-                            angleToValue(robot.legs[3].joints[0].jointAngle.toDouble()),
-                            robot.legs[3].touchValue
-                    ))
+                doubleArrayOf(
+                    robot.legs[0].touchValue,
+                    angleToValue(robot.legs[0].joints[0].jointAngle.toDouble()),
+                    angleToValue(robot.legs[0].joints[1].jointAngle.toDouble()),
+                    angleToValue(robot.legs[1].joints[1].jointAngle.toDouble()),
+                    angleToValue(robot.legs[1].joints[0].jointAngle.toDouble()),
+                    robot.legs[1].touchValue
+                ),
+                doubleArrayOf(
+                    robot.body.angle.toDouble(),
+                    1.0,
+                    sin(framesElapsed / FUNC_DIVIDER),
+                    cos(framesElapsed / FUNC_DIVIDER),
+                    1.0,
+                    robot.body.angle.toDouble()
+                ),
+                doubleArrayOf(
+                    robot.legs[2].touchValue,
+                    angleToValue(robot.legs[2].joints[0].jointAngle.toDouble()),
+                    angleToValue(robot.legs[2].joints[1].jointAngle.toDouble()),
+                    angleToValue(robot.legs[3].joints[1].jointAngle.toDouble()),
+                    angleToValue(robot.legs[3].joints[0].jointAngle.toDouble()),
+                    robot.legs[3].touchValue
+                )
+            )
             val outputs = phenotype.step(inputs)
             setAngle(robot.legs[0].joints[0], outputs[0][1])
             setAngle(robot.legs[0].joints[1], outputs[0][2])

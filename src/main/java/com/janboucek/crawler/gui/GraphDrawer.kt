@@ -42,11 +42,16 @@ class GraphDrawer(g: Genotype) {
             nodesById[nodeGene.innov] = Pair(Vec2(x.toFloat(), y.toFloat()), nodeGene.activateFunction)
         })
         g.connectionGenes.forEach(Consumer { connectionGene: ConnectionGene ->
-            lines.add(Pair(arrayOf(
-                    nodesById[connectionGene.input]!!.first.x.toInt(),
-                    nodesById[connectionGene.input]!!.first.y.toInt(),
-                    nodesById[connectionGene.output]!!.first.x.toInt(),
-                    nodesById[connectionGene.output]!!.first.y.toInt()), connectionGene.active))
+            lines.add(
+                Pair(
+                    arrayOf(
+                        nodesById[connectionGene.input]!!.first.x.toInt(),
+                        nodesById[connectionGene.input]!!.first.y.toInt(),
+                        nodesById[connectionGene.output]!!.first.x.toInt(),
+                        nodesById[connectionGene.output]!!.first.y.toInt()
+                    ), connectionGene.active
+                )
+            )
         })
     }
 
@@ -68,15 +73,17 @@ class GraphDrawer(g: Genotype) {
         for (line in lines) {
             val coords = line.first
             debugDraw.drawSegment(
-                    Vec2(debugDraw.getScreenToWorld(coords[0].toFloat(), coords[1].toFloat())),
-                    Vec2(debugDraw.getScreenToWorld(coords[2].toFloat(), coords[3].toFloat())),
-                    if (line.second) Color3f.GREEN else GRAY_COLOR)
+                Vec2(debugDraw.getScreenToWorld(coords[0].toFloat(), coords[1].toFloat())),
+                Vec2(debugDraw.getScreenToWorld(coords[2].toFloat(), coords[3].toFloat())),
+                if (line.second) Color3f.GREEN else GRAY_COLOR
+            )
             val pointerX = ((coords[2] - coords[0]) * (5.0 / 6) + coords[0]).toInt()
             val pointerY = ((coords[3] - coords[1]) * (5.0 / 6) + coords[1]).toInt()
             debugDraw.drawSegment(
-                    Vec2(debugDraw.getScreenToWorld(pointerX.toFloat(), pointerY.toFloat())),
-                    Vec2(debugDraw.getScreenToWorld(coords[2].toFloat(), coords[3].toFloat())),
-                    if (line.second) Color3f.RED else Color3f.WHITE)
+                Vec2(debugDraw.getScreenToWorld(pointerX.toFloat(), pointerY.toFloat())),
+                Vec2(debugDraw.getScreenToWorld(coords[2].toFloat(), coords[3].toFloat())),
+                if (line.second) Color3f.RED else Color3f.WHITE
+            )
         }
     }
 }

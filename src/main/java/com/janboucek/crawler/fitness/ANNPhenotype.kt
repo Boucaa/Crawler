@@ -25,8 +25,10 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
     var lastHidden = Array(1) { DoubleArray(1) }
 
     init {
-        inputToHiddenWeights = Array(SUBSTRATE_WIDTH) { Array(SUBSTRATE_HEIGHT) { Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) } } }
-        hiddenToOutputWeights = Array(SUBSTRATE_WIDTH) { Array(SUBSTRATE_HEIGHT) { Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) } } }
+        inputToHiddenWeights =
+            Array(SUBSTRATE_WIDTH) { Array(SUBSTRATE_HEIGHT) { Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) } } }
+        hiddenToOutputWeights =
+            Array(SUBSTRATE_WIDTH) { Array(SUBSTRATE_HEIGHT) { Array(SUBSTRATE_WIDTH) { DoubleArray(SUBSTRATE_HEIGHT) } } }
         var ithMax = 0.0
         var htoMax = 0.0
         //ಠ_ಠ that indent though
@@ -38,7 +40,15 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
                         val y1 = yValues[j]
                         val x2 = START_X + k
                         val y2 = yValues[l]
-                        val output = cppnPhenotype.step(doubleArrayOf(x1.toDouble(), y1.toDouble(), x2.toDouble(), y2.toDouble(), 1.0))
+                        val output = cppnPhenotype.step(
+                            doubleArrayOf(
+                                x1.toDouble(),
+                                y1.toDouble(),
+                                x2.toDouble(),
+                                y2.toDouble(),
+                                1.0
+                            )
+                        )
                         inputToHiddenWeights[i][j][k][l] = output[0]
                         hiddenToOutputWeights[i][j][k][l] = output[1]
                         if (output[0] > ithMax) ithMax = output[0]
@@ -52,8 +62,10 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
                 for (j in 0 until SUBSTRATE_HEIGHT) {
                     for (k in 0 until SUBSTRATE_WIDTH) {
                         for (l in 0 until SUBSTRATE_HEIGHT) {
-                            if (ithMax != 0.0) inputToHiddenWeights[i][j][k][l] = inputToHiddenWeights[i][j][k][l] / ithMax
-                            if (htoMax != 0.0) hiddenToOutputWeights[i][j][k][l] = hiddenToOutputWeights[i][j][k][l] / htoMax
+                            if (ithMax != 0.0) inputToHiddenWeights[i][j][k][l] =
+                                inputToHiddenWeights[i][j][k][l] / ithMax
+                            if (htoMax != 0.0) hiddenToOutputWeights[i][j][k][l] =
+                                hiddenToOutputWeights[i][j][k][l] / htoMax
                         }
                     }
                 }
@@ -63,8 +75,10 @@ class ANNPhenotype(cppnPhenotype: CPPNPhenotype) {
             for (j in 0 until SUBSTRATE_HEIGHT) {
                 for (k in 0 until SUBSTRATE_WIDTH) {
                     for (l in 0 until SUBSTRATE_HEIGHT) {
-                        if (ithMax != 0.0) inputToHiddenWeights[i][j][k][l] = inputToHiddenWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER
-                        if (htoMax != 0.0) hiddenToOutputWeights[i][j][k][l] = hiddenToOutputWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER
+                        if (ithMax != 0.0) inputToHiddenWeights[i][j][k][l] =
+                            inputToHiddenWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER
+                        if (htoMax != 0.0) hiddenToOutputWeights[i][j][k][l] =
+                            hiddenToOutputWeights[i][j][k][l] * TestSettings.WEIGHT_MULTIPLIER
                     }
                 }
             }

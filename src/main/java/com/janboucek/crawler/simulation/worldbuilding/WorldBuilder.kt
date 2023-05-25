@@ -1,21 +1,24 @@
 package com.janboucek.crawler.simulation.worldbuilding
 
+import com.janboucek.crawler.settings.TestSettings
 import com.janboucek.crawler.simulation.Robot
 import com.janboucek.crawler.simulation.RobotLeg
-import com.janboucek.crawler.settings.TestSettings
 import org.jbox2d.collision.shapes.PolygonShape
 import org.jbox2d.common.Vec2
 import org.jbox2d.dynamics.*
 import org.jbox2d.dynamics.joints.JointType
 import org.jbox2d.dynamics.joints.RevoluteJoint
 import org.jbox2d.dynamics.joints.RevoluteJointDef
-import java.util.*
 
 /**
  * Created by colander on 12/14/16.
  * Class used to build the test world ant the robot structure
  */
-class WorldBuilder(private val world: World, private val bodySettings: BodySettings, private val worldSettings: WorldSettings) {
+class WorldBuilder(
+    private val world: World,
+    private val bodySettings: BodySettings,
+    private val worldSettings: WorldSettings
+) {
     companion object {
         private const val TORQUE = 12000
         private const val BODY_POS_X = 0

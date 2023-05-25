@@ -6,7 +6,15 @@ import java.util.*
  * Created by colander on 12/14/16.
  * A settings container used in test body construction.
  */
-data class BodySettings(var legs: Int, var segments: Int, var bodyWidth: Float, var bodyHeight: Float, var segmentWidth: Float, var segmentHeight: Float, var density: Float) {
+data class BodySettings(
+    var legs: Int,
+    var segments: Int,
+    var bodyWidth: Float,
+    var bodyHeight: Float,
+    var segmentWidth: Float,
+    var segmentHeight: Float,
+    var density: Float
+) {
 
     companion object {
         fun fromSerialized(serialized: String): BodySettings {

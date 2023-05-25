@@ -1,7 +1,6 @@
 package com.janboucek.crawler.simulation
 
 import org.jbox2d.dynamics.Body
-import java.util.*
 
 /**
  * Created by colander on 1/13/17.

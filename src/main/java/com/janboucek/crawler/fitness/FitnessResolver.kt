@@ -3,7 +3,6 @@ package com.janboucek.crawler.fitness
 import com.janboucek.crawler.neat.Genotype
 import com.janboucek.crawler.simulation.FitnessTest
 import com.janboucek.crawler.simulation.worldbuilding.BodySettings
-import java.util.*
 
 /**
  * DEPRECATED

@@ -1,10 +1,10 @@
 package com.janboucek.crawler.neat
 
+import com.janboucek.crawler.fitness.CoroutineFitnessResolver
 import com.janboucek.crawler.io.Color
 import com.janboucek.crawler.io.Logger
 import com.janboucek.crawler.neat.Util.copyGenotype
 import com.janboucek.crawler.neat.Util.getAllowedConnectionList
-import com.janboucek.crawler.fitness.CoroutineFitnessResolver
 import com.janboucek.crawler.settings.TestSettings
 import com.janboucek.crawler.simulation.worldbuilding.BodySettings
 import java.util.*
@@ -27,7 +27,8 @@ class Evolution(private val bodySettings: BodySettings, runId: Long) {
         private const val MUTATE_ADD_CONNECTION = 0.15
         private const val MUTATE_ENABLE_DISABLE = 0.4 //0
         private const val MUTATE_WEIGHT = 0.8 //the chance of mutating connection weights //0.8
-        private const val MUTATE_WEIGHT_SMALL = 0.9 //if the connections are to be changed, this decides the small/random ratio
+        private const val MUTATE_WEIGHT_SMALL =
+            0.9 //if the connections are to be changed, this decides the small/random ratio
         private const val MUTATE_SINGLE_INSTEAD = 0.1 //chance of mutating only a single weight
         private const val MUTATE_FUNCTION = 0.15
         private const val MUTATE_SMALL_LIMIT = 0.05 //0.05
@@ -123,7 +124,9 @@ class Evolution(private val bodySettings: BodySettings, runId: Long) {
                 }
             }
             spec.lastInnovate++
-            val curSum = spec.genotypes.stream().map { it.second }.reduce { a: Double, b: Double -> java.lang.Double.sum(a, b) }.get()
+            val curSum =
+                spec.genotypes.stream().map { it.second }.reduce { a: Double, b: Double -> java.lang.Double.sum(a, b) }
+                    .get()
             spec.avgFitness = max(0.0, curSum / spec.genotypes.size)
             sum += spec.avgFitness
         }
@@ -142,7 +145,12 @@ class Evolution(private val bodySettings: BodySettings, runId: Long) {
             //breed the next generation
             var toBreed = (curSpec.avgFitness / sum * GENERATION_SIZE).toInt() - 1
             if (sum == 0.0) toBreed = GENERATION_SIZE / species.size
-            logger.log("species #" + curSpec.uid + ": avg " + String.format("%.4f", curSpec.avgFitness) + ", breeding " + toBreed + "/" + curSpec.genotypes.size)
+            logger.log(
+                "species #" + curSpec.uid + ": avg " + String.format(
+                    "%.4f",
+                    curSpec.avgFitness
+                ) + ", breeding " + toBreed + "/" + curSpec.genotypes.size
+            )
             if (toBreed >= 0) {
                 noMutateChildren.add(copyGenotype(curSpec.genotypes[curSpec.genotypes.size - 1].first))
             }
@@ -174,7 +182,9 @@ class Evolution(private val bodySettings: BodySettings, runId: Long) {
         for (child in children) {
             if (random.nextDouble() < MUTATE_ADD_CONNECTION) mutateAddConnection(child)
             if (random.nextDouble() < MUTATE_ADD_NODE && child.connectionGenes.isNotEmpty()) mutateSplitConnection(child)
-            if (random.nextDouble() < MUTATE_ENABLE_DISABLE && child.connectionGenes.isNotEmpty()) mutateEnableDisableConnection(child)
+            if (random.nextDouble() < MUTATE_ENABLE_DISABLE && child.connectionGenes.isNotEmpty()) mutateEnableDisableConnection(
+                child
+            )
             if (random.nextDouble() < MUTATE_WEIGHT && child.connectionGenes.isNotEmpty()) {
                 if (random.nextDouble() < MUTATE_SINGLE_INSTEAD) {
                     mutateWightSmall(child.connectionGenes[random.nextInt(child.connectionGenes.size)])
@@ -206,12 +216,14 @@ class Evolution(private val bodySettings: BodySettings, runId: Long) {
         //LOG RESULTS
         val time = System.currentTimeMillis() - startTime
         logger.log("finished in " + time + "ms")
-        logger.log("""
+        logger.log(
+            """
             ${Color.BLUE}max fitness: ${fitnesses[fitnesses.size - 1].result}${Color.RESET}
             avg: ${sum / species.size}
             species: ${species.size}
             size: ${generation.size}
-            """.trimIndent())
+            """.trimIndent()
+        )
         logger.logGeneration(fitnesses, generationNo)
         logger.flush()
     }
@@ -220,7 +232,8 @@ class Evolution(private val bodySettings: BodySettings, runId: Long) {
         //retrieves the list of all edges that are allowed to add (existing and recurrent connections are removed)
         var possibleConnections = getAllowedConnectionList(g)
         //remove all edges leading to an input
-        possibleConnections = possibleConnections.filterNot { cur: Pair<Int, Int> -> cur.second < INPUT_NODES || cur.first < INPUT_NODES + OUTPUT_NODES && cur.first >= INPUT_NODES }
+        possibleConnections =
+            possibleConnections.filterNot { cur: Pair<Int, Int> -> cur.second < INPUT_NODES || cur.first < INPUT_NODES + OUTPUT_NODES && cur.first >= INPUT_NODES }
         if (possibleConnections.isEmpty()) {
             return
         }

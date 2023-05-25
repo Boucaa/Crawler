@@ -46,7 +46,12 @@ class GUI private constructor() : JFrame() {
     private val displayPanel: JPanel
 
     private val testbedModel = TestbedModel()
-    private val controller = TestbedController(testbedModel, TestbedController.UpdateBehavior.UPDATE_CALLED, TestbedController.MouseBehavior.NORMAL, null)//FixedController(testbedModel, testbedPanel, TestbedController.UpdateBehavior.UPDATE_CALLED)
+    private val controller = TestbedController(
+        testbedModel,
+        TestbedController.UpdateBehavior.UPDATE_CALLED,
+        TestbedController.MouseBehavior.NORMAL,
+        null
+    )//FixedController(testbedModel, testbedPanel, TestbedController.UpdateBehavior.UPDATE_CALLED)
 
     init {
         //set basic properties of the JFrame
@@ -186,13 +191,17 @@ class GUI private constructor() : JFrame() {
         if (!cfgFile.exists()) {
             System.err.println("NO CFG FILE, leaving default")
         } else {
-            TestSettings.set(readFile(cfgFile.absolutePath)
-                    ?: throw IllegalStateException("failed to read config file: ${cfgFile.absolutePath}"))
+            TestSettings.set(
+                readFile(cfgFile.absolutePath)
+                    ?: throw IllegalStateException("failed to read config file: ${cfgFile.absolutePath}")
+            )
         }
         val genFolders = runFolder.listFiles() ?: return
         Arrays.sort(genFolders)
         for (genFolder in genFolders) {
-            if (genFolder.name != "evolution.log" && genFolder.name != "config.cfg") generationSelectModel.addElement(genFolder.name)
+            if (genFolder.name != "evolution.log" && genFolder.name != "config.cfg") generationSelectModel.addElement(
+                genFolder.name
+            )
         }
         if (!generationSelectModel.isEmpty) generationSelectList.selectedIndex = generationSelectModel.size() - 1
     }
@@ -200,7 +209,8 @@ class GUI private constructor() : JFrame() {
     private fun selectGeneration(index: Int) {
         if (generationSelectModel.isEmpty || index < 0) return
         genotypeSelectModel.clear()
-        val genFile = File(Logger.RESULTS_DIRECTORY + runSelectModel[runSelectList.selectedIndex] + "/" + generationSelectModel[index])
+        val genFile =
+            File(Logger.RESULTS_DIRECTORY + runSelectModel[runSelectList.selectedIndex] + "/" + generationSelectModel[index])
         genotypeSelectModel.clear()
         var sc: Scanner? = null
         try {
@@ -217,7 +227,8 @@ class GUI private constructor() : JFrame() {
             val fitness = sc.nextDouble()
             val genotype = Genotype.fromSerialized(sc)
             val fitnessResult = FitnessResult(fitness, genotype)
-            val test = TestbedFitnessTest(fitnessResult.genotype, fitnessResult.genotype.bodySettings, fitnessResult.result)
+            val test =
+                TestbedFitnessTest(fitnessResult.genotype, fitnessResult.genotype.bodySettings, fitnessResult.result)
             testbedModel.addTest(test)
         }
         if (!genotypeSelectModel.isEmpty) genotypeSelectList.selectedIndex = 0

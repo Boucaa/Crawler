@@ -7,12 +7,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import java.util.*
 
 /**
  * A refined version of the FitnessResolver, which coroutines to run tests in parallel.
  */
-open class CoroutineFitnessResolver(genotypes: ArrayList<Genotype>, settings: BodySettings) : FitnessResolver(genotypes, settings) {
+open class CoroutineFitnessResolver(genotypes: ArrayList<Genotype>, settings: BodySettings) :
+    FitnessResolver(genotypes, settings) {
     companion object {
         // cache results globally in order not to compute the same fitness test
         val cache = mutableMapOf<Genotype, Double>()
@@ -25,7 +25,8 @@ open class CoroutineFitnessResolver(genotypes: ArrayList<Genotype>, settings: Bo
             markedGenotypes.add(Pair(genotypes[i], i))
         }
         return runBlocking {
-            val tests = markedGenotypes.map { genoPair: Pair<Genotype, Int> -> async(Dispatchers.Default) { runTest(genoPair) } }
+            val tests =
+                markedGenotypes.map { genoPair: Pair<Genotype, Int> -> async(Dispatchers.Default) { runTest(genoPair) } }
             tests.awaitAll()
         }
     }
