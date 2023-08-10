@@ -5,6 +5,7 @@ package com.janboucek.crawler.io
  * source: https://stackoverflow.com/questions/5762491/how-to-print-color-in-console-using-system-out-println
  */
 
+@Suppress("unused")
 enum class Color(private val code: String) {
     //Color end string, color reset
     RESET("\u001b[0m"),  // Regular Colors.
@@ -77,7 +78,5 @@ enum class Color(private val code: String) {
     CYAN_BACKGROUND_BRIGHT("\u001b[0;106m"),
     WHITE_BACKGROUND_BRIGHT("\u001b[0;107m");
 
-    override fun toString(): String {
-        return code
-    }
+    override fun toString(): String = code
 }

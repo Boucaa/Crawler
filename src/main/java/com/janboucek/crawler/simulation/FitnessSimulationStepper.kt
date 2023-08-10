@@ -14,6 +14,8 @@ import org.jbox2d.dynamics.contacts.Contact
 import org.jbox2d.dynamics.joints.RevoluteJoint
 import java.util.function.Consumer
 import kotlin.math.cos
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.math.sin
 
 /**
@@ -71,10 +73,11 @@ class FitnessSimulationStepper internal constructor(
     fun step(stepWorld: Boolean) {
         if (++framesElapsed > STARTUP_FRAMES) {
             robot.legs.forEach(Consumer { l: RobotLeg ->
-                l.touchValue = if (l.touch) Math.min(1.0, l.touchValue + TOUCH_CHANGE_SPEED) else Math.max(
-                    -1.0,
-                    l.touchValue - TOUCH_CHANGE_SPEED
-                )
+                l.touchValue = if (l.touch) {
+                    min(1.0, l.touchValue + TOUCH_CHANGE_SPEED)
+                } else {
+                    max(-1.0, l.touchValue - TOUCH_CHANGE_SPEED)
+                }
             })
             val inputs = arrayOf(
                 doubleArrayOf(

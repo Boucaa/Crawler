@@ -17,6 +17,7 @@ import java.io.FileNotFoundException
 import java.util.*
 import java.util.Timer
 import javax.swing.*
+import kotlin.system.exitProcess
 
 /**
  * Class used to display the results in a GUI.
@@ -32,6 +33,7 @@ class GUI private constructor() : JFrame() {
         private const val CELL_HEIGHT = 22
 
         @JvmStatic
+        @Suppress("unused")
         fun main(args: Array<String>) {
             GUI()
         }
@@ -142,7 +144,7 @@ class GUI private constructor() : JFrame() {
         val resultsFolder = File(Logger.RESULTS_DIRECTORY)
         if (!resultsFolder.exists()) {
             println("NO RESULTS FOLDER, EXITING")
-            System.exit(0)
+            exitProcess(0)
         }
         val runFolders = resultsFolder.listFiles() ?: return
         Arrays.sort(runFolders)

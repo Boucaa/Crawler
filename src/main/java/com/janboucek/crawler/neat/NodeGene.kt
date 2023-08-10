@@ -4,7 +4,7 @@ package com.janboucek.crawler.neat
  * Created by colander on 1/3/17.
  * NEAT node gene class.
  */
-data class NodeGene constructor(val innov: Int, val type: Int, var activateFunction: Int) {
+data class NodeGene(val innov: Int, val type: Int, var activateFunction: Int) {
     companion object {
         const val TYPE_INPUT = 0
         const val TYPE_OUTPUT = 1

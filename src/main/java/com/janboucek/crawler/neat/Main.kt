@@ -10,6 +10,7 @@ import com.janboucek.crawler.simulation.worldbuilding.BodySettings
  */
 object Main {
     @JvmStatic
+    @Suppress("unused")
     fun main(args: Array<String>) {
         val set = BodySettings(4, 2, 6f, 0.7f, 0.7f, 2.0f, 20.0f)
         TestSettings.set(

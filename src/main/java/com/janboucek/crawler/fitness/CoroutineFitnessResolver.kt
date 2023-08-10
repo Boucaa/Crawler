@@ -9,7 +9,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 
 /**
- * A refined version of the FitnessResolver, which coroutines to run tests in parallel.
+ * A refined version of the FitnessResolver, which uses coroutines to run tests in parallel.
  */
 open class CoroutineFitnessResolver(genotypes: ArrayList<Genotype>, settings: BodySettings) :
     FitnessResolver(genotypes, settings) {
@@ -19,14 +19,14 @@ open class CoroutineFitnessResolver(genotypes: ArrayList<Genotype>, settings: Bo
     }
 
     override fun resolve(): List<FitnessResult> {
-        val results = ArrayList<FitnessResult>()
         val markedGenotypes = ArrayList<Pair<Genotype, Int>>()
         for (i in genotypes.indices) {
             markedGenotypes.add(Pair(genotypes[i], i))
         }
         return runBlocking {
-            val tests =
-                markedGenotypes.map { genoPair: Pair<Genotype, Int> -> async(Dispatchers.Default) { runTest(genoPair) } }
+            val tests = markedGenotypes.map { genoPair: Pair<Genotype, Int> ->
+                async(Dispatchers.Default) { runTest(genoPair) }
+            }
             tests.awaitAll()
         }
     }

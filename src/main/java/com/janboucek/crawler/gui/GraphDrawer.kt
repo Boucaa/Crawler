@@ -57,18 +57,18 @@ class GraphDrawer(g: Genotype) {
 
     fun draw(debugDraw: DebugDraw) {
         for (id in nodesById.keys) {
-            var colour: Color3f? = null
+            var color: Color3f? = null
             when (nodesById[id]!!.second) {
-                NodeGene.FUNCTION_SIGMOID -> colour = Color3f.BLUE
-                NodeGene.FUNCTION_LINEAR -> colour = Color3f.GREEN
-                NodeGene.FUNCTION_SIN -> colour = Color3f.RED
-                NodeGene.FUNCTION_COS -> colour = PINK_COLOR
-                NodeGene.FUNCTION_ABS -> colour = BROWN_COLOR
-                NodeGene.FUNCTION_GAUSS -> colour = YELLOW_COLOR
-                -1 -> colour = Color3f.WHITE
-                else -> println("WRONG COLOUR " + nodesById[id]!!.second)
+                NodeGene.FUNCTION_SIGMOID -> color = Color3f.BLUE
+                NodeGene.FUNCTION_LINEAR -> color = Color3f.GREEN
+                NodeGene.FUNCTION_SIN -> color = Color3f.RED
+                NodeGene.FUNCTION_COS -> color = PINK_COLOR
+                NodeGene.FUNCTION_ABS -> color = BROWN_COLOR
+                NodeGene.FUNCTION_GAUSS -> color = YELLOW_COLOR
+                -1 -> color = Color3f.WHITE
+                else -> println("WRONG COLOR " + nodesById[id]!!.second)
             }
-            debugDraw.drawString(Vec2(nodesById[id]!!.first.x, nodesById[id]!!.first.y), id.toString() + "", colour)
+            debugDraw.drawString(Vec2(nodesById[id]!!.first.x, nodesById[id]!!.first.y), id.toString() + "", color)
         }
         for (line in lines) {
             val coords = line.first

@@ -21,9 +21,11 @@ class CPPNPhenotype(g: Genotype) {
             val node = NetworkNode(nodeInnov, g.nodeGenes[i].activateFunction)
             nodesByInnov[nodeInnov] = node
             network.add(node)
-            if (g.nodeGenes[i].type == NodeGene.TYPE_INPUT) inputs.add(node) else if (g.nodeGenes[i].type == NodeGene.TYPE_OUTPUT) outputs.add(
-                node
-            ) else hidden.add(node)
+            when (g.nodeGenes[i].type) {
+                NodeGene.TYPE_INPUT -> inputs.add(node)
+                NodeGene.TYPE_OUTPUT -> outputs.add(node)
+                else -> hidden.add(node)
+            }
         }
         for (i in g.connectionGenes.indices) {
             val connectionGene = g.connectionGenes[i]

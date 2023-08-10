@@ -272,7 +272,7 @@ class Evolution(private val bodySettings: BodySettings, runId: Long) {
         genes[random.nextInt(genes.size)].activateFunction = random.nextInt(NodeGene.NO_FUNCTIONS)
     }
 
-    //genotype a is the fitter one (decides disjoint and excess genes)
+    //genotype [a] is the fitter one (decides disjoint and excess genes)
     private fun crossOver(a: Genotype, b: Genotype): Genotype {
         val commonConnections = ArrayList<Pair<ConnectionGene, ConnectionGene>>()
         val dominantConnections = ArrayList<ConnectionGene>()
