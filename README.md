@@ -1,9 +1,9 @@
 Crawler
 -------
 
-Crawler is a HyperNEAT implementation used to train controllers of legged robots simulated in 2D. It started as a school leaving examination IT project and will hopefully receive some improvements in the future. The full documentation/paper can be found [here (Czech)](https://github.com/Colanderr/Crawler/raw/master/documentation/crawler.pdf).
+Crawler is a HyperNEAT implementation used to train controllers of legged robots simulated in 2D. It started as a school leaving examination IT project and will hopefully receive some improvements in the future. The full documentation/paper can be found [here (Czech)](https://github.com/Boucaa/Crawler/raw/master/documentation/crawler.pdf).
 
-A pre-built package with trained controllers can be found in the releases [here](https://github.com/Colanderr/Crawler/releases).
+A pre-built package with trained controllers can be found in the releases [here](https://github.com/Boucaa/Crawler/releases).
 
 ### Results ###
 The best and some of the more interesting results can be seen on my Youtube channel:
